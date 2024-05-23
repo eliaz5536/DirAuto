@@ -23,7 +23,7 @@ sudo apt-get install python python2 python3 python3-pip pip pipx
 These following tools need to be installed and put in /opt directory in order to utilize the following script:
 ```
 gobuster
-ffif
+ffuf
 feroxbuster
 dirsearch
 dirb
