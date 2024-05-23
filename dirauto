@@ -1,0 +1,1023 @@
+#!/bin/bash
+
+echo "
+        ██████╗ ██╗██████╗ ███████╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗          
+        ██╔══██╗██║██╔══██╗██╔════╝██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝          
+        ██║  ██║██║██████╔╝█████╗  ██║        ██║   ██║   ██║██████╔╝ ╚████╔╝           
+        ██║  ██║██║██╔══██╗██╔══╝  ██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝            
+        ██████╔╝██║██║  ██║███████╗╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║             
+        ╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝             
+                                                                                        
+███████╗███╗   ██╗██╗   ██╗███╗   ███╗███████╗██████╗  █████╗ ████████╗ ██████╗ ██████╗ 
+██╔════╝████╗  ██║██║   ██║████╗ ████║██╔════╝██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
+█████╗  ██╔██╗ ██║██║   ██║██╔████╔██║█████╗  ██████╔╝███████║   ██║   ██║   ██║██████╔╝
+██╔══╝  ██║╚██╗██║██║   ██║██║╚██╔╝██║██╔══╝  ██╔══██╗██╔══██║   ██║   ██║   ██║██╔══██╗
+███████╗██║ ╚████║╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
+╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+                                                                                        
+"
+
+###############################################################
+# Help                                                        #
+###############################################################
+usage()
+{
+        echo "Directory Enumeration Automator using Gobuster, FFuF, DirSearch & Dirb"
+	echo "Usage: dirauto [options] <arguments>"
+        echo " "
+        echo "Arguments"
+        echo "  URL		Target URL address"
+        echo " "
+        echo "Options:"
+        echo "  -u		Specifies URL"
+}
+
+###############################################################
+# Arguments                                                   #
+###############################################################
+# Check if list of arguements are met
+if [ $# -eq 0 ];
+then 
+        echo "$0: Missing Arguments"
+        exit 1
+fi
+
+while getopts ":u:" flag
+do
+    case "${flag}" in
+        u) URL=${OPTARG};;
+    esac
+done
+
+if [ -z "$URL" ]; then
+        echo "Missing URL address. Please specify the URL using the -u option."
+        exit 1
+fi
+
+echo "URL: $URL";
+
+###############################################################
+# Directory Enumeration Selection Option                      #
+###############################################################
+automatic_dir_scan() {
+	mkdir -p Dirauto/auto/gobuster
+	mkdir -p Dirauto/auto/feroxbuster
+
+	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/common.txt -o $(pwd)/Dirauto/auto/gobuster/gobuster_common.txt
+	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/big.txt -o $(pwd)/Dirauto/auto/gobuster/gobuster_big.txt
+	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-small.txt -o $(pwd)/Dirauto/auto/gobuster/gobuster_dir_small.txt
+	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -o $(pwd)/Dirauto/auto/gobuster/gobuster_dir_medium.txt
+
+	feroxbuster -u $URL --output $(pwd)/Dirauto/auto/feroxbuster/ferox.txt
+}
+
+dir_mode() {
+	# Prompts the user the option to select tool for performing subdomain enumeration
+	dir_options=()
+	PS3='Select the following options: '
+	options=("Gobuster" "FFuF" "Feroxbuster" "Dirsearch" "Dirb" "All of the above" "Quit (Exit to Menu)")
+	while true; do
+		select choice in "${options[@]}"; do
+			case $choice in
+				"Gobuster")
+					dir_options+=("gobuster")
+					break
+					;;
+				"FFuF")
+					dir_options+=("ffuf")
+					break
+					;;
+				"Feroxbuster")
+					dir_options+=("feroxbuster")
+					break
+					;;
+				"Dirsearch")
+					dir_options+=("dirsearch")
+					break
+					;;
+				"Dirb")
+					dir_options+=("dirb")
+					break
+					;;
+				"All of the above")
+					dir_options+=("gobuster")
+					dir_options+=("ffuf")
+					dir_options+=("feroxbuster")
+					dir_options+=("dirsearch")
+					dir_options+=("dirb")
+					break
+					;;
+				"Quit (Exit to Menu)")
+					echo "Quitting Directory Enumeration Selection..."
+					exit 0
+					break
+					;;
+				*) echo "Invalid option, please try again." ;;
+			esac
+			break
+		done
+
+		read -p "Do you want to select more options? (yes/no): " answer
+		case $answer in 
+			[nN])
+				break
+				;;
+			[yY])
+				continue
+				;;
+		esac
+	done
+
+	echo "Selected Enumeration Programs: ${dir_options[@]}"
+
+	
+	# Directory Enumeration Wordlist Menu 
+	wordlists=()
+	PS3='Select wordlist you would like to utilize: '
+	options=("common.txt" "directory-list-1.0.txt" "directory-list-2.3-small.txt" "directory-list-2.3-medium.txt" "directory-list-2.3-big.txt" "directory-list-lowercase-2.3-small.txt" "directory-list-lowercast-2.3-medium.txt" "directory-list-lowercase-2.3-big.txt")
+	while true; do
+		select choice in "${options[@]}"; do
+			case $choice in
+					"common.txt")
+						echo "common.txt"
+						wordlists+=("/usr/share/wordlists/dirb/common.txt")
+						break
+						;;
+					"directory-list-1.0.txt")
+						echo "directory-list-1.0.txt"
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-1.0.txt")
+						break
+						;;
+					"directory-list-2.3-small.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-small.txt")
+						break
+						;;
+					"directory-list-2.3-medium.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt")
+						break
+						;;
+					"directory-list-2.3-big.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-big.txt")
+						break
+						;;
+					"directory-list-lowercase-2.3-small.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-small.txt")
+						break
+						;;
+					"directory-list-lowercase-2.3-medium.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt")
+						break
+						;;
+					"directory-list-lowercase-2.3-big.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-big.txt")
+						break
+						;;
+					"Custom Wordlist")
+						read -p "Enter the path of the custom wordlist you would like to use: " customWordlist
+						wordlists+=("$customWordlist")
+						break
+						;;
+					*) echo "Invalid option, please try again." ;;
+				esac
+			break
+		done
+
+		read -p "Do you want to select more options? (yes/no): " answer
+		case $answer in 
+			[nN])
+				break
+				;;
+			[yY])
+				continue
+				;;
+		esac
+	done
+
+	echo "Wordlists: ${wordlists[@]}"
+
+
+	# Directory Enumeration Extension Menu
+	# Add option to add all extensions if the user wants to have that option
+	while true; do
+	    read -p "Would you like to scan for list of extensions? " yn
+	    if [ "$yn" == "y" ]; then
+		    read -p "Do you want to scan all list of the extensions?" scanAllExtensions
+		    if [ "$scanAllExtensions" == "y" ]; then
+			    extensions="sh,txt,php,html,htm,asp,aspx,js,xml,log,json,jpg,jpeg,png,gif,doc,pdf,mpg,mp3,zip,tar.gz,tar"
+		    else
+			    read -p "Enter the list of extensions files: " userInput
+			    extensions="$userInput"
+		    fi
+		    
+
+		    break
+	    elif [ "$yn" == "n" ]; then
+		    break
+	    else 
+		    echo "Please answer yes (y) or no (n)."
+	    fi 
+	done
+
+	# Directory Enumeration HTTP Status Code Menu
+	while true; do
+	    read -p "Would you like to scan pages that includes only specified HTTP status codes? " yn
+	    if [ "$yn" == "y" ]; then
+		    read -p "Enter the list of HTTP status codes: " userInput
+	   	    status_codes="$userInput"
+		    break
+	    elif [ "$yn" == "n" ]; then
+		    break
+	    else 
+		    echo "Please answer yes (y) or no (n)."
+	    fi 
+	done
+
+	# Directory Enumeration Thread/Execution Rate Menu
+	while true; do
+	    read -p "Would you like to change the number of concurrent threads? " yn
+	    if [ "$yn" == "y" ]; then
+		    read -p "Enter the specified number of concurrent threads: " userInput
+	            threads="$userInput"
+		    break
+	    elif [ "$yn" == "n" ]; then
+		    break
+	    else 
+		    echo "Please answer yes (y) or no (n)."
+	    fi 
+	done
+
+	# ===============================================================================================
+	# Execute Directory Enumeration tools from user's preference
+	mkdir DIRAUTO_SCANS
+	mkdir -p DIRAUTO_SCANS/DIR
+	OPTION="dir"
+	for program in "${dir_options[@]}"; do
+		case $program in 
+			"gobuster")
+				echo "Executing Gobuster..."
+				run_gobuster "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
+				;;
+			"ffuf")
+				echo "Executing FFuF..."
+				run_FFuF "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
+				;;
+			"dirsearch")
+				echo "Executing dirsearch..."
+				run_dirsearch "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
+				;;
+			"ferixbuster")
+				echo "Executing feroxbuster..."
+				run_forexbuster "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
+				;;
+			"dirb") echo "Executing dirb..."
+				run_dirb "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
+				;;
+		esac
+	done
+	# ===============================================================================================
+}
+
+vhost_mode() {
+	# Prompts the user the option to select tool for performing VHost enumeration
+	vhost_options=()
+	PS3='Select VHost enumeration program you want to execute: '
+	options=("Gobuster" "FFuF" "All of the above" "Quit (Exit to Menu)")
+	while true; do
+		select choice in "${options[@]}"; do
+			case $choice in
+				"Gobuster")
+					echo "VHost Enumeration Program: Gobuster"
+					vhost_options+=("gobuster")
+					break
+					;;
+				"FFuF")
+					echo "VHost Enumeration Program: Gobuster"
+					vhost_options+=("ffuf")
+					break
+					;;
+				"All of the above")
+					echo "VHost Enumeration Program: All Enumeration Programs"
+					vhost_options+=("gobuster")
+					vhost_options+=("ffuf")
+					break
+					;;
+				"Quit (Exit to Menu)")
+					echo "Quitting Subdomain Selection..."
+					exit 0
+					break
+					;;
+				*) echo "Invalid option, please try again." ;;
+			esac
+			break
+		done
+
+		read -p "Do you want to select more options? (yes/no): " answer
+		case $answer in 
+			[nN])
+				break
+				;;
+			[yY])
+				continue
+				;;
+		esac
+	done
+
+	echo "Selected VHost Enumeration Programs: ${vhost_options[@]}"
+
+	# VHost Wordlist Menu 
+	wordlists=()
+	PS3='Select wordlist you would like to utilize: '
+	options=("bitquark-subdomains-top100000.txt" "bug-bounty-program-subdomains-trickest-inventory.txt" "combined_subdomains.txt" "deepmagic.com-prefixes-top500.txt" "deepmagic.com-prefixes-top50000.txt" "dns-Jhaddix.txt" "fierce-hostlist.txt" "namelist.txt" "shubs-subdomains.txt" "subdomains-top1million-110000.txt" "subdomains-top1million-20000.txt" "subdomains-top1million-5000.txt" "tlds.txt")
+	while true; do
+		select choice in "${options[@]}"; do
+			case $choice in
+					"bitquark-subdomains-top100000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt")
+						break
+						;;
+					"bug-bounty-program-subdomains-trickest-inventory.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt")
+						break
+						;;
+					"combined_subdomains.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/combined_subdomains.txt")
+						break
+						;;
+					"deepmagic.com-prefixes-top500.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/deepmagic.com-prefixes-top500.txt")
+						break
+						;;
+					"deepmagic.com-prefixes-top50000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/deepmagic.com-prefixes-top50000.txt")
+						break
+						;;
+					"dns-Jhaddix.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/dns-Jhaddix.txt")
+						break
+						;;
+					"fierce-hostlist.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/fierce-hostlist.txt")
+						break
+						;;
+					"namelist.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/namelist.txt")
+						break
+						;;
+					"shubs-subdomains.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/shubs-subdomains.txt")
+						break
+						;;
+					"subdomains-top1million-110000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt")
+						break
+						;;
+					"subdomains-top1million-20000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-20000.txt")
+						break
+						;;
+					"subdomains-top1million-5000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt")
+						break
+						;;
+					"Custom Wordlist")
+						read -p "Enter the path of the custom wordlist you would like to use: " customWordlist
+						wordlists+=("$customWordlist")
+						break
+						;;
+					*) echo "Invalid option, please try again." ;;
+				esac
+			break
+		done
+
+		read -p "Do you want to select more options? (yes/no): " answer
+		case $answer in 
+			[nN])
+				break
+				;;
+			[yY])
+				continue
+				;;
+		esac
+	done
+
+	echo "Wordlists: ${wordlists[@]}"
+
+
+	# VHost Extension Menu
+	while true; do
+	    read -p "Would you like to scan for list of extensions? " yn
+	    if [ "$yn" == "y" ]; then
+		    read -p "Do you want to scan all list of the extensions?" scanAllExtensions
+		    if [ "$scanAllExtensions" == "y" ]; then
+			    extensions="sh,txt,php,html,htm,asp,aspx,js,xml,log,json,jpg,jpeg,png,gif,doc,pdf,mpg,mp3,zip,tar.gz,tar"
+		    else
+			    read -p "Enter the list of extensions files: " userInput
+			    extensions="$userInput"
+		    fi
+		    
+
+		    break
+	    elif [ "$yn" == "n" ]; then
+		    break
+	    else 
+		    echo "Please answer yes (y) or no (n)."
+	    fi 
+	done
+
+	# VHost HTTP Status Code Menu
+	while true; do
+	    read -p "Would you like to scan pages that includes only specified HTTP status codes? " yn
+	    if [ "$yn" == "y" ]; then
+		    read -p "Enter the list of HTTP status codes: " userInput
+	   	    status_codes="$userInput"
+		    break
+	    elif [ "$yn" == "n" ]; then
+		    break
+	    else 
+		    echo "Please answer yes (y) or no (n)."
+	    fi 
+	done
+
+	# VHost Thread Menu
+	while true; do
+	    read -p "Would you like to change the number of concurrent threads? " yn
+	    if [ "$yn" == "y" ]; then
+		    read -p "Enter the specified number of concurrent threads: " userInput
+	            threads="$userInput"
+		    break
+	    elif [ "$yn" == "n" ]; then
+		    break
+	    else 
+		    echo "Please answer yes (y) or no (n)."
+	    fi 
+	done
+
+	# ===============================================================================================
+	# Execute VHost enumeration tools from user's preference
+	mkdir DIRAUTO_SCANS
+	mkdir -p DIRAUTO_SCANS/VHOST
+	OPTION="vhost"
+	for program in "${vhost_options[@]}"; do
+		case $program in 
+			"gobuster")
+				echo "Executing Gobuster..."
+				run_gobuster "$OPTION" "$URL" "${wordlists}" "$extensions" "$status_codes" "$threads"
+				;;
+			"ffuf")
+				echo "Executing FFuF..."
+				run_FFuF "$OPTION" "$URL" "${wordlists}" "$extensions" "$status_codes" "$threads"
+				;;
+		esac
+	done
+	# ===============================================================================================
+}
+
+dns_mode() {
+	# Prompts the user the option to select tool for performing DNS enumeration
+	dns_options=()
+	PS3='Select the following options: '
+	options=("Gobuster" "FFuF" "All of the above" "Quit (Exit to Menu)")
+	while true; do
+		select choice in "${options[@]}"; do
+			case $choice in
+				"Gobuster")
+					echo "VHost Enumeration Program: Gobuster"
+					dns_options+=("gobuster")
+					break
+					;;
+				"FFuF")
+					echo "VHost Enumeration Program: FFuF"
+					dns_options+=("ffuf")
+					break
+					;;
+				"All of the above")
+					echo "VHost Enumeration Program: All Enumeration Programs"
+					dns_options+=("gobuster")
+					dns_options+=("ffuf")
+					break
+					;;
+				"Quit (Exit to Menu)")
+					echo "Quitting Subdomain Selection..."
+					exit 0
+					break
+					;;
+				*) echo "Invalid option, please try again." ;;
+			esac
+			break
+		done
+
+		read -p "Do you want to select more options? (yes/no): " answer
+		case $answer in 
+			[nN])
+				break
+				;;
+			[yY])
+				continue
+				;;
+		esac
+	done
+
+	echo "Selected Subdomain Enumeration Programs: ${dns_options[@]}"
+
+	# Subdomain Wordlist Menu 
+	wordlists=()
+	PS3='Select wordlist you would like to utilize: '
+	options=("bitquark-subdomains-top100000.txt" "bug-bounty-program-subdomains-trickest-inventory.txt" "combined_subdomains.txt" "deepmagic.com-prefixes-top500.txt" "deepmagic.com-prefixes-top50000.txt" "dns-Jhaddix.txt" "fierce-hostlist.txt" "namelist.txt" "shubs-subdomains.txt" "subdomains-top1million-110000.txt" "subdomains-top1million-20000.txt" "subdomains-top1million-5000.txt" "tlds.txt")
+	while true; do
+		select choice in "${options[@]}"; do
+			case $choice in
+					"bitquark-subdomains-top100000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt")
+						break
+						;;
+					"bug-bounty-program-subdomains-trickest-inventory.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt")
+						break
+						;;
+					"combined_subdomains.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/combined_subdomains.txt")
+						break
+						;;
+					"deepmagic.com-prefixes-top500.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/deepmagic.com-prefixes-top500.txt")
+						break
+						;;
+					"deepmagic.com-prefixes-top50000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/deepmagic.com-prefixes-top50000.txt")
+						break
+						;;
+					"dns-Jhaddix.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/dns-Jhaddix.txt")
+						break
+						;;
+					"fierce-hostlist.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/fierce-hostlist.txt")
+						break
+						;;
+					"namelist.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/namelist.txt")
+						break
+						;;
+					"shubs-subdomains.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/shubs-subdomains.txt")
+						break
+						;;
+					"subdomains-top1million-110000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt")
+						break
+						;;
+					"subdomains-top1million-20000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-20000.txt")
+						break
+						;;
+					"subdomains-top1million-5000.txt")
+						wordlists+=("/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt")
+						break
+						;;
+					"Custom Wordlist")
+						read -p "Enter the path of the custom wordlist you would like to use: " customWordlist
+						wordlists+=("$customWordlist")
+						break
+						;;
+					*) echo "Invalid option, please try again." ;;
+				esac
+			break
+		done
+
+		read -p "Do you want to select more options? (yes/no): " answer
+		case $answer in 
+			[nN])
+				break
+				;;
+			[yY])
+				continue
+				;;
+		esac
+	done
+
+	echo "Wordlists: ${wordlists[@]}"
+
+	# Subdomain Thread Menu
+	while true; do
+	    read -p "Would you like to change the number of concurrent threads? " yn
+	    if [ "$yn" == "y" ]; then
+		    read -p "Enter the specified number of concurrent threads: " userInput
+	            threads="$userInput"
+		    break
+	    elif [ "$yn" == "n" ]; then
+		    break
+	    else 
+		    echo "Please answer yes (y) or no (n)."
+	    fi 
+	done
+
+	# ===============================================================================================
+	# Execute VHost enumeration tools from user's preference
+	mkdir DIRAUTO_SCANS
+	mkdir -p DIRAUTO_SCANS/DNS
+	OPTION="dns"
+	for program in "${dns_options[@]}"; do
+		case $program in 
+			"gobuster")
+				echo "Executing Gobuster..."
+				run_gobuster "$OPTION" "$URL" "${wordlists}" "$extensions" "$status_codes" "$threads"
+				;;
+			"ffuf")
+				echo "Executing FFuF..."
+				run_FFuF "$OPTION" "$URL" "${wordlists}" "$extensions" "$status_codes" "$threads"
+				;;
+		esac
+	done
+	# ===============================================================================================
+}
+
+# get_parameter_fuzzing() { }
+# post_data_fuzzing() { }
+
+###############################################################
+# Enumeration Programs                                        #
+###############################################################
+run_gobuster() {
+	local option="$1"
+	local wordlists=("${@:3}")
+	if [ "$option" == "dir" ]; then
+		mkdir -p DIRAUTO_SCANS/DIR/Gobuster
+		counter=0
+		for wordlist in "${wordlists[@]}"; do
+			if [ -z "$wordlist" ]; then
+				break
+			fi
+
+			local url="$2"
+			local extension="$4"
+			local response_codes="$5"
+			local execution_rate="$6"
+
+			echo "URL: $url"
+			echo "Extension: $extension"
+			echo "Response Codes: $response_codes"
+			echo "Execution Rate: $execution_rate"
+
+			# GoBuster comamnd with conditionally added parameters
+			# command="gobuster dir -u $url -w $wordlist"
+			command="gobuster dir -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/DIR/Gobuster/gobuster_dir_output_$counter.txt"
+
+			if [ -n "$extension" ]; then
+				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+					command+=" -x $extension"	
+				fi
+			fi
+
+			
+			if [ -n "$response_codes" ]; then
+				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
+					command+=" -s $response_codes"	
+				fi
+			fi
+
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"	
+				fi
+			fi
+
+			echo "$command"
+
+			# Execute the constructed command
+			eval "$command"
+
+			((counter++))
+		done
+	elif [ "$option" == "vhost" ]; then
+		mkdir -p DIRAUTO_SCANS/VHOST/Gobuster
+		counter=0
+		for wordlist in "${wordlists[@]}"; do
+			if [ -z "$wordlist" ]; then
+				break
+			fi
+
+			local url="$2"
+			local execution_rate="$6"
+
+			# GoBuster comamnd with conditionally added parameters
+			# command="gobuster vhost -u $url -w $wordlist"
+			command="gobuster vhost -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/VHOST_MODE/Gobuster/gobuster_vhost_output_$counter.txt"
+
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"	
+				fi
+			fi
+
+			echo "$command"
+
+			# Execute the constructed command
+			eval "$command"
+
+			((counter++))
+		done
+	elif [ "$option" == "dns" ]; then
+		mkdir -p DIRAUTO_SCANS/DNS/Gobuster
+		counter=0
+		for wordlist in "${wordlists[@]}"; do
+			if [ -z "$wordlist" ]; then
+				break
+			fi
+
+			local url="$2"
+			local execution_rate="$6"
+		
+			# GoBuster comamnd with conditionally added parameters
+			command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/DIRAUTO_SCANS/DNS/Gobuster/gobuster_dns_output_$counter.txt"
+
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"	
+				fi
+			fi
+
+			echo "$command"
+
+			# Execute the constructed command
+			eval "$command"
+
+			((counter++))
+		done
+	else 
+		echo "Gobuster cannot perform the following enumeration method: $option"
+	fi 
+}
+
+run_FFuF() {
+	local option="$1"
+	local wordlists=("${@:3}")
+
+	if [ "$option" == "dir" ]; then
+		mkdir -p DIRAUTO_SCANS/DIR/FFuF
+		counter=0
+		for wordlist in "${wordlists[@]}"; do
+			if [ -z "$wordlist" ]; then
+				break
+			fi
+
+			local url="$2"
+			local extension="$4"
+			local response_codes="$5"
+			local execution_rate="$6"
+			
+			# FFuF command with conditionally added parameters
+			command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/DIRAUTO_SCANS/DIR/FFuF/FFuF_dir_output_$counter.txt"
+			
+			if [ -n "$extension" ]; then
+				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+					command+=" -e $extension"
+				fi
+			fi 
+
+			if [ -n "$response_codes" ]; then
+				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
+					command+=" -mc $response_codes"
+				fi
+			fi 
+
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"
+				fi
+			fi 
+			
+			echo "$command"
+
+			# Execute the constructed command
+			eval "$command"
+
+			((counter++))
+		done
+	elif [ "$option" == "vhost" ]; then
+		mkdir -p DIRAUTO_SCANS/VHOST/FFuF
+		counter=0
+		for wordlist in "${wordlists[@]}"; do
+			if [ -z "$wordlist" ]; then
+				break
+			fi
+
+			local url="$2"
+			local execution_rate="$6"
+
+			echo "Enter the name of the header for FUZZING (Example: \"Host: FUZZ.ffuf.com \"): "	
+			read headerInput
+
+			# FFuF command with conditionally added parameters
+			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/DIRAUTO_SCANS/VHOST/FFuF/FFuF_vhost_output_$counter.txt"
+
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"
+				fi
+			fi 
+
+			echo "$command"
+
+			# Execute the constructed command
+			eval "$command"
+
+			((counter++))
+		done
+	elif [ "$option" == "dns" ]; then
+		mkdir -p DIRAUTO_SCANS/DNS/FFuF
+		counter=0
+		for wordlist in "${wordlists[@]}"; do
+			if [ -z "$wordlist" ]; then
+				break
+			fi
+
+			local url="$2"
+			local execution_rate="$6"
+
+			# FFuF command with conditionally added parameters
+			command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/DIRAUTO_SCANS/DNS/FFuF/FFuF_dns_output_$counter.txt"
+		
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"
+				fi
+			fi 
+
+			echo "$command"
+
+			# Execute the constructed command
+			eval "$command"
+		done
+	else 
+		echo "FFuF cannot perform the following enumeration method: $option"
+	fi 
+}
+
+run_dirsearch() {
+	local option="$1"
+	local wordlists=("${@:3}")
+	if [ "$option" == "dir" ]; then
+		mkdir -p DIRAUTO_SCANS/DIR/Dirsearch
+		counter=0
+
+		if [ -z "$wordlist" ]; then
+			break
+		fi
+
+		local url="$2"
+		local extension="$4"
+		local response_codes="$5"
+		local execution_rate="$6"
+
+		# Dirsearch command with conditionally added parameters
+		# command="python3 ~/Tools/dirsearch/dirsearch.py -u $url"
+		command="dirsearch -u $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirsearch/dirsearch_dir_output_$counter.txt"
+
+		if [ -n "$extension" ]; then
+			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+				command+=" -e $extension"
+			fi
+		fi 
+
+		if [ -n "$response_codes" ]; then
+			if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
+				command+=" -i $response_codes"
+			fi
+		fi 
+
+		if [ -n "$execution_rate" ]; then
+			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+				command+=" -t $execution_rate"
+			fi
+		fi 
+
+		echo "$command"
+
+		# Execute the constructed command
+		eval "$command"
+
+		((counter++))
+	else 
+		echo "DirSearch cannot perform the following enumeration method: $option"
+	fi 
+	
+}
+
+run_feroxbuster() {
+	local option="$1"
+	local wordlists=("${@:3}")
+	if [ "$option" == "dir" ]; then
+		mkdir -p DIRAUTO_SCANS/DIR/Feroxbuster
+		counter=0
+
+		if [ -z "$wordlist" ]; then
+			break
+		fi
+
+		local url="$2"
+		local extension="$4"
+		local response_codes="$5"
+		local execution_rate="$6"
+		
+		# Feroxbuster command with conditionally added parameters
+		# command="feroxbuster --url $url --output $(pwd)/DIRAUTO_SCANS/DIR/Feroxbuster/feroxbuster_dir_output_$counter.txt"	
+		command="feroxbuster --url $url"	
+		echo "$command"
+
+		if [ -n "$extension" ]; then
+			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+				command+=" -x $extension"
+			fi
+		fi 
+
+		if [ -n "$execution_rate" ]; then
+			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+				command+=" -t $execution_rate"
+			fi
+		fi 
+
+		echo "$command"
+
+		# Executed the constructed command
+		eval "$command"
+
+		((counter++))
+	else 
+		echo "Feroxbuster cannot perform the following enumeration method: $option"
+	fi 
+}
+
+run_dirb() {
+	local option="$1"
+	local wordlists=("${@:3}")
+
+	if [ "$option" == "dir" ]; then
+		mkdir -p DIRAUTO_SCANS/DIR/Dirb
+		counter=0
+
+		if [ -z "$wordlist" ]; then
+			break
+		fi
+
+		local url="$2"
+		local extension="$4"
+
+		# Dirb command with conditionally added parameters	
+		command="dirb $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirb/dirb_dir_output_$counter.txt"
+
+		if [ -n "$extension" ]; then
+			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+				command+=" -X $extension"
+			fi
+		fi 
+
+		echo "$command"
+
+		# Execute the constructed command
+		eval "$command"
+
+		((counter++))
+	else 
+		echo "Dirb cannot perform the following enumeration method: $option"
+	fi 
+}
+
+# - GET Parameter Fuzzing
+# - POST Data Fuzzing
+
+###############################################################
+# Main                                                        #
+###############################################################
+# TO-DO List:
+# >	Add more subdomain programs such as amass and subfinder.
+
+# Select Enumeration method
+PS3='Select enumeration mode: '
+options=("Automatic Directory Scan" "Directory Enumeration Mode (dir)" "Subdomain Enumeration Mode (dns)" "VHost Enumeration Mode (vhost)" "GET Parameter Fuzzing" "POST Data Fuzzing")
+select opt in "${options[@]}"; do
+        case $opt in
+		"Automatic Directory Scan")
+			echo "Automatic Directory Scan"
+                        automatic_dir_scan
+                        break
+                        ;;
+		"Directory Enumeration Mode (dir)")
+			echo "Directory Enumeration Mode (dir)"
+                        dir_mode
+                        break
+                        ;;
+		"Subdomain Enumeration Mode (dns)")
+			echo "Subdomain Enumeration Mode (dns)" 
+			dns_mode
+			break
+			;;
+		"Vhost Enumeration Mode (vhost)") 
+			echo "VHost Enumeration Mode (vhost)" 
+			vhost_mode
+			break
+			;;
+                #"GET Parameter Fuzzing") echo "GET Parameter Fuzzing - Not usable" ;;
+                #"POST Data Fuzzing") echo "POST Data Fuzzing - Not usable" ;;
+                *) echo "Invalid option, please try again." ;;
+        esac
+done
