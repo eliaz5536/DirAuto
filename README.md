@@ -34,7 +34,7 @@ You will also need to install the following wordlists in order to execute one of
 sudo apt-get install seclist
 ```
 
-You can utilize the bash script by donwloading the git clone by the following:
+You can utilize the bash script by downloading the git clone by the following:
 ```
 
 ```
