@@ -66,8 +66,9 @@ Launch NetAuto bash script file by doing the following
 ███████╗██║ ╚████║╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
 ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
 
+
 Directory Enumeration Automator using Gobuster, FFuF, DirSearch & Dirb
- Usage: dirauto [options] <arguments>
+Usage: dirauto [options] <arguments>
 
 Arguments
   URL		Target URL address
