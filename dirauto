@@ -23,13 +23,17 @@ echo "
 usage()
 {
         echo "Directory Enumeration Automator using Gobuster, FFuF, DirSearch & Dirb"
-	echo "Usage: dirauto [options] <arguments>"
-        echo " "
-        echo "Arguments"
-        echo "  URL		Target URL address"
+	echo "Usage: dirauto [options] <url>"
         echo " "
         echo "Options:"
-        echo "  -u		Specifies URL"
+        echo "  -h, --help		Prints usage"
+        echo "  -u, --url		Target URL"
+        echo "  -x, --extensions	Extensions"
+        echo "  -c, --status-codes	Status Codes"
+        echo "  -d, --dir		Directory Mode"
+        echo "  -v, --vhost		VHost Mode"
+        echo "  -s, --subdomain		Subdomain Mode"
+
 }
 
 ###############################################################
@@ -38,23 +42,80 @@ usage()
 # Check if list of arguements are met
 if [ $# -eq 0 ];
 then 
-        echo "$0: Missing Arguments"
+	usage
         exit 1
 fi
 
-while getopts ":u:" flag
-do
-    case "${flag}" in
-        u) URL=${OPTARG};;
-    esac
+URL=""
+EXTENSIONS=""
+STATUS_CODES=""
+DIR=false
+VHOST=false
+SUBDOMAIN=false
+
+while [[ "$#" -gt 0 ]]; do
+	case $1 in
+		-h|--help) usage ;;
+		-u|--url) URL="$2"; shift ;;
+		-x|--extensions) EXTENSIONS="$2"; shift ;;
+		-c|--status-codes) STATUS_CODES="$2"; shift ;;
+		-d|--dir) DIR=true; shift ;;
+		-v|--vhost) VHOST=true; shift ;;
+		-s|--subdomain) SUBDOMAIN=true; shift ;;
+		*) echo "Unknown parameter passed: $1"; exit 1 ;;
+	esac
+	shift
 done
 
+
+# ===========================================================================
+# Checking Conditions... 
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# URL
+# ---------------------------------------------------------------------------
 if [ -z "$URL" ]; then
-        echo "Missing URL address. Please specify the URL using the -u option."
+        echo "Missing URL address. Please specify the URL using the -u or --url option."
         exit 1
 fi
 
+# ---------------------------------------------------------------------------
+# EXTENSIONS
+# ---------------------------------------------------------------------------
+if [[ -n "$EXTENSIONS" ]]; then
+	if ! [[ $EXTENSIONS =~ ^[a-zA-Z0-9.,]+$ ]]; then
+		echo "Error: Status Codes must not contain any special characters'"
+		exit 1
+	fi	
+fi
+
+# ---------------------------------------------------------------------------
+# STATUS CODES
+# ---------------------------------------------------------------------------
+if [[ -n "$STATUS_CODES" ]]; then
+	if ! [[ $STATUS_CODES =~ ^[0-9]+$ ]]; then
+		echo "Error: Status Codes must contain only integer and the following ','"
+		exit 1
+	fi	
+fi
+
+
+# ---------------------------------------------------------------------------
+# SELECTED MODE
+# ---------------------------------------------------------------------------
+
+# Dir
+
+
+# Subdomain 
+
+
+# VHost
+
+
 echo "URL: $URL";
+
 
 ###############################################################
 # Directory Enumeration Selection Option                      #
