@@ -1,9 +1,7 @@
+![dirauto_logo](https://github.com/eliaz5536/DirAuto/assets/5835036/97a666c3-bb93-4ece-a752-e2574d6932f8)
+
 # DirAuto
 
-# Banner
-```
-<insert banner over here to show dirauto logo>
-```
 NetAuto is a basic network reconnaissance tools that automates enumeration of services, protocols and ports, ideal for penetration testing environments and network scanning.
 
 This tool performs port scans and service detection to perform further enumeration scans using different third-party tools.
