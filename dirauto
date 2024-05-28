@@ -49,7 +49,7 @@ echo "
 
 # Default
 usage() {
-        echo "Directory Enumeration Automator using Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
+        echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
 	echo "Usage: dirauto [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions] [-c, --status-codes] [-d, --dir] [-v, --vhost] [-s, --subdomain] [-t, --threads] [-w, --wordlist] [--check] [-i, --install]"
 	echo " "
@@ -77,7 +77,7 @@ help()
 
 # Dir Help
 dir_usage() {
-        echo "Directory Enumeration Automator using Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
+        echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
 	echo "Usage: dirauto dir [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
 	echo " "
@@ -86,12 +86,24 @@ dir_usage() {
 
 dir_help() {
 	dir_usage
+        echo "Options:"
+       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage"
+        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help"
+        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL"
+        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions"
+        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes"
+        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads"
+        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan"
+        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script"
+        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script"
+        echo " "
+	exit 1
 }
 
 
 # VHost Help
 vhost_usage() {
-        echo "Directory Enumeration Automator using Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
+        echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
 	echo "Usage: dirauto vhost [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
 	echo " "
@@ -99,11 +111,23 @@ vhost_usage() {
 
 vhost_help() {
 	vhost_usage
+        echo "Options:"
+       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage"
+        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help"
+        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL"
+        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions"
+        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes"
+        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads"
+        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan"
+        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script"
+        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script"
+        echo " "
+	exit 1
 }
 
 # Subdomain Help
 subdomain_usage() {
-        echo "Directory Enumeration Automator using Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
+        echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
 	echo "Usage: dirauto subdomain [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
 	echo " "
@@ -111,12 +135,24 @@ subdomain_usage() {
 
 subdomain_help() { 
 	subdomain_usage
+        echo "Options:"
+       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage"
+        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help"
+        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL"
+        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions"
+        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes"
+        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads"
+        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan"
+        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script"
+        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script"
+        echo " "
+	exit 1
 }
 
 ###############################################################
 # Arguments                                                   #
 ###############################################################
-# Check if list of arguements are met
+# Check if list of arguments are met
 if [ $# -eq 0 ];
 then 
 	usage
@@ -128,6 +164,11 @@ EXTENSIONS=""
 STATUS_CODES=""
 THREADS=""
 WORDLISTS=""
+GOBUSTER=false
+FEROXBUSTER=false
+DIRSEARCH=false
+DIRB=false
+AUTO=false
 
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
@@ -143,11 +184,16 @@ while [[ "$#" -gt 0 ]]; do
 				case $1 in
 					-h|--help) usage ;;
 					-u|--url) URL="$2"; shift ;;
+					gb) GOBUSTER=true; shift ;; # GoBuster
+					ff) FFUF=true; shift ;; # FFuF
+					fb) FEROXBUSTER=true; shift ;; # FeroxBuster
+					ds) DIRSEARCH=true; shift ;; # Dirsearch
+					db) DIRB=true; shift ;; # Dirb
 					-x|--extensions) EXTENSIONS="$2"; shift ;;
 					-c|--status-codes) STATUS_CODES="$2"; shift ;;
 					-t|--threads) THREADS="$2"; shift ;;
 					-w|--wordlists) WORDLISTS="$2"; shift ;;
-					--auto) automatic_dir_scan ;; 
+					--auto) auto=true; shift ;; 
 					*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
 				esac
 				shift
@@ -155,12 +201,17 @@ while [[ "$#" -gt 0 ]]; do
 			;;
 		vhost)
 			shift
-			dir 
+			vhost
 			shift
 			while [[ "$#" -gt 0 ]]; do
 				case $1 in
 					-h|--help) usage ;;
 					-u|--url) URL="$2"; shift ;;
+					gb) GOBUSTER=true; shift ;; # GoBuster
+					ff) FFUF=true; shift ;; # FFuF
+					fb) FEROXBUSTER=true; shift ;; # FeroxBuster
+					ds) DIRSEARCH=true; shift ;; # Dirsearch
+					db) DIRB=true; shift ;; # Dirb
 					-x|--extensions) EXTENSIONS="$2"; shift ;;
 					-c|--status-codes) STATUS_CODES="$2"; shift ;;
 					-t|--threads) THREADS="$2"; shift ;;
@@ -173,12 +224,17 @@ while [[ "$#" -gt 0 ]]; do
 			;;
 		subdomain) 
 			shift
-			dir 
+			subdomain
 			shift
 			while [[ "$#" -gt 0 ]]; do
 				case $1 in
 					-h|--help) usage ;;
 					-u|--url) URL="$2"; shift ;;
+					gb) GOBUSTER=true; shift ;; # GoBuster
+					ff) FFUF=true; shift ;; # FFuF
+					fb) FEROXBUSTER=true; shift ;; # FeroxBuster
+					ds) DIRSEARCH=true; shift ;; # Dirsearch
+					db) DIRB=true; shift ;; # Dirb
 					-x|--extensions) EXTENSIONS="$2"; shift ;;
 					-c|--status-codes) STATUS_CODES="$2"; shift ;;
 					-t|--threads) THREADS="$2"; shift ;;
@@ -207,42 +263,36 @@ done
 # Repositories Check
 # ---------------------------------------------------------------------------
 check() {
-	echo "Checking GoBuster..."	
 	if ! [-f /usr/bin/gobuster ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Gobuster is not located in /usr/bin. Install Gobuster.\n"
 		exit 1
 	fi 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Gobuster installed.\n"
 
-	echo "Checking FFuF..."	
 	if ! [-f /usr/bin/ffuf ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} FFuF is not located in /usr/bin. Install FFuF.\n"
 		exit 1
 	fi 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} FFuF installed.\n"
 	
-	echo "Checking Feroxbuster..."	
 	if ! [-f /usr/bin/feroxbuster ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} FeroxBuster is not located in /usr/bin. Install FeroxBuster.\n"
 		exit 1
 	fi 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Feroxbuster installed.\n"
 
-	echo "Checking Dirsearch..."	
 	if ! [-f /usr/bin/dirsearch ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Dirsearch is not located in /usr/bin. Install Dirsearch.\n"
 		exit 1
 	fi 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Dirsearch installed\n"
 
-	echo "Checking Dirb..."	
 	if ! [-f /usr/bin/dirb ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Dirb is not located in /usr/bin. Install Dirb.\n"
 		exit 1
 	fi 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Dirb installed\n"
-
-	echo "Checking Seclists..."	
+	
 	if ! [ -f /usr/share/seclists ] || [ -f /usr/share/wordlist/seclists ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists is not located in /usr/bin. Install Seclists.\n"
 		exit 1
@@ -271,145 +321,168 @@ installation() {
 	exit 1
 }
 
+###############################################################
+# Printing output options...                                  #
+###############################################################
+input_check() {
+	# ---------------------------------------------------------------------------
+	# URL
+	# ---------------------------------------------------------------------------
+	if [ -z "$URL" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Missing URL address. Please specify the URL using the -u or --url option."
+		exit 1
+	fi
+
+	# ---------------------------------------------------------------------------
+	# EXTENSIONS
+	# ---------------------------------------------------------------------------
+	if [[ -n "$EXTENSIONS" ]]; then
+		if ! [[ $EXTENSIONS =~ ^[a-zA-Z0-9.,]+$ ]]; then
+			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Status Codes must not contain any special characters'"
+			exit 1
+		fi	
+	fi
+
+	# ---------------------------------------------------------------------------
+	# STATUS CODES
+	# ---------------------------------------------------------------------------
+	if [[ -n "$STATUS_CODES" ]]; then
+		if ! [[ $STATUS_CODES =~ ^[0-9]+$ ]]; then
+			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Status Codes must contain only integer and the following ','"
+			exit 1
+		fi	
+	fi
+
+	# ---------------------------------------------------------------------------
+	# THREADS
+	# ---------------------------------------------------------------------------
+	if [[ -n "$THREADS" ]]; then
+		if ! [[ $THREADS =~ ^[0-9]+$ ]]; then
+			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Threads must contain only integers"
+			exit 1
+		fi	
+	fi
+
+	# Print info if they are included
+	echo " "
+	printf "${YELLOW}Target:${ENDCOLOR} ${WHITE}$URL${ENDCOLOR}\n"
+
+	if [[ -n "$EXTENSIONS" ]]; then
+		printf "${YELLOW}Extensions:${ENDCOLOR} $EXTENSIONS\n"
+	fi
+
+	if [[ -n "$THREADS" ]]; then
+		printf "${YELLOW}Threads:${ENDCOLOR} $THREADS\n"
+	fi
+
+	if [[ -n "$STATUS_CODES" ]]; then
+		printf "${YELLOW}Status Codes:${ENDCOLOR} $STATUS_CODES\n"
+	fi
+
+	if [[ -n "$WORDLISTS" ]]; then
+		printf "${YELLOW}Wordlists:${ENDCOLOR} $WORDLISTS\n"
+	fi
+}
+
 # ---------------------------------------------------------------------------
 # MODES
 # ---------------------------------------------------------------------------
-
 # Directory Mode
 dir() {
+	input_check
+
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized Directory Mode${ENDCOLOR}"
 
-	mkdir DIRAUTO_SCANS
-	mkdir -p DIRAUTO_SCANS/DIR
-	OPTION="dir"
-	for program in "${dir_options[@]}"; do
-		case $program in 
-			"gobuster")
-				echo "Executing Gobuster..."
-				run_gobuster "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-			"ffuf")
-				echo "Executing FFuF..."
-				run_FFuF "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-			"dirsearch")
-				echo "Executing dirsearch..."
-				run_dirsearch "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-			"ferixbuster")
-				echo "Executing feroxbuster..."
-				run_forexbuster "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-			"dirb") echo "Executing dirb..."
-				run_dirb "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-		esac
+	mkdir Dirauto
+
+	if ["$AUTO" == "true" ]
+		automatic_dir_scan
+		exit 1
+	fi
+
+	# Perform a for loop for the list of wordlists
+	# Review this code section over here
+	
+	# Before initializing the for-loop for wordlists,
+	# Modify the code to ensure that it can find the directory of 'Seclists',
+	# along with folder called 'Discovery' and 'Web-Discovery' for further enumeration through verification!
+	
+	# We can reduce the name of the file path by simply giving a name 
+	# For example: Instead of giving the full path like this: /usr/share/wordlist/seclists/Discovery/WebContent/directory-list-2.3-small.txt
+	# We can just give a name like 'directory-list-2.3-small.txt' just like that and we can separate using comments to know where the following file 
+	# path is.
+	# The reason for this practice is to ensure that it saves time in performing enumeration scans of unnecessary giving the full path just like that
+	# Which completely wastes so much time giving the actual location of where th files are.
+	OLD_IFS=$IFS
+	IFS=";"
+	readread -ra FILES <<< "$WORDLISTS"
+	IFS=$OLD_IFS
+	for wordlist in ${WORDLISTS[@]}; do
+		if ["$GOBUSTER" == "true" ]
+			run_gobuster "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		fi
+
+		if ["$FFUF" == "true" ]
+			run_FFuF "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		fi
+
+		if ["$DIRSEARCH" == "true"] 
+			run_dirsearch "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		fi
+
+		if ["$FEROXBUSTER" == "true"] 
+			run_feroxbuster "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		fi
+
+		if ["$DIRB" == "true"] 
+			run_dirb "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		fi
 	done
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed Directory Mode${ENDCOLOR}"
+
+	exit 1
 }
+
 
 # Subdomain 
 subdomain() {
+	input_check
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Subdomain Mode"
 }
 
 # VHost
 vhost() {
+	input_check
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} VHost Mode"
 }
-
-
-# ---------------------------------------------------------------------------
-# URL
-# ---------------------------------------------------------------------------
-if [ -z "$URL" ]; then
-        printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Missing URL address. Please specify the URL using the -u or --url option."
-        exit 1
-fi
-
-# ---------------------------------------------------------------------------
-# EXTENSIONS
-# ---------------------------------------------------------------------------
-if [[ -n "$EXTENSIONS" ]]; then
-	if ! [[ $EXTENSIONS =~ ^[a-zA-Z0-9.,]+$ ]]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Status Codes must not contain any special characters'"
-		exit 1
-	fi	
-fi
-
-# ---------------------------------------------------------------------------
-# STATUS CODES
-# ---------------------------------------------------------------------------
-if [[ -n "$STATUS_CODES" ]]; then
-	if ! [[ $STATUS_CODES =~ ^[0-9]+$ ]]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Status Codes must contain only integer and the following ','"
-		exit 1
-	fi	
-fi
-
-# ---------------------------------------------------------------------------
-# THREADS
-# ---------------------------------------------------------------------------
-if [[ -n "$THREADS" ]]; then
-	if ! [[ $THREADS =~ ^[0-9]+$ ]]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Threads must contain only integers"
-		exit 1
-	fi	
-fi
-
-
-echo "URL: $URL";
 
 ###############################################################
 # Directory Enumeration Selection Option                      #
 ###############################################################
 automatic_dir_scan() {
-	mkdir -p Dirauto/auto/gobuster
-	mkdir -p Dirauto/auto/feroxbuster
+	# Check is Seclists directory actually exist first before actually executinglist
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Automatic Directory Enumeration Scan Enabled..${ENDCOLOR}"
+
+	mkdir -p Dirauto/Auto/GoBuster
+	mkdir -p Dirauto/Auto/Feroxbuster
 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Started Automatic Directory Enumeration Scan \n"
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Gobuster...\n"
-	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/common.txt -o $(pwd)/Dirauto/auto/gobuster/gobuster_common.txt
-	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/big.txt -o $(pwd)/Dirauto/auto/gobuster/gobuster_big.txt
-	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-small.txt -o $(pwd)/Dirauto/auto/gobuster/gobuster_dir_small.txt
-	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -o $(pwd)/Dirauto/auto/gobuster/gobuster_dir_medium.txt
+	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/common.txt -o $(pwd)/Dirauto/Auto/Gobuster/common.txt
+	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/big.txt -o $(pwd)/Dirauto/Auto/Gobuster/big.txt
+	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-small.txt -o $(pwd)/Dirauto/Auto/Gobuster/dir_small.txt
+	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -o $(pwd)/Dirauto/Auto/Gobuster/dir_medium.txt
+
+	echo " "
 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Feroxbuster...\n"
-	feroxbuster -u $URL --output $(pwd)/Dirauto/auto/feroxbuster/ferox.txt
+	feroxbuster -u $URL --output $(pwd)/Dirauto/Auto/Feroxbuster/feroxbuster.txt
+
+	echo " "
 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Completed Automatic Directory Enumeration Scan \n"
-}
-
-dir_mode() {
-	mkdir DIRAUTO_SCANS
-	mkdir -p DIRAUTO_SCANS/DIR
-	OPTION="dir"
-	for program in "${dir_options[@]}"; do
-		case $program in 
-			"gobuster")
-				echo "Executing Gobuster..."
-				run_gobuster "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-			"ffuf")
-				echo "Executing FFuF..."
-				run_FFuF "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-			"dirsearch")
-				echo "Executing dirsearch..."
-				run_dirsearch "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-			"ferixbuster")
-				echo "Executing feroxbuster..."
-				run_forexbuster "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-			"dirb") echo "Executing dirb..."
-				run_dirb "$OPTION" "$URL" "${wordlists[@]}" "$extensions" "$status_codes" "$threads"
-				;;
-		esac
-	done
-	# ===============================================================================================
-	
-	
-	
 }
 
 vhost_mode() {
@@ -807,37 +880,6 @@ run_dirb() {
 	fi 
 }
 
-
-###############################################################
-# Printing output options...                                  #
-###############################################################
-
-echo " "
-printf "${YELLOW}Target:${ENDCOLOR} ${WHITE}$URL${ENDCOLOR}\n"
-
-if [[ -n "$EXTENSIONS" ]]; then
-	printf "${YELLOW}Extensions:${ENDCOLOR} $EXTENSIONS\n"
-fi
-
-if [[ -n "$THREADS" ]]; then
-	printf "${YELLOW}Threads:${ENDCOLOR} $THREADS\n"
-fi
-
-if [[ -n "$STATUS_CODES" ]]; then
-	printf "${YELLOW}Status Codes:${ENDCOLOR} $STATUS_CODES\n"
-fi
-
-if [[ -n "$WORDLISTS" ]]; then
-	printf "${YELLOW}Wordlists:${ENDCOLOR} $WORDLISTS\n"
-fi
-
-# Check if the user selected a mode
-echo " "
-
-# Check if a mode is selected.
-# If no mode is selected, automatically go for the dir mode
-# Additionally: If the user does not implement extensions; theads; status; wordlists; and software, 
-# The user can perform automatic directory enumeration scan
 
 
 
