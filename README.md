@@ -75,7 +75,15 @@ Launch NetAuto bash script file by doing the following
 
 # Usage 
 ```
-<update usage over here>
+
+┳┓•  ┏┓     
+┃┃┓┏┓┣┫┓┏╋┏┓
+┻┛┗┛ ┛┗┗┻┗┗┛
+            
+
+Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
+ 
+Usage: dirauto [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions] [-c, --status-codes] [-d, --dir] [-v, --vhost] [-s, --subdomain] [-t, --threads] [-w, --wordlist] [--check] [-i, --install]
 
 ```
 
