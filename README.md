@@ -1,15 +1,28 @@
 ![dirauto_logo](https://github.com/eliaz5536/DirAuto/assets/5835036/97a666c3-bb93-4ece-a752-e2574d6932f8)
 
-# DirAuto
 
-NetAuto is a basic network reconnaissance tools that automates enumeration of services, protocols and ports, ideal for penetration testing environments and network scanning.
+# Demos 
+## Automatic Directory Enumeration Scan
+```
+<insert asciinema player to show the process of performing automatic directory enumeration scan>
+```
+
+## Automatic VHost Enumeration Scan
+```
+<insert asciinema player to show the process of performing automatic directory enumeration scan>
+```
+
+## Automatic Subdomain Enumeration Scan
+```
+<insert asciinema player to show the process of performing automatic directory enumeration scan>
+```
+
+# DirAuto
+DirAuto is a basic direcotry reconnaissance tool that automates enumeration of directories present in existing websites, which is ideal for penetration testing environments and network scanning.
 
 This tool performs port scans and service detection to perform further enumeration scans using different third-party tools.
 
 It performs **no automated exploitation**.
-
-# Origin
-It was inspired by the following ethicaL hacking notes that provide numerous opportunities of scanning multiple targets in the form of IP addresses
 
 # Installation
 Requirements of utilizing this tool must be met by installing the latest available packages
@@ -53,30 +66,7 @@ Launch NetAuto bash script file by doing the following
 
 # Usage 
 ```
-
-        ██████╗ ██╗██████╗ ███████╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗          
-        ██╔══██╗██║██╔══██╗██╔════╝██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝          
-        ██║  ██║██║██████╔╝█████╗  ██║        ██║   ██║   ██║██████╔╝ ╚████╔╝           
-        ██║  ██║██║██╔══██╗██╔══╝  ██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝            
-        ██████╔╝██║██║  ██║███████╗╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║             
-        ╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝             
-                                                                                        
-███████╗███╗   ██╗██╗   ██╗███╗   ███╗███████╗██████╗  █████╗ ████████╗ ██████╗ ██████╗ 
-██╔════╝████╗  ██║██║   ██║████╗ ████║██╔════╝██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
-█████╗  ██╔██╗ ██║██║   ██║██╔████╔██║█████╗  ██████╔╝███████║   ██║   ██║   ██║██████╔╝
-██╔══╝  ██║╚██╗██║██║   ██║██║╚██╔╝██║██╔══╝  ██╔══██╗██╔══██║   ██║   ██║   ██║██╔══██╗
-███████╗██║ ╚████║╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
-╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
-
-
-Directory Enumeration Automator using Gobuster, FFuF, DirSearch & Dirb
-Usage: dirauto [options] <arguments>
-
-Arguments
-  URL		Target URL address
-
-Options:
-  -u		Specifies URL
+<update usage over here>
 
 ```
 
