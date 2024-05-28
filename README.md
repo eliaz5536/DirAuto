@@ -2,20 +2,29 @@
 
 
 # Demos 
-## Automatic Directory Enumeration Scan
+## Automatic
+
+### Automatic Directory Enumeration Scan
 ```
 <insert asciinema player to show the process of performing automatic directory enumeration scan>
 ```
 
-## Automatic VHost Enumeration Scan
+### Automatic VHost Enumeration Scan
 ```
 <insert asciinema player to show the process of performing automatic directory enumeration scan>
 ```
 
-## Automatic Subdomain Enumeration Scan
+### Automatic Subdomain Enumeration Scan
 ```
 <insert asciinema player to show the process of performing automatic directory enumeration scan>
 ```
+
+## Custom Commands
+```
+<insert asciinema player to show customized execution of each enumerator performed with customized settings>
+```
+
+
 
 # DirAuto
 DirAuto is a basic direcotry reconnaissance tool that automates enumeration of directories present in existing websites, which is ideal for penetration testing environments and network scanning.
