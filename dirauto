@@ -1,39 +1,109 @@
 #!/bin/bash
 
+###############################################################
+# Color Codes 				 	      	      # 
+###############################################################
+BLACK="\e[30m"
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+MAGENTA="\e[35m"
+CYAN="\e[36m"
+LIGHT_GRAY="\e[37m"
+GRAY="\e[90m"
+LIGHT_RED="\e[91m"
+LIGHT_GREEN="\e[92m"
+LIGHT_YELLOW="\e[93m"
+LIGHT_BLUE="\e[94m"
+LIGHT_MAGENTA="\e[95m"
+LIGHT_CYAN="\e[96m"
+WHITE="\e[97m"
+ENDCOLOR="\e[0m"
+
+# Background Color
+BLACK_BG="\e[40m"
+RED_BG="\e[41m"
+GREEN_BG="\e[42m"
+YELLOW_BG="\e[43m"
+BLUE_BG="\e[44m"
+MAGENTA_BG="\e[45m"
+CYAN_BG="\e[46m"
+WHITE_BG="\e[47m"
+
+# Styles
+BOLD="\e[1m"
+ITALIC="\e[3m"
+
 echo "
-        ██████╗ ██╗██████╗ ███████╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗          
-        ██╔══██╗██║██╔══██╗██╔════╝██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝          
-        ██║  ██║██║██████╔╝█████╗  ██║        ██║   ██║   ██║██████╔╝ ╚████╔╝           
-        ██║  ██║██║██╔══██╗██╔══╝  ██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝            
-        ██████╔╝██║██║  ██║███████╗╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║             
-        ╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝             
-                                                                                        
-███████╗███╗   ██╗██╗   ██╗███╗   ███╗███████╗██████╗  █████╗ ████████╗ ██████╗ ██████╗ 
-██╔════╝████╗  ██║██║   ██║████╗ ████║██╔════╝██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
-█████╗  ██╔██╗ ██║██║   ██║██╔████╔██║█████╗  ██████╔╝███████║   ██║   ██║   ██║██████╔╝
-██╔══╝  ██║╚██╗██║██║   ██║██║╚██╔╝██║██╔══╝  ██╔══██╗██╔══██║   ██║   ██║   ██║██╔══██╗
-███████╗██║ ╚████║╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
-╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
-                                                                                        
+
+┳┓•  ┏┓     
+┃┃┓┏┓┣┫┓┏╋┏┓
+┻┛┗┛ ┛┗┗┻┗┗┛
+            
 "
 
 ###############################################################
-# Help                                                        #
+# Help & Usage                                                # 
 ###############################################################
-usage()
+
+# Default
+usage() {
+	echo " "
+        echo "Directory Enumeration Automator using Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
+	echo " "
+	echo "Usage: dirauto [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions] [-c, --status-codes] [-d, --dir] [-v, --vhost] [-s, --subdomain] [-t, --threads] [-w, --wordlist] [--check] [-i, --install]"
+	echo " "
+}
+
+help()
 {
-        echo "Directory Enumeration Automator using Gobuster, FFuF, DirSearch & Dirb"
-	echo "Usage: dirauto [options] <url>"
+	echo " "
+	usage
         echo " "
         echo "Options:"
-        echo "  -h, --help		Prints usage"
-        echo "  -u, --url		Target URL"
-        echo "  -x, --extensions	Extensions"
-        echo "  -c, --status-codes	Status Codes"
-        echo "  -d, --dir		Directory Mode"
-        echo "  -v, --vhost		VHost Mode"
-        echo "  -s, --subdomain		Subdomain Mode"
+       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage"
+        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help"
+        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL"
+        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions"
+        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes"
+        printf "  ${ITALIC}-d, --dir${ENDCOLOR}			Directory Mode"
+        printf "  ${ITALIC}-v, --vhost${ENDCOLOR}		VHost Mode"
+        printf "  ${ITALIC}-s, --subdomain${ENDCOLOR}		Subdomain Mode"
+        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads"
+        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan"
+        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script"
+        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script"
+        echo " "
+	exit 1
+}
 
+# Dir Help
+dir_usage() {
+	echo "nothing"	
+}
+
+dir_help() {
+	dir_usage
+}
+
+
+# VHost Help
+vhost_usage() {
+	echo "nothing"	
+}
+
+vhost_help() {
+	vhost_usage
+}
+
+# Subdomain Help
+subdomain_usage() {
+	echo "nothing"	
+}
+
+subdomain_help() { 
+	subdomain_usage
 }
 
 ###############################################################
@@ -52,6 +122,8 @@ STATUS_CODES=""
 DIR=false
 VHOST=false
 SUBDOMAIN=false
+THREADS=""
+WORDLISTS=""
 
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
@@ -62,7 +134,7 @@ while [[ "$#" -gt 0 ]]; do
 		-d|--dir) DIR=true; shift ;;
 		-v|--vhost) VHOST=true; shift ;;
 		-s|--subdomain) SUBDOMAIN=true; shift ;;
-		*) echo "Unknown parameter passed: $1"; exit 1 ;;
+		*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
 	esac
 	shift
 done
@@ -73,10 +145,62 @@ done
 # ===========================================================================
 
 # ---------------------------------------------------------------------------
+# Repositories Check
+# ---------------------------------------------------------------------------
+check() {
+	# Check if the following is installed in /usr/bin and /usr/share/ directory
+	# If not, warn through error message
+
+	# Create Spinning Animation while checking for existing directory for all installation
+	echo "Checking GoBuster..."	
+	if ! [-f /usr/bin/gobuster ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} "
+	fi 
+
+	echo "Checking FFuF..."	
+	if ! [-f /usr/bin/ffuf ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} "
+	fi 
+	
+	echo "Checking Feroxbuster..."	
+	if ! [-f /usr/bin/feroxbuster ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} "
+	fi 
+
+	echo "Checking Dirsearch..."	
+	if ! [-f /usr/bin/dirsearch ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} "
+	fi 
+
+	echo "Checking Dirb..."	
+	if ! [-f /usr/bin/dirb ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} "
+	fi 
+
+	echo "Checking Seclists..."	
+	if ! [ -f /usr/share/seclists ] || [ -f /usr/share/wordlist/seclists ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} "
+	fi 
+}
+
+# ---------------------------------------------------------------------------
+# Repositories Installation
+# ---------------------------------------------------------------------------
+installation() {
+	echo "Installing gobuster..."	
+	echo "Installing FFuF..."	
+	echo "Installing Feroxbuster..."	
+	echo "Installing Dirsearch..."	
+	echo "Installing Dirb..."	
+	echo "Installing Seclists..."	
+}
+
+
+# ---------------------------------------------------------------------------
 # URL
 # ---------------------------------------------------------------------------
 if [ -z "$URL" ]; then
-        echo "Missing URL address. Please specify the URL using the -u or --url option."
+        printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Missing URL address. Please specify the URL using the -u or --url option."
         exit 1
 fi
 
@@ -85,7 +209,7 @@ fi
 # ---------------------------------------------------------------------------
 if [[ -n "$EXTENSIONS" ]]; then
 	if ! [[ $EXTENSIONS =~ ^[a-zA-Z0-9.,]+$ ]]; then
-		echo "Error: Status Codes must not contain any special characters'"
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Status Codes must not contain any special characters'"
 		exit 1
 	fi	
 fi
@@ -95,14 +219,14 @@ fi
 # ---------------------------------------------------------------------------
 if [[ -n "$STATUS_CODES" ]]; then
 	if ! [[ $STATUS_CODES =~ ^[0-9]+$ ]]; then
-		echo "Error: Status Codes must contain only integer and the following ','"
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Status Codes must contain only integer and the following ','"
 		exit 1
 	fi	
 fi
 
 
 # ---------------------------------------------------------------------------
-# SELECTED MODE
+# MODES
 # ---------------------------------------------------------------------------
 
 # Dir
@@ -115,6 +239,12 @@ fi
 
 
 echo "URL: $URL";
+
+# ---------------------------------------------------------------------------
+# Seclists Installation
+# ---------------------------------------------------------------------------
+# Check if the user has installed 'Seclists' in their wordlist
+# 
 
 
 ###############################################################
