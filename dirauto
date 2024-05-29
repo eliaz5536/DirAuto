@@ -75,7 +75,6 @@ help()
 	exit 1
 }
 
-# Dir Help
 dir_usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
@@ -100,8 +99,6 @@ dir_help() {
 	exit 1
 }
 
-
-# VHost Help
 vhost_usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
@@ -125,7 +122,6 @@ vhost_help() {
 	exit 1
 }
 
-# Subdomain Help
 subdomain_usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
@@ -152,7 +148,6 @@ subdomain_help() {
 ###############################################################
 # Arguments                                                   #
 ###############################################################
-# Check if list of arguments are met
 if [ $# -eq 0 ];
 then 
 	usage
@@ -258,7 +253,6 @@ done
 # ===========================================================================
 # Checking Conditions... 
 # ===========================================================================
-
 # ---------------------------------------------------------------------------
 # Repositories Check
 # ---------------------------------------------------------------------------
@@ -301,35 +295,46 @@ check() {
 
 	echo " "
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} All of the programs are installed for usage."
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} All of the programs are installed for usage. You are ready to enumerate!"
 
-	exit 1
-}
-
-# ---------------------------------------------------------------------------
-# Repositories Installation
-# (Optional Function) Incomplete
-# ---------------------------------------------------------------------------
-installation() {
-	# Incomplete
-	echo "Installing gobuster..."	
-	echo "Installing FFuF..."	
-	echo "Installing Feroxbuster..."	
-	echo "Installing Dirsearch..."	
-	echo "Installing Dirb..."	
-	echo "Installing Seclists..."	
 	exit 1
 }
 
 ###############################################################
 # Printing output options...                                  #
 ###############################################################
+search_wordlist() {
+	local wordlist_name="$1"
+	find "/usr/share/" -type f -name "$wordlist_name" 2>/dev/null
+}
+
 input_check() {
 	# ---------------------------------------------------------------------------
 	# URL
 	# ---------------------------------------------------------------------------
 	if [ -z "$URL" ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Missing URL address. Please specify the URL using the -u or --url option."
+		exit 1
+	fi
+
+	# ---------------------------------------------------------------------------
+	# WORDLIST
+	# ---------------------------------------------------------------------------
+	if [ -z "$WORDLIST" ]; then
+		if ! [ -f /usr/share/seclists ] || [ -f /usr/share/wordlist/seclists ]; then
+			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists is not located in /usr/bin. Install Seclists.\n"
+			exit 1
+		fi 
+
+		# Enumerate through folders to check if the following wordlist exists
+		wordlist_path=$(search_wordlist "$WORDLIST")	
+		if [ -z "$wordlist_path" ]; then
+			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Wordlist not found\n"
+			exit 1
+		fi
+
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Using wordlist: \n"
+
 		exit 1
 	fi
 
@@ -363,7 +368,6 @@ input_check() {
 		fi	
 	fi
 
-	# Print info if they are included
 	echo " "
 	printf "${YELLOW}Target:${ENDCOLOR} ${WHITE}$URL${ENDCOLOR}\n"
 
@@ -387,7 +391,6 @@ input_check() {
 # ---------------------------------------------------------------------------
 # MODES
 # ---------------------------------------------------------------------------
-# Directory Mode
 dir() {
 	input_check
 
@@ -400,42 +403,26 @@ dir() {
 		exit 1
 	fi
 
-	# Perform a for loop for the list of wordlists
-	# Review this code section over here
-	
-	# Before initializing the for-loop for wordlists,
-	# Modify the code to ensure that it can find the directory of 'Seclists',
-	# along with folder called 'Discovery' and 'Web-Discovery' for further enumeration through verification!
-	
-	# We can reduce the name of the file path by simply giving a name 
-	# For example: Instead of giving the full path like this: /usr/share/wordlist/seclists/Discovery/WebContent/directory-list-2.3-small.txt
-	# We can just give a name like 'directory-list-2.3-small.txt' just like that and we can separate using comments to know where the following file 
-	# path is.
-	# The reason for this practice is to ensure that it saves time in performing enumeration scans of unnecessary giving the full path just like that
-	# Which completely wastes so much time giving the actual location of where th files are.
-	OLD_IFS=$IFS
-	IFS=";"
-	readread -ra FILES <<< "$WORDLISTS"
-	IFS=$OLD_IFS
-	for wordlist in ${WORDLISTS[@]}; do
+	IFS=";" read -r -a FILES <<< "$WORDLISTS"
+	for wordlist in ${FILES[@]}; do
 		if ["$GOBUSTER" == "true" ]
-			run_gobuster "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+			run_gobuster "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
 		fi
 
 		if ["$FFUF" == "true" ]
-			run_FFuF "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+			run_FFuF "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
 		fi
 
 		if ["$DIRSEARCH" == "true"] 
-			run_dirsearch "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+			run_dirsearch "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
 		fi
 
 		if ["$FEROXBUSTER" == "true"] 
-			run_feroxbuster "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+			run_feroxbuster "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
 		fi
 
 		if ["$DIRB" == "true"] 
-			run_dirb "$URL" wordlist "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+			run_dirb "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
 		fi
 	done
 
@@ -461,24 +448,56 @@ vhost() {
 # Directory Enumeration Selection Option                      #
 ###############################################################
 automatic_dir_scan() {
-	# Check is Seclists directory actually exist first before actually executinglist
-
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Automatic Directory Enumeration Scan Enabled..${ENDCOLOR}"
 
-	mkdir -p Dirauto/Auto/GoBuster
+	mkdir -p Dirauto/Auto/Gobuster
 	mkdir -p Dirauto/Auto/Feroxbuster
 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Started Automatic Directory Enumeration Scan \n"
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Gobuster...\n"
-	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/common.txt -o $(pwd)/Dirauto/Auto/Gobuster/common.txt
-	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/big.txt -o $(pwd)/Dirauto/Auto/Gobuster/big.txt
-	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-small.txt -o $(pwd)/Dirauto/Auto/Gobuster/dir_small.txt
-	gobuster dir -u $URL -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -o $(pwd)/Dirauto/Auto/Gobuster/dir_medium.txt
+
+	common_path=$($search_wordlist "common.txt")
+	if [ -z "$common_path" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} common.txt wordlist not found\n"
+	else
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found common.txt wordlist\n"
+		gobuster dir -u $URL -w $common_path -o $(pwd)/Dirauto/Auto/Gobuster/common.txt
+	fi
+
+	big_path=$($search_wordlist "big.txt")
+	if [ -z "$big_path" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} big.txt wordlist not found\n"
+	else 
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found big.txt wordlist\n"
+		gobuster dir -u $URL -w $big_path -o $(pwd)/Dirauto/Auto/Gobuster/big.txt
+	fi
+
+	directory_list_small_path=$($search_wordlist "directory-list-2.3-small.txt")
+	if [ -z "$directory_list_small_path" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-small.txt wordlist not found\n"
+	else
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-small.txt wordlist\n"
+		gobuster dir -u $URL -w $directory_list_small_path -o $(pwd)/Dirauto/Auto/Gobuster/dir_small.txt
+	fi
+
+	directory_list_medium_path=$($search_wordlist "directory-list-2.3-medium.txt")
+	if [ -z "$directory_list_medium_path" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-medium.txt wordlist not found\n"
+	else 
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-medium.txt wordlist\n"
+		gobuster dir -u $URL -w $directory_list_medium_path -o $(pwd)/Dirauto/Auto/Gobuster/dir_medium.txt
+	fi
 
 	echo " "
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Feroxbuster...\n"
-	feroxbuster -u $URL --output $(pwd)/Dirauto/Auto/Feroxbuster/feroxbuster.txt
+	raft_medium_directories_path=$($search_wordlist "raft-medium-directories.txt")
+	if [ -z "$raft_medium_directories_path" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} raft-medium-directories.txt wordlist not found\n"
+	else 
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found raft-medium-directories.txt wordlist\n"
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Feroxbuster...\n"
+		feroxbuster -u $URL --output $(pwd)/Dirauto/Auto/Feroxbuster/feroxbuster.txt
+	fi
 
 	echo " "
 
@@ -536,225 +555,191 @@ dns_mode() {
 # Enumeration Programs                                        #
 ###############################################################
 run_gobuster() {
-	local option="$1"
-	local wordlists=("${@:3}")
-	if [ "$option" == "dir" ]; then
-		mkdir -p DIRAUTO_SCANS/DIR/Gobuster
-		counter=0
-		for wordlist in "${wordlists[@]}"; do
-			if [ -z "$wordlist" ]; then
-				break
+	if [ "$DIR" == "true" ]; then
+		mkdir -p Dirauto/Dir/Gobuster
+		if [ -z "$wordlist" ]; then
+			break
+		fi
+
+		local url="$2"
+		local extension="$4"
+		local response_codes="$5"
+		local execution_rate="$6"
+
+		# echo "URL: $url"
+		# echo "Extension: $extension"
+		# echo "Response Codes: $response_codes"
+		# echo "Execution Rate: $execution_rate"
+
+		# GoBuster comamnd with conditionally added parameters
+		# command="gobuster dir -u $url -w $wordlist"
+		command="gobuster dir -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/DIR/Gobuster/gobuster_dir_output_$counter.txt"
+
+		if [ -n "$extension" ]; then
+			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+				command+=" -x $extension"	
 			fi
+		fi
 
-			local url="$2"
-			local extension="$4"
-			local response_codes="$5"
-			local execution_rate="$6"
-
-			echo "URL: $url"
-			echo "Extension: $extension"
-			echo "Response Codes: $response_codes"
-			echo "Execution Rate: $execution_rate"
-
-			# GoBuster comamnd with conditionally added parameters
-			# command="gobuster dir -u $url -w $wordlist"
-			command="gobuster dir -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/DIR/Gobuster/gobuster_dir_output_$counter.txt"
-
-			if [ -n "$extension" ]; then
-				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-					command+=" -x $extension"	
-				fi
-			fi
-
-			
-			if [ -n "$response_codes" ]; then
-				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
-					command+=" -s $response_codes"	
-				fi
-			fi
-
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"	
-				fi
-			fi
-
-			echo "$command"
-
-			# Execute the constructed command
-			eval "$command"
-
-			((counter++))
-		done
-	elif [ "$option" == "vhost" ]; then
-		mkdir -p DIRAUTO_SCANS/VHOST/Gobuster
-		counter=0
-		for wordlist in "${wordlists[@]}"; do
-			if [ -z "$wordlist" ]; then
-				break
-			fi
-
-			local url="$2"
-			local execution_rate="$6"
-
-			# GoBuster comamnd with conditionally added parameters
-			# command="gobuster vhost -u $url -w $wordlist"
-			command="gobuster vhost -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/VHOST_MODE/Gobuster/gobuster_vhost_output_$counter.txt"
-
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"	
-				fi
-			fi
-
-			echo "$command"
-
-			# Execute the constructed command
-			eval "$command"
-
-			((counter++))
-		done
-	elif [ "$option" == "dns" ]; then
-		mkdir -p DIRAUTO_SCANS/DNS/Gobuster
-		counter=0
-		for wordlist in "${wordlists[@]}"; do
-			if [ -z "$wordlist" ]; then
-				break
-			fi
-
-			local url="$2"
-			local execution_rate="$6"
 		
-			# GoBuster comamnd with conditionally added parameters
-			command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/DIRAUTO_SCANS/DNS/Gobuster/gobuster_dns_output_$counter.txt"
-
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"	
-				fi
+		if [ -n "$response_codes" ]; then
+			if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
+				command+=" -s $response_codes"	
 			fi
+		fi
 
-			echo "$command"
+		if [ -n "$execution_rate" ]; then
+			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+				command+=" -t $execution_rate"	
+			fi
+		fi
 
-			# Execute the constructed command
-			eval "$command"
+		echo "$command"
 
-			((counter++))
-		done
-	else 
-		echo "Gobuster cannot perform the following enumeration method: $option"
+		eval "$command"
+	fi
+
+	if [ "$VHOST" == "true" ]; then
+		if [ -z "$wordlist" ]; then
+			break
+		fi
+
+		local url="$2"
+		local execution_rate="$6"
+
+		# GoBuster comamnd with conditionally added parameters
+		# command="gobuster vhost -u $url -w $wordlist"
+		command="gobuster vhost -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/VHOST_MODE/Gobuster/gobuster_vhost_output_$counter.txt"
+
+		if [ -n "$execution_rate" ]; then
+			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+				command+=" -t $execution_rate"	
+			fi
+		fi
+
+		echo "$command"
+
+		eval "$command"
+	fi
+
+	if [ "$SUBDOMAIN" == "true" ]; then
+		mkdir -p DIRAUTO_SCANS/DNS/Gobuster
+		if [ -z "$wordlist" ]; then
+			break
+		fi
+
+		local url="$2"
+		local execution_rate="$6"
+	
+		# GoBuster comamnd with conditionally added parameters
+		command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/DIRAUTO_SCANS/DNS/Gobuster/gobuster_dns_output_$counter.txt"
+
+		if [ -n "$execution_rate" ]; then
+			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+				command+=" -t $execution_rate"	
+			fi
+		fi
+
+		echo "$command"
+
+		eval "$command"
 	fi 
 }
 
 run_FFuF() {
 	local option="$1"
-	local wordlists=("${@:3}")
 
-	if [ "$option" == "dir" ]; then
+	if [ "$DIR" == "true" ]; then
 		mkdir -p DIRAUTO_SCANS/DIR/FFuF
-		counter=0
-		for wordlist in "${wordlists[@]}"; do
-			if [ -z "$wordlist" ]; then
-				break
-			fi
+		if [ -z "$wordlist" ]; then
+			break
+		fi
 
-			local url="$2"
-			local extension="$4"
-			local response_codes="$5"
-			local execution_rate="$6"
-			
-			# FFuF command with conditionally added parameters
-			command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/DIRAUTO_SCANS/DIR/FFuF/FFuF_dir_output_$counter.txt"
-			
-			if [ -n "$extension" ]; then
-				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-					command+=" -e $extension"
-				fi
-			fi 
-
-			if [ -n "$response_codes" ]; then
-				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
-					command+=" -mc $response_codes"
-				fi
-			fi 
-
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"
-				fi
-			fi 
-			
-			echo "$command"
-
-			# Execute the constructed command
-			eval "$command"
-
-			((counter++))
-		done
-	elif [ "$option" == "vhost" ]; then
-		mkdir -p DIRAUTO_SCANS/VHOST/FFuF
-		counter=0
-		for wordlist in "${wordlists[@]}"; do
-			if [ -z "$wordlist" ]; then
-				break
-			fi
-
-			local url="$2"
-			local execution_rate="$6"
-
-			echo "Enter the name of the header for FUZZING (Example: \"Host: FUZZ.ffuf.com \"): "	
-			read headerInput
-
-			# FFuF command with conditionally added parameters
-			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/DIRAUTO_SCANS/VHOST/FFuF/FFuF_vhost_output_$counter.txt"
-
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"
-				fi
-			fi 
-
-			echo "$command"
-
-			# Execute the constructed command
-			eval "$command"
-
-			((counter++))
-		done
-	elif [ "$option" == "dns" ]; then
-		mkdir -p DIRAUTO_SCANS/DNS/FFuF
-		counter=0
-		for wordlist in "${wordlists[@]}"; do
-			if [ -z "$wordlist" ]; then
-				break
-			fi
-
-			local url="$2"
-			local execution_rate="$6"
-
-			# FFuF command with conditionally added parameters
-			command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/DIRAUTO_SCANS/DNS/FFuF/FFuF_dns_output_$counter.txt"
+		local url="$2"
+		local extension="$4"
+		local response_codes="$5"
+		local execution_rate="$6"
 		
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"
-				fi
-			fi 
+		# FFuF command with conditionally added parameters
+		command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/DIRAUTO_SCANS/DIR/FFuF/FFuF_dir_output_$counter.txt"
+		
+		if [ -n "$extension" ]; then
+			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+				command+=" -e $extension"
+			fi
+		fi 
 
-			echo "$command"
+		if [ -n "$response_codes" ]; then
+			if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
+				command+=" -mc $response_codes"
+			fi
+		fi 
 
-			# Execute the constructed command
-			eval "$command"
-		done
-	else 
-		echo "FFuF cannot perform the following enumeration method: $option"
+		if [ -n "$execution_rate" ]; then
+			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+				command+=" -t $execution_rate"
+			fi
+		fi 
+		
+		echo "$command"
+
+		eval "$command"
+	fi
+	
+	if [ "$VHOST" == "true" ]; then
+		if [ -z "$wordlist" ]; then
+			break
+		fi
+
+		local url="$2"
+		local execution_rate="$6"
+
+		echo "Enter the name of the header for FUZZING (Example: \"Host: FUZZ.ffuf.com \"): "	
+		read headerInput
+
+		# FFuF command with conditionally added parameters
+		command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/DIRAUTO_SCANS/VHOST/FFuF/FFuF_vhost_output_$counter.txt"
+
+		if [ -n "$execution_rate" ]; then
+			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+				command+=" -t $execution_rate"
+			fi
+		fi 
+
+		echo "$command"
+
+		# Execute the constructed command
+		eval "$command"
+	fi
+
+	if [ "$SUBDOMAIN" == "true" ]; then
+		if [ -z "$wordlist" ]; then
+			break
+		fi
+
+		local url="$2"
+		local execution_rate="$6"
+
+		# FFuF command with conditionally added parameters
+		command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/DIRAUTO_SCANS/DNS/FFuF/FFuF_dns_output_$counter.txt"
+	
+		if [ -n "$execution_rate" ]; then
+			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+				command+=" -t $execution_rate"
+			fi
+		fi 
+
+		echo "$command"
+
+		# Execute the constructed command
+		eval "$command"
 	fi 
 }
 
 run_dirsearch() {
 	local option="$1"
 	local wordlists=("${@:3}")
-	if [ "$option" == "dir" ]; then
+	if [ "$DIR" == "true" ]; then
 		mkdir -p DIRAUTO_SCANS/DIR/Dirsearch
 		counter=0
 
@@ -767,8 +752,6 @@ run_dirsearch() {
 		local response_codes="$5"
 		local execution_rate="$6"
 
-		# Dirsearch command with conditionally added parameters
-		# command="python3 ~/Tools/dirsearch/dirsearch.py -u $url"
 		command="dirsearch -u $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirsearch/dirsearch_dir_output_$counter.txt"
 
 		if [ -n "$extension" ]; then
@@ -789,14 +772,7 @@ run_dirsearch() {
 			fi
 		fi 
 
-		echo "$command"
-
-		# Execute the constructed command
 		eval "$command"
-
-		((counter++))
-	else 
-		echo "DirSearch cannot perform the following enumeration method: $option"
 	fi 
 	
 }
@@ -804,9 +780,8 @@ run_dirsearch() {
 run_feroxbuster() {
 	local option="$1"
 	local wordlists=("${@:3}")
-	if [ "$option" == "dir" ]; then
+	if [ "$DIR" == "true" ]; then
 		mkdir -p DIRAUTO_SCANS/DIR/Feroxbuster
-		counter=0
 
 		if [ -z "$wordlist" ]; then
 			break
@@ -817,7 +792,6 @@ run_feroxbuster() {
 		local response_codes="$5"
 		local execution_rate="$6"
 		
-		# Feroxbuster command with conditionally added parameters
 		# command="feroxbuster --url $url --output $(pwd)/DIRAUTO_SCANS/DIR/Feroxbuster/feroxbuster_dir_output_$counter.txt"	
 		command="feroxbuster --url $url"	
 		echo "$command"
@@ -834,14 +808,7 @@ run_feroxbuster() {
 			fi
 		fi 
 
-		echo "$command"
-
-		# Executed the constructed command
 		eval "$command"
-
-		((counter++))
-	else 
-		echo "Feroxbuster cannot perform the following enumeration method: $option"
 	fi 
 }
 
@@ -849,10 +816,7 @@ run_dirb() {
 	local option="$1"
 	local wordlists=("${@:3}")
 
-	if [ "$option" == "dir" ]; then
-		mkdir -p DIRAUTO_SCANS/DIR/Dirb
-		counter=0
-
+	if [ "$DIR" == "true" ]; then
 		if [ -z "$wordlist" ]; then
 			break
 		fi
@@ -860,7 +824,6 @@ run_dirb() {
 		local url="$2"
 		local extension="$4"
 
-		# Dirb command with conditionally added parameters	
 		command="dirb $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirb/dirb_dir_output_$counter.txt"
 
 		if [ -n "$extension" ]; then
@@ -869,17 +832,7 @@ run_dirb() {
 			fi
 		fi 
 
-		echo "$command"
-
-		# Execute the constructed command
 		eval "$command"
-
-		((counter++))
-	else 
-		echo "Dirb cannot perform the following enumeration method: $option"
 	fi 
 }
-
-
-
 
