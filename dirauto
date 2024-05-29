@@ -78,7 +78,6 @@ dir_usage() {
 	echo " "
 	echo "Usage: dirauto dir [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
 	echo " "
-
 }
 
 dir_help() {
@@ -92,7 +91,7 @@ dir_help() {
         printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
         printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
         echo " "
-	exit 1
+	exit 0
 }
 
 vhost_usage() {
@@ -100,6 +99,7 @@ vhost_usage() {
 	echo " "
 	echo "Usage: dirauto vhost [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
 	echo " "
+	# exit 0
 }
 
 vhost_help() {
@@ -113,7 +113,7 @@ vhost_help() {
         printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
         printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
         echo " "
-	exit 1
+	exit 0
 }
 
 subdomain_usage() {
@@ -121,6 +121,7 @@ subdomain_usage() {
 	echo " "
 	echo "Usage: dirauto subdomain [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
 	echo " "
+	# exit 0
 }
 
 subdomain_help() { 
@@ -134,7 +135,7 @@ subdomain_help() {
         printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
         printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
         echo " "
-	exit 1
+	exit 0
 }
 
 ###############################################################
@@ -167,13 +168,11 @@ while [[ "$#" -gt 0 ]]; do
 		-c|--status-codes) STATUS_CODES="$2"; shift ;;
 		dir) 
 			shift
-			dir 
-			shift
 			while [[ "$#" -gt 0 ]]; do
 				case $1 in
 					-h|--help) dir_help ;;
 					--usage) dir_usage ;;
-					-u|--url) URL="$2"; shift ;;
+					-u|--url) URL="$2"; shift ;; # Check here if URL has passed over here
 					gb) GOBUSTER=true; shift ;;
 					ff) FFUF=true; shift ;;
 					fb) FEROXBUSTER=true; shift ;;
@@ -190,8 +189,6 @@ while [[ "$#" -gt 0 ]]; do
 			done
 			;;
 		vhost)
-			shift
-			vhost
 			shift
 			while [[ "$#" -gt 0 ]]; do
 				case $1 in
@@ -214,8 +211,6 @@ while [[ "$#" -gt 0 ]]; do
 			done
 			;;
 		subdomain) 
-			shift
-			subdomain
 			shift
 			while [[ "$#" -gt 0 ]]; do
 				case $1 in
@@ -305,7 +300,9 @@ search_wordlist() {
 	find "/usr/share/" -type f -name "$wordlist_name" 2>/dev/null
 }
 
-input_check() {
+URL_check() {
+	local URL="$1"
+
 	# ---------------------------------------------------------------------------
 	# URL
 	# ---------------------------------------------------------------------------
@@ -313,7 +310,9 @@ input_check() {
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Missing URL address. Please specify the URL using the -u or --url option."
 		exit 1
 	fi
+}
 
+input_check() {
 	# ---------------------------------------------------------------------------
 	# WORDLIST
 	# ---------------------------------------------------------------------------
@@ -398,74 +397,14 @@ input_check() {
 	fi
 }
 
-# ---------------------------------------------------------------------------
-# MODES
-# ---------------------------------------------------------------------------
-dir() {
-	input_check
-
-	OPTION="dir"
-
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized Directory Mode${ENDCOLOR}\n"
-
-	mkdir Dirauto
-
-	if ["$AUTO" == "true" ]
-		automatic_dir_scan
-	fi
-
-	if ["$GOBUSTER" == "true" ]
-		run_gobuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if ["$FFUF" == "true" ]
-		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if ["$DIRSEARCH" == "true"] 
-		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if ["$FEROXBUSTER" == "true"] 
-		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if ["$DIRB" == "true"] 
-		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed Directory Mode${ENDCOLOR}"
-
-	exit 1
-}
-
-
-# Subdomain 
-subdomain() {
-	input_check
-
-	OPTION="subdomain"
-
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Subdomain Mode"
-}
-
-# VHost
-vhost() {
-	input_check
-
-	OPTION="vhost"
-
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} VHost Mode"
-}
-
 ###############################################################
 # Directory Enumeration Selection Option                      #
 ###############################################################
 automatic_dir_scan() {
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Automatic Directory Enumeration Scan Enabled..${ENDCOLOR}"
 
-	mkdir -p Dirauto/Auto/Gobuster
-	mkdir -p Dirauto/Auto/Feroxbuster
+	mkdir -p Dirauto/dir/Auto/Gobuster
+	mkdir -p Dirauto/dir/Auto/Feroxbuster
 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Started Automatic Directory Enumeration Scan \n"
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Gobuster...\n"
@@ -475,7 +414,7 @@ automatic_dir_scan() {
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} common.txt wordlist not found\n"
 	else
 		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found common.txt wordlist\n"
-		gobuster dir -u $URL -w $common_path -o $(pwd)/Dirauto/Auto/Gobuster/common.txt
+		gobuster dir -u $URL -w $common_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/common.txt
 	fi
 
 	big_path=$($search_wordlist "big.txt")
@@ -532,7 +471,7 @@ run_gobuster() {
 
 		IFS=";" read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="gobuster dir -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/DIR/Gobuster/gobuster_dir_output_$counter.txt"
+			command="gobuster dir -u $url -w $wordlist -o $(pwd)/Dirauto/dir/Gobuster/$wordlist.txt"
 
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -562,7 +501,7 @@ run_gobuster() {
 
 		IFS=";" read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="gobuster vhost -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/VHOST_MODE/Gobuster/gobuster_vhost_output_$counter.txt"
+			command="gobuster vhost -u $url -w $wordlist -o $(pwd)/Dirauto/vhost/Gobuster/$wordlist.txt"
 
 			if [ -n "$execution_rate" ]; then
 				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
@@ -580,7 +519,7 @@ run_gobuster() {
 	
 		IFS=";" read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/DIRAUTO_SCANS/DNS/Gobuster/gobuster_dns_output_$counter.txt"
+			command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/Dirauto/subdomain/Gobuster/$wordlist.txt"
 
 			if [ -n "$execution_rate" ]; then
 				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
@@ -608,7 +547,7 @@ run_FFuF() {
 		
 		IFS=";" read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/DIRAUTO_SCANS/DIR/FFuF/FFuF_dir_output_$counter.txt"
+			command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/Dirauto/dir/FFuF/$wordlist.txt"
 			
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -641,7 +580,7 @@ run_FFuF() {
 
 		IFS=";" read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/DIRAUTO_SCANS/VHOST/FFuF/FFuF_vhost_output_$counter.txt"
+			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/Dirauto/vhost/FFuF/$wordlist.txt"
 
 			if [ -n "$execution_rate" ]; then
 				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
@@ -659,7 +598,7 @@ run_FFuF() {
 
 		IFS=";" read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/DIRAUTO_SCANS/DNS/FFuF/FFuF_dns_output_$counter.txt"
+			command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/Dirauto/subdomain/FFuF/$wordlist.txt"
 		
 			if [ -n "$execution_rate" ]; then
 				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
@@ -687,7 +626,7 @@ run_dirsearch() {
 
 		IFS=";" read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="dirsearch -u $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirsearch/dirsearch_dir_output_$counter.txt"
+			command="dirsearch -u $url -o $(pwd)/Dirauto/dir/Dirsearch/$wordlist.txt"
 
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -726,10 +665,9 @@ run_feroxbuster() {
 		local response_codes="$5"
 		local execution_rate="$6"
 		
-		# command="feroxbuster --url $url --output $(pwd)/DIRAUTO_SCANS/DIR/Feroxbuster/feroxbuster_dir_output_$counter.txt"	
 		IFS=";" read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="feroxbuster --url $url"	
+			command="feroxbuster --url $url --wordlist $(pwd)/Dirauto/dir/Feroxbuster/$wordlist"	
 
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -761,7 +699,7 @@ run_dirb() {
 
 		IFS=";" read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="dirb $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirb/dirb_dir_output_$counter.txt"
+			command="dirb $url -o $(pwd)/Dirauto/dir/Dirb/$wordlist.txt"
 
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -778,3 +716,115 @@ run_dirb() {
 	fi
 }
 
+# ---------------------------------------------------------------------------
+# MODES
+# ---------------------------------------------------------------------------
+dir_mode() {
+	input_check
+
+	OPTION="dir"
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized Directory Mode${ENDCOLOR}\n"
+
+	if [ "$AUTO" == "true" ]; then
+		automatic_dir_scan
+	fi
+
+	if [ "$GOBUSTER" == "true" ]; then
+		run_gobuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$FFUF" == "true" ]; then
+		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$DIRSEARCH" == "true" ]; then
+		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$FEROXBUSTER" == "true" ]; then
+		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$DIRB" == "true" ]; then
+		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed Directory Mode${ENDCOLOR}"
+
+	exit 1
+}
+
+# Subdomain 
+subdomain_mode() {
+	input_check
+
+	OPTION="subdomain"
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized Subdomain Mode${ENDCOLOR}\n"
+
+	if [ "$AUTO" == "true" ]; then
+		automatic_dir_scan
+	fi
+
+	if [ "$GOBUSTER" == "true" ]; then
+		run_gobuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$FFUF" == "true" ]; then
+		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$DIRSEARCH" == "true" ]; then
+		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$FEROXBUSTER" == "true" ]; then
+		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$DIRB" == "true" ]; then
+		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed Subdomain Mode${ENDCOLOR}"
+
+	exit 1
+}
+
+# VHost
+vhost_mode() {
+	input_check
+
+	OPTION="vhost"
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized VHost Mode${ENDCOLOR}\n"
+
+	if [ "$AUTO" == "true" ]; then
+		automatic_dir_scan
+	fi
+
+	if [ "$GOBUSTER" == "true" ]; then
+		run_gobuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$FFUF" == "true" ]; then
+		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$DIRSEARCH" == "true" ]; then
+		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$FEROXBUSTER" == "true" ]; then
+		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [ "$DIRB" == "true" ]; then
+		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed VHost Mode${ENDCOLOR}"
+
+	exit 1
+}
