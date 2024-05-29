@@ -36,11 +36,9 @@ BOLD="\e[1m"
 ITALIC="\e[3m"
 
 echo "
-
 ┳┓•  ┏┓     
 ┃┃┓┏┓┣┫┓┏╋┏┓
 ┻┛┗┛ ┛┗┗┻┗┗┛
-            
 "
 
 ###############################################################
@@ -51,7 +49,7 @@ echo "
 usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
-	echo "Usage: dirauto [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions] [-c, --status-codes] [-d, --dir] [-v, --vhost] [-s, --subdomain] [-t, --threads] [-w, --wordlist] [--check] [-i, --install]"
+	echo "Usage: dirauto [dir / vhost / subdomain] [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions] [-c, --status-codes] [-d, --dir] [-v, --vhost] [-s, --subdomain] [-t, --threads] [-w, --wordlist] [--check] [-i, --install]"
 	echo " "
 }
 
@@ -59,18 +57,18 @@ help()
 {
 	usage
         echo "Options:"
-       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage"
-        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help"
-        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL"
-        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions"
-        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes"
-        printf "  ${ITALIC}dir${ENDCOLOR}			Directory Mode"
-        printf "  ${ITALIC}vhost${ENDCOLOR}			VHost Mode"
-        printf "  ${ITALIC}subdomain${ENDCOLOR}			Subdomain Mode"
-        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads"
-        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan"
-        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script"
-        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script"
+       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage\n"
+        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help\n"
+        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL\n"
+        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions\n"
+        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes\n"
+        printf "  ${ITALIC}dir${ENDCOLOR}			Directory Mode\n"
+        printf "  ${ITALIC}vhost${ENDCOLOR}			VHost Mode\n"
+        printf "  ${ITALIC}subdomain${ENDCOLOR}			Subdomain Mode\n"
+        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
+        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
+        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script\n"
+        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script\n"
         echo " "
 	exit 1
 }
@@ -86,15 +84,13 @@ dir_usage() {
 dir_help() {
 	dir_usage
         echo "Options:"
-       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage"
-        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help"
-        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL"
-        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions"
-        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes"
-        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads"
-        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan"
-        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script"
-        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script"
+       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage\n"
+        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help\n"
+        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL\n"
+        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions\n"
+        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes\n"
+        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
+        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
         echo " "
 	exit 1
 }
@@ -109,15 +105,13 @@ vhost_usage() {
 vhost_help() {
 	vhost_usage
         echo "Options:"
-       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage"
-        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help"
-        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL"
-        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions"
-        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes"
-        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads"
-        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan"
-        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script"
-        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script"
+       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage\n"
+        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help\n"
+        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL\n"
+        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions\n"
+        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes\n"
+        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
+        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
         echo " "
 	exit 1
 }
@@ -132,15 +126,13 @@ subdomain_usage() {
 subdomain_help() { 
 	subdomain_usage
         echo "Options:"
-       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage"
-        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help"
-        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL"
-        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions"
-        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes"
-        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads"
-        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan"
-        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script"
-        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script"
+       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage\n"
+        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help\n"
+        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL\n"
+        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions\n"
+        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes\n"
+        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
+        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
         echo " "
 	exit 1
 }
@@ -158,6 +150,7 @@ URL=""
 EXTENSIONS=""
 STATUS_CODES=""
 THREADS=""
+EXECUTION_RATE=""
 WORDLISTS=""
 GOBUSTER=false
 FEROXBUSTER=false
@@ -167,7 +160,8 @@ AUTO=false
 
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
-		-h|--help) usage ;;
+		-h|--help) help ;;
+		--usage) usage ;;
 		-u|--url) URL="$2"; shift ;;
 		-x|--extensions) EXTENSIONS="$2"; shift ;;
 		-c|--status-codes) STATUS_CODES="$2"; shift ;;
@@ -177,13 +171,14 @@ while [[ "$#" -gt 0 ]]; do
 			shift
 			while [[ "$#" -gt 0 ]]; do
 				case $1 in
-					-h|--help) usage ;;
+					-h|--help) dir_help ;;
+					--usage) dir_usage ;;
 					-u|--url) URL="$2"; shift ;;
-					gb) GOBUSTER=true; shift ;; # GoBuster
-					ff) FFUF=true; shift ;; # FFuF
-					fb) FEROXBUSTER=true; shift ;; # FeroxBuster
-					ds) DIRSEARCH=true; shift ;; # Dirsearch
-					db) DIRB=true; shift ;; # Dirb
+					gb) GOBUSTER=true; shift ;;
+					ff) FFUF=true; shift ;;
+					fb) FEROXBUSTER=true; shift ;;
+					ds) DIRSEARCH=true; shift ;;
+					db) DIRB=true; shift ;;
 					-x|--extensions) EXTENSIONS="$2"; shift ;;
 					-c|--status-codes) STATUS_CODES="$2"; shift ;;
 					-t|--threads) THREADS="$2"; shift ;;
@@ -200,13 +195,14 @@ while [[ "$#" -gt 0 ]]; do
 			shift
 			while [[ "$#" -gt 0 ]]; do
 				case $1 in
-					-h|--help) usage ;;
+					-h|--help) vhost_help ;;
+					--usage) vhost_usage ;;
 					-u|--url) URL="$2"; shift ;;
-					gb) GOBUSTER=true; shift ;; # GoBuster
-					ff) FFUF=true; shift ;; # FFuF
-					fb) FEROXBUSTER=true; shift ;; # FeroxBuster
-					ds) DIRSEARCH=true; shift ;; # Dirsearch
-					db) DIRB=true; shift ;; # Dirb
+					gb) GOBUSTER=true; shift ;;
+					ff) FFUF=true; shift ;;
+					fb) FEROXBUSTER=true; shift ;;
+					ds) DIRSEARCH=true; shift ;;
+					db) DIRB=true; shift ;;
 					-x|--extensions) EXTENSIONS="$2"; shift ;;
 					-c|--status-codes) STATUS_CODES="$2"; shift ;;
 					-t|--threads) THREADS="$2"; shift ;;
@@ -223,7 +219,8 @@ while [[ "$#" -gt 0 ]]; do
 			shift
 			while [[ "$#" -gt 0 ]]; do
 				case $1 in
-					-h|--help) usage ;;
+					-h|--help) subdomain_help ;;
+					--usage) subdomain_usage ;;
 					-u|--url) URL="$2"; shift ;;
 					gb) GOBUSTER=true; shift ;; # GoBuster
 					ff) FFUF=true; shift ;; # FFuF
@@ -326,7 +323,6 @@ input_check() {
 			exit 1
 		fi 
 
-		# Enumerate through folders to check if the following wordlist exists
 		wordlist_path=$(search_wordlist "$WORDLIST")	
 		if [ -z "$wordlist_path" ]; then
 			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Wordlist not found\n"
@@ -359,6 +355,16 @@ input_check() {
 	fi
 
 	# ---------------------------------------------------------------------------
+	# EXECUTION RATE
+	# ---------------------------------------------------------------------------
+	if [[ -n "$EXECUTION_RATE" ]]; then
+		if ! [[ $EXECUTION_RATE =~ ^[0-9]+$ ]]; then
+			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Execution Rate must only accept integers"
+			exit 1
+		fi	
+	fi
+
+	# ---------------------------------------------------------------------------
 	# THREADS
 	# ---------------------------------------------------------------------------
 	if [[ -n "$THREADS" ]]; then
@@ -383,6 +389,10 @@ input_check() {
 		printf "${YELLOW}Status Codes:${ENDCOLOR} $STATUS_CODES\n"
 	fi
 
+	if [[ -n "$EXECUTION_RATE" ]]; then
+		printf "${YELLOW}Execution Rate:${ENDCOLOR} $EXECUTION_RATE\n"
+	fi
+
 	if [[ -n "$WORDLISTS" ]]; then
 		printf "${YELLOW}Wordlists:${ENDCOLOR} $WORDLISTS\n"
 	fi
@@ -394,37 +404,35 @@ input_check() {
 dir() {
 	input_check
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized Directory Mode${ENDCOLOR}"
+	OPTION="dir"
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized Directory Mode${ENDCOLOR}\n"
 
 	mkdir Dirauto
 
 	if ["$AUTO" == "true" ]
 		automatic_dir_scan
-		exit 1
 	fi
 
-	IFS=";" read -r -a FILES <<< "$WORDLISTS"
-	for wordlist in ${FILES[@]}; do
-		if ["$GOBUSTER" == "true" ]
-			run_gobuster "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		fi
+	if ["$GOBUSTER" == "true" ]
+		run_gobuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
 
-		if ["$FFUF" == "true" ]
-			run_FFuF "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		fi
+	if ["$FFUF" == "true" ]
+		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
 
-		if ["$DIRSEARCH" == "true"] 
-			run_dirsearch "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		fi
+	if ["$DIRSEARCH" == "true"] 
+		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
 
-		if ["$FEROXBUSTER" == "true"] 
-			run_feroxbuster "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		fi
+	if ["$FEROXBUSTER" == "true"] 
+		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
 
-		if ["$DIRB" == "true"] 
-			run_dirb "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		fi
-	done
+	if ["$DIRB" == "true"] 
+		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed Directory Mode${ENDCOLOR}"
 
@@ -435,12 +443,18 @@ dir() {
 # Subdomain 
 subdomain() {
 	input_check
+
+	OPTION="subdomain"
+
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Subdomain Mode"
 }
 
 # VHost
 vhost() {
 	input_check
+
+	OPTION="vhost"
+
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} VHost Mode"
 }
 
@@ -504,335 +518,263 @@ automatic_dir_scan() {
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Completed Automatic Directory Enumeration Scan \n"
 }
 
-vhost_mode() {
-
-	options=("bitquark-subdomains-top100000.txt" "bug-bounty-program-subdomains-trickest-inventory.txt" "combined_subdomains.txt" "deepmagic.com-prefixes-top500.txt" "deepmagic.com-prefixes-top50000.txt" "dns-Jhaddix.txt" "fierce-hostlist.txt" "namelist.txt" "shubs-subdomains.txt" "subdomains-top1million-110000.txt" "subdomains-top1million-20000.txt" "subdomains-top1million-5000.txt" "tlds.txt")
-
-	# ===============================================================================================
-	# Execute VHost enumeration tools from user's preference
-	mkdir DIRAUTO_SCANS
-	mkdir -p DIRAUTO_SCANS/VHOST
-	OPTION="vhost"
-	for program in "${vhost_options[@]}"; do
-		case $program in 
-			"gobuster")
-				echo "Executing Gobuster..."
-				run_gobuster "$OPTION" "$URL" "${wordlists}" "$extensions" "$status_codes" "$threads"
-				;;
-			"ffuf")
-				echo "Executing FFuF..."
-				run_FFuF "$OPTION" "$URL" "${wordlists}" "$extensions" "$status_codes" "$threads"
-				;;
-		esac
-	done
-	# ===============================================================================================
-}
-
-dns_mode() {
-	options=("bitquark-subdomains-top100000.txt" "bug-bounty-program-subdomains-trickest-inventory.txt" "combined_subdomains.txt" "deepmagic.com-prefixes-top500.txt" "deepmagic.com-prefixes-top50000.txt" "dns-Jhaddix.txt" "fierce-hostlist.txt" "namelist.txt" "shubs-subdomains.txt" "subdomains-top1million-110000.txt" "subdomains-top1million-20000.txt" "subdomains-top1million-5000.txt" "tlds.txt")
-
-	# ===============================================================================================
-	# Execute VHost enumeration tools from user's preference
-	mkdir DIRAUTO_SCANS
-	mkdir -p DIRAUTO_SCANS/DNS
-	OPTION="dns"
-	for program in "${dns_options[@]}"; do
-		case $program in 
-			"gobuster")
-				echo "Executing Gobuster..."
-				run_gobuster "$OPTION" "$URL" "${wordlists}" "$extensions" "$status_codes" "$threads"
-				;;
-			"ffuf")
-				echo "Executing FFuF..."
-				run_FFuF "$OPTION" "$URL" "${wordlists}" "$extensions" "$status_codes" "$threads"
-				;;
-		esac
-	done
-	# ===============================================================================================
-}
-
 ###############################################################
 # Enumeration Programs                                        #
 ###############################################################
 run_gobuster() {
-	if [ "$DIR" == "true" ]; then
-		mkdir -p Dirauto/Dir/Gobuster
-		if [ -z "$wordlist" ]; then
-			break
-		fi
+	local OPTION="$1"
 
+	if [ "$OPTION" == "dir" ]; then
 		local url="$2"
 		local extension="$4"
 		local response_codes="$5"
 		local execution_rate="$6"
 
-		# echo "URL: $url"
-		# echo "Extension: $extension"
-		# echo "Response Codes: $response_codes"
-		# echo "Execution Rate: $execution_rate"
+		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			command="gobuster dir -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/DIR/Gobuster/gobuster_dir_output_$counter.txt"
 
-		# GoBuster comamnd with conditionally added parameters
-		# command="gobuster dir -u $url -w $wordlist"
-		command="gobuster dir -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/DIR/Gobuster/gobuster_dir_output_$counter.txt"
-
-		if [ -n "$extension" ]; then
-			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-				command+=" -x $extension"	
+			if [ -n "$extension" ]; then
+				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+					command+=" -x $extension"	
+				fi
 			fi
-		fi
-
-		
-		if [ -n "$response_codes" ]; then
-			if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
-				command+=" -s $response_codes"	
+			
+			if [ -n "$response_codes" ]; then
+				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
+					command+=" -s $response_codes"	
+				fi
 			fi
-		fi
 
-		if [ -n "$execution_rate" ]; then
-			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-				command+=" -t $execution_rate"	
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"	
+				fi
 			fi
-		fi
 
-		echo "$command"
-
-		eval "$command"
+			eval "$command"
+		done
 	fi
 
-	if [ "$VHOST" == "true" ]; then
-		if [ -z "$wordlist" ]; then
-			break
-		fi
-
+	if [ "$OPTION" == "vhost" ]; then
 		local url="$2"
 		local execution_rate="$6"
 
-		# GoBuster comamnd with conditionally added parameters
-		# command="gobuster vhost -u $url -w $wordlist"
-		command="gobuster vhost -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/VHOST_MODE/Gobuster/gobuster_vhost_output_$counter.txt"
+		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			command="gobuster vhost -u $url -w $wordlist -o $(pwd)/DIRAUTO_SCANS/VHOST_MODE/Gobuster/gobuster_vhost_output_$counter.txt"
 
-		if [ -n "$execution_rate" ]; then
-			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-				command+=" -t $execution_rate"	
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"	
+				fi
 			fi
-		fi
 
-		echo "$command"
-
-		eval "$command"
+			eval "$command"
+		done
 	fi
 
-	if [ "$SUBDOMAIN" == "true" ]; then
-		mkdir -p DIRAUTO_SCANS/DNS/Gobuster
-		if [ -z "$wordlist" ]; then
-			break
-		fi
-
+	if [ "$OPTION" == "subdomain" ]; then
 		local url="$2"
 		local execution_rate="$6"
 	
-		# GoBuster comamnd with conditionally added parameters
-		command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/DIRAUTO_SCANS/DNS/Gobuster/gobuster_dns_output_$counter.txt"
+		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/DIRAUTO_SCANS/DNS/Gobuster/gobuster_dns_output_$counter.txt"
 
-		if [ -n "$execution_rate" ]; then
-			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-				command+=" -t $execution_rate"	
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"	
+				fi
 			fi
-		fi
 
-		echo "$command"
-
-		eval "$command"
+			eval "$command"
+		done
 	fi 
+
+	if [ -z "$OPTION" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+	fi
 }
 
 run_FFuF() {
-	local option="$1"
+	local OPTION="$1"
 
-	if [ "$DIR" == "true" ]; then
-		mkdir -p DIRAUTO_SCANS/DIR/FFuF
-		if [ -z "$wordlist" ]; then
-			break
-		fi
-
+	if [ "$OPTION" == "dir" ]; then
 		local url="$2"
 		local extension="$4"
 		local response_codes="$5"
 		local execution_rate="$6"
 		
-		# FFuF command with conditionally added parameters
-		command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/DIRAUTO_SCANS/DIR/FFuF/FFuF_dir_output_$counter.txt"
-		
-		if [ -n "$extension" ]; then
-			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-				command+=" -e $extension"
-			fi
-		fi 
+		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/DIRAUTO_SCANS/DIR/FFuF/FFuF_dir_output_$counter.txt"
+			
+			if [ -n "$extension" ]; then
+				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+					command+=" -e $extension"
+				fi
+			fi 
 
-		if [ -n "$response_codes" ]; then
-			if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
-				command+=" -mc $response_codes"
-			fi
-		fi 
+			if [ -n "$response_codes" ]; then
+				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
+					command+=" -mc $response_codes"
+				fi
+			fi 
 
-		if [ -n "$execution_rate" ]; then
-			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-				command+=" -t $execution_rate"
-			fi
-		fi 
-		
-		echo "$command"
-
-		eval "$command"
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"
+				fi
+			fi 
+			
+			eval "$command"
+		done
 	fi
 	
-	if [ "$VHOST" == "true" ]; then
-		if [ -z "$wordlist" ]; then
-			break
-		fi
-
+	if [ "$OPTION" == "vhost" ]; then
 		local url="$2"
 		local execution_rate="$6"
 
 		echo "Enter the name of the header for FUZZING (Example: \"Host: FUZZ.ffuf.com \"): "	
 		read headerInput
 
-		# FFuF command with conditionally added parameters
-		command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/DIRAUTO_SCANS/VHOST/FFuF/FFuF_vhost_output_$counter.txt"
+		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/DIRAUTO_SCANS/VHOST/FFuF/FFuF_vhost_output_$counter.txt"
 
-		if [ -n "$execution_rate" ]; then
-			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-				command+=" -t $execution_rate"
-			fi
-		fi 
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"
+				fi
+			fi 
 
-		echo "$command"
-
-		# Execute the constructed command
-		eval "$command"
+			eval "$command"
+		done
 	fi
 
-	if [ "$SUBDOMAIN" == "true" ]; then
-		if [ -z "$wordlist" ]; then
-			break
-		fi
-
+	if [ "$OPTION" == "subdomain" ]; then
 		local url="$2"
 		local execution_rate="$6"
 
-		# FFuF command with conditionally added parameters
-		command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/DIRAUTO_SCANS/DNS/FFuF/FFuF_dns_output_$counter.txt"
-	
-		if [ -n "$execution_rate" ]; then
-			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-				command+=" -t $execution_rate"
-			fi
-		fi 
+		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/DIRAUTO_SCANS/DNS/FFuF/FFuF_dns_output_$counter.txt"
+		
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"
+				fi
+			fi 
 
-		echo "$command"
-
-		# Execute the constructed command
-		eval "$command"
+			eval "$command"
+		done
 	fi 
+
+	if [ -z "$OPTION" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+	fi
 }
 
 run_dirsearch() {
-	local option="$1"
-	local wordlists=("${@:3}")
-	if [ "$DIR" == "true" ]; then
-		mkdir -p DIRAUTO_SCANS/DIR/Dirsearch
-		counter=0
+	local OPTION="$1"
 
-		if [ -z "$wordlist" ]; then
-			break
-		fi
-
+	if [ "$OPTION" == "dir" ]; then
 		local url="$2"
 		local extension="$4"
 		local response_codes="$5"
 		local execution_rate="$6"
 
-		command="dirsearch -u $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirsearch/dirsearch_dir_output_$counter.txt"
+		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			command="dirsearch -u $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirsearch/dirsearch_dir_output_$counter.txt"
 
-		if [ -n "$extension" ]; then
-			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-				command+=" -e $extension"
-			fi
-		fi 
+			if [ -n "$extension" ]; then
+				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+					command+=" -e $extension"
+				fi
+			fi 
 
-		if [ -n "$response_codes" ]; then
-			if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
-				command+=" -i $response_codes"
-			fi
-		fi 
+			if [ -n "$response_codes" ]; then
+				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
+					command+=" -i $response_codes"
+				fi
+			fi 
 
-		if [ -n "$execution_rate" ]; then
-			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-				command+=" -t $execution_rate"
-			fi
-		fi 
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"
+				fi
+			fi 
 
-		eval "$command"
+			eval "$command"
+		done
 	fi 
+
+	if [ -z "$OPTION" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+	fi
 	
 }
 
 run_feroxbuster() {
-	local option="$1"
-	local wordlists=("${@:3}")
-	if [ "$DIR" == "true" ]; then
-		mkdir -p DIRAUTO_SCANS/DIR/Feroxbuster
+	local OPTION="$1"
 
-		if [ -z "$wordlist" ]; then
-			break
-		fi
-
+	if [ "$OPTION" == "dir" ]; then
 		local url="$2"
 		local extension="$4"
 		local response_codes="$5"
 		local execution_rate="$6"
 		
 		# command="feroxbuster --url $url --output $(pwd)/DIRAUTO_SCANS/DIR/Feroxbuster/feroxbuster_dir_output_$counter.txt"	
-		command="feroxbuster --url $url"	
-		echo "$command"
+		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			command="feroxbuster --url $url"	
 
-		if [ -n "$extension" ]; then
-			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-				command+=" -x $extension"
-			fi
-		fi 
+			if [ -n "$extension" ]; then
+				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+					command+=" -x $extension"
+				fi
+			fi 
 
-		if [ -n "$execution_rate" ]; then
-			if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-				command+=" -t $execution_rate"
-			fi
-		fi 
+			if [ -n "$execution_rate" ]; then
+				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
+					command+=" -t $execution_rate"
+				fi
+			fi 
 
-		eval "$command"
+			eval "$command"
+		done
 	fi 
+
+	if [ -z "$OPTION" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+	fi
 }
 
 run_dirb() {
-	local option="$1"
-	local wordlists=("${@:3}")
+	local OPTION="$1"
 
-	if [ "$DIR" == "true" ]; then
-		if [ -z "$wordlist" ]; then
-			break
-		fi
-
+	if [ "$OPTION" == "dir" ]; then
 		local url="$2"
 		local extension="$4"
 
-		command="dirb $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirb/dirb_dir_output_$counter.txt"
+		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			command="dirb $url -o $(pwd)/DIRAUTO_SCANS/DIR/Dirb/dirb_dir_output_$counter.txt"
 
-		if [ -n "$extension" ]; then
-			if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-				command+=" -X $extension"
-			fi
-		fi 
+			if [ -n "$extension" ]; then
+				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
+					command+=" -X $extension"
+				fi
+			fi 
 
-		eval "$command"
+			eval "$command"
+		done
 	fi 
+
+	if [ -z "$OPTION" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+	fi
 }
 
