@@ -3,12 +3,9 @@
 
 # Demos 
 ## Automatic
-[![asciicast](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN.svg)](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN)
 
 ### Automatic Directory Enumeration Scan
-```
-<insert asciinema player to show the process of performing automatic directory enumeration scan>
-```
+[![asciicast](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN.svg)](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN)
 
 ### Automatic VHost Enumeration Scan
 ```
