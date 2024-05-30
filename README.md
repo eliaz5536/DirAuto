@@ -1,6 +1,5 @@
 ![dirauto_logo](https://github.com/eliaz5536/DirAuto/assets/5835036/97a666c3-bb93-4ece-a752-e2574d6932f8)
 
-
 # Demos 
 ## Automatic
 
@@ -82,6 +81,37 @@ Launch NetAuto bash script file by doing the following
 Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
  
 Usage: dirauto [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions] [-c, --status-codes] [-d, --dir] [-v, --vhost] [-s, --subdomain] [-t, --threads] [-w, --wordlist] [--check] [-i, --install]
+
+```
+
+```
+
+```
+
+## Directory Mode
+```
+
+```
+
+```
+
+```
+
+## Virtual Host Mode
+```
+
+```
+
+```
+
+```
+
+## Subdomain Mode
+```
+
+```
+
+```
 
 ```
 
