@@ -92,7 +92,7 @@ dir_help() {
         printf "  ${BOLD}-c, --status-codes <codes>${ENDCOLOR}		Specify Status Codes\n"
         printf "  ${BOLD}-t, --threads <threads>${ENDCOLOR}		Specify number of threads\n"
         printf "  ${BOLD}-e, --execution-rate <rate>${ENDCOLOR}		Specify execution rate\n"
-        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}		Specify wordlist\n"
+        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}			Specify wordlist\n"
         printf "  ${BOLD}--auto${ENDCOLOR}				Enable auto mode\n"
         echo " "
 	exit 0
@@ -115,7 +115,7 @@ vhost_help() {
         printf "  ${BOLD}-c, --status-codes <codes>${ENDCOLOR}		Specify Status Codes\n"
         printf "  ${BOLD}-t, --threads <threads>${ENDCOLOR}		Specify number of threads\n"
         printf "  ${BOLD}-e, --execution-rate <rate>${ENDCOLOR}		Specify execution rate\n"
-        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}		Specify wordlist\n"
+        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}			Specify wordlist\n"
         printf "  ${BOLD}--auto${ENDCOLOR}				Enable auto mode\n"
         echo " "
 	exit 0
@@ -337,13 +337,13 @@ automatic_dir_scan() {
 
 	echo " "
 
-	directory_list_small_path=$(search_wordlist "directory-list-2.3-small.txt")
-	if [ -z "$directory_list_small_path" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-small.txt wordlist not found\n"
-	else
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-small.txt wordlist\n"
-		gobuster dir -u $URL -w $directory_list_small_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/dir_small.txt
-	fi
+	#directory_list_small_path=$(search_wordlist "directory-list-2.3-small.txt")
+	#if [ -z "$directory_list_small_path" ]; then
+	#	printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-small.txt wordlist not found\n"
+	#else
+	#	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-small.txt wordlist\n"
+	#	gobuster dir -u $URL -w $directory_list_small_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/dir_small.txt
+	#fi
 
 	echo " "
 
