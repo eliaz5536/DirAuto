@@ -57,20 +57,22 @@ help()
 {
 	usage
         echo "Options:"
-       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage\n"
-        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help\n"
-        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL\n"
-        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions\n"
-        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes\n"
-        printf "  ${ITALIC}dir${ENDCOLOR}			Directory Mode\n"
-        printf "  ${ITALIC}vhost${ENDCOLOR}			VHost Mode\n"
-        printf "  ${ITALIC}subdomain${ENDCOLOR}			Subdomain Mode\n"
-        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
-        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
-        printf "  ${ITALIC}--check${ENDCOLOR}			Check if certain repositories are installed for usage of this script\n"
-        printf "  ${ITALIC}-i, --install${ENDCOLOR}		Install certain repositories in order to utilize this script\n"
+       	printf "  ${BOLD}--usage${ENDCOLOR}			Show usage information\n"
+        printf "  ${BOLD}-h, --help${ENDCOLOR}			Show help message\n"
+        printf "  ${BOLD}-u, --url${ENDCOLOR}			Specify target URL\n"
+        printf "  ${BOLD}-x, --extensions${ENDCOLOR}		Specify extensions\n"
+        printf "  ${BOLD}-c, --status-codes${ENDCOLOR}		Specify status codes\n"
+        printf "  ${BOLD}-e, --extension-rate${ENDCOLOR}		Specify extension rate\n"
+        printf "  ${BOLD}-t, --threads${ENDCOLOR}			Specify number of threads\n"
+        printf "  ${BOLD}-w, --wordlist${ENDCOLOR}		Specify wordlist\n"
+        printf "  ${BOLD}--check${ENDCOLOR}			Check if repositories are installed\n"
+        printf "  ${BOLD}-i, --install${ENDCOLOR}			Install repositories\n"
         echo " "
-	exit 1
+        echo "Modes:"
+        printf "  ${BOLD}dir${ENDCOLOR}				Directory Mode\n"
+        printf "  ${BOLD}vhost${ENDCOLOR}				Virtual Host Mode\n"
+        printf "  ${BOLD}subdomain${ENDCOLOR}			Subdomain Mode\n"
+	exit 0
 }
 
 dir_usage() {
@@ -82,14 +84,16 @@ dir_usage() {
 
 dir_help() {
 	dir_usage
-        echo "Options:"
-       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage\n"
-        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help\n"
-        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL\n"
-        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions\n"
-        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes\n"
-        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
-        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
+        echo "Directory mode help:"
+       	printf "  ${BOLD}--usage${ENDCOLOR}				Show usage information\n"
+        printf "  ${BOLD}-h, --help${ENDCOLOR}				Show help information\n"
+        printf "  ${BOLD}-u, --url <URL>${ENDCOLOR}			Specify target URL\n"
+        printf "  ${BOLD}-x, --extensions <ext>${ENDCOLOR}		Specify file extensions\n"
+        printf "  ${BOLD}-c, --status-codes <codes>${ENDCOLOR}		Specify Status Codes\n"
+        printf "  ${BOLD}-t, --threads <threads>${ENDCOLOR}		Specify number of threads\n"
+        printf "  ${BOLD}-e, --execution-rate <rate>${ENDCOLOR}		Specify execution rate\n"
+        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}		Specify wordlist\n"
+        printf "  ${BOLD}--auto${ENDCOLOR}				Enable auto mode\n"
         echo " "
 	exit 0
 }
@@ -99,19 +103,20 @@ vhost_usage() {
 	echo " "
 	echo "Usage: dirauto vhost [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
 	echo " "
-	# exit 0
 }
 
 vhost_help() {
 	vhost_usage
-        echo "Options:"
-       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage\n"
-        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help\n"
-        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL\n"
-        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions\n"
-        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes\n"
-        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
-        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
+        echo "Virtual host mode help:"
+       	printf "  ${BOLD}--usage${ENDCOLOR}				Show usage information\n"
+        printf "  ${BOLD}-h, --help${ENDCOLOR}				Show help information\n"
+        printf "  ${BOLD}-u, --url <URL>${ENDCOLOR}			Specify target URL\n"
+        printf "  ${BOLD}-x, --extensions <ext>${ENDCOLOR}		Specify file extensions\n"
+        printf "  ${BOLD}-c, --status-codes <codes>${ENDCOLOR}		Specify Status Codes\n"
+        printf "  ${BOLD}-t, --threads <threads>${ENDCOLOR}		Specify number of threads\n"
+        printf "  ${BOLD}-e, --execution-rate <rate>${ENDCOLOR}		Specify execution rate\n"
+        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}		Specify wordlist\n"
+        printf "  ${BOLD}--auto${ENDCOLOR}				Enable auto mode\n"
         echo " "
 	exit 0
 }
@@ -121,126 +126,23 @@ subdomain_usage() {
 	echo " "
 	echo "Usage: dirauto subdomain [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
 	echo " "
-	# exit 0
 }
 
 subdomain_help() { 
 	subdomain_usage
-        echo "Options:"
-       	printf "  ${ITALIC}--usage${ENDCOLOR}			Prints usage\n"
-        printf "  ${ITALIC}-h, --help${ENDCOLOR}		Prints help\n"
-        printf "  ${ITALIC}-u, --url${ENDCOLOR}			Target URL\n"
-        printf "  ${ITALIC}-x, --extensions${ENDCOLOR}		Scan extensions\n"
-        printf "  ${ITALIC}-c, --status-codes${ENDCOLOR}	Status Codes\n"
-        printf "  ${ITALIC}-t, --threads${ENDCOLOR}		Threads\n"
-        printf "  ${ITALIC}-w, --wordlists${ENDCOLOR}		Sets wordlists for directory scan\n"
+        echo "Subdomain mode help:"
+       	printf "  ${BOLD}--usage${ENDCOLOR}			Show usage information\n"
+        printf "  ${BOLD}-h, --help${ENDCOLOR}			Show help information\n"
+        printf "  ${BOLD}-u, --url${ENDCOLOR}			Specify target URL\n"
+        printf "  ${BOLD}-x, --extensions${ENDCOLOR}		Specify file extensions\n"
+        printf "  ${BOLD}-c, --status-codes${ENDCOLOR}		Specify status codes\n"
+        printf "  ${BOLD}-t, --threads${ENDCOLOR}			Specify number of threads\n"
+        printf "  ${BOLD}-e, --execution-rate${ENDCOLOR}		Specify execution rate\n"
+        printf "  ${BOLD}-w, --wordlist${ENDCOLOR}		Specify wordlist\n"
+        printf "  ${BOLD}--auto${ENDCOLOR}			Enable auto mode\n"
         echo " "
 	exit 0
 }
-
-###############################################################
-# Arguments                                                   #
-###############################################################
-if [ $# -eq 0 ];
-then 
-	usage
-        exit 1
-fi
-
-URL=""
-EXTENSIONS=""
-STATUS_CODES=""
-THREADS=""
-EXECUTION_RATE=""
-WORDLISTS=""
-GOBUSTER=false
-FEROXBUSTER=false
-DIRSEARCH=false
-DIRB=false
-AUTO=false
-
-while [[ "$#" -gt 0 ]]; do
-	case $1 in
-		-h|--help) help ;;
-		--usage) usage ;;
-		-u|--url) URL="$2"; shift ;;
-		-x|--extensions) EXTENSIONS="$2"; shift ;;
-		-c|--status-codes) STATUS_CODES="$2"; shift ;;
-		dir) 
-			shift
-			while [[ "$#" -gt 0 ]]; do
-				case $1 in
-					-h|--help) dir_help ;;
-					--usage) dir_usage ;;
-					-u|--url) URL="$2"; shift ;; # Check here if URL has passed over here
-					gb) GOBUSTER=true; shift ;;
-					ff) FFUF=true; shift ;;
-					fb) FEROXBUSTER=true; shift ;;
-					ds) DIRSEARCH=true; shift ;;
-					db) DIRB=true; shift ;;
-					-x|--extensions) EXTENSIONS="$2"; shift ;;
-					-c|--status-codes) STATUS_CODES="$2"; shift ;;
-					-t|--threads) THREADS="$2"; shift ;;
-					-w|--wordlists) WORDLISTS="$2"; shift ;;
-					--auto) auto=true; shift ;; 
-					*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
-				esac
-				shift
-			done
-			;;
-		vhost)
-			shift
-			while [[ "$#" -gt 0 ]]; do
-				case $1 in
-					-h|--help) vhost_help ;;
-					--usage) vhost_usage ;;
-					-u|--url) URL="$2"; shift ;;
-					gb) GOBUSTER=true; shift ;;
-					ff) FFUF=true; shift ;;
-					fb) FEROXBUSTER=true; shift ;;
-					ds) DIRSEARCH=true; shift ;;
-					db) DIRB=true; shift ;;
-					-x|--extensions) EXTENSIONS="$2"; shift ;;
-					-c|--status-codes) STATUS_CODES="$2"; shift ;;
-					-t|--threads) THREADS="$2"; shift ;;
-					-w|--wordlists) WORDLISTS="$2"; shift ;;
-					--auto)  ;; 
-					*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
-				esac
-				shift
-			done
-			;;
-		subdomain) 
-			shift
-			while [[ "$#" -gt 0 ]]; do
-				case $1 in
-					-h|--help) subdomain_help ;;
-					--usage) subdomain_usage ;;
-					-u|--url) URL="$2"; shift ;;
-					gb) GOBUSTER=true; shift ;; # GoBuster
-					ff) FFUF=true; shift ;; # FFuF
-					fb) FEROXBUSTER=true; shift ;; # FeroxBuster
-					ds) DIRSEARCH=true; shift ;; # Dirsearch
-					db) DIRB=true; shift ;; # Dirb
-					-x|--extensions) EXTENSIONS="$2"; shift ;;
-					-c|--status-codes) STATUS_CODES="$2"; shift ;;
-					-t|--threads) THREADS="$2"; shift ;;
-					-w|--wordlists) WORDLISTS="$2"; shift ;;
-					--auto)  ;; 
-					*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
-				esac
-				shift
-			done
-			;;
-		-t|--threads) THREADS="$2"; shift ;;
-		-w|--wordlists) WORDLISTS="$2"; shift ;;
-		--check) check ;;
-		-i|--install) installation ;; 
-		*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
-	esac
-	shift
-done
-
 
 # ===========================================================================
 # Checking Conditions... 
@@ -279,15 +181,15 @@ check() {
 	fi 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Dirb installed\n"
 	
-	if ! [ -f /usr/share/seclists ] || [ -f /usr/share/wordlist/seclists ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists is not located in /usr/bin. Install Seclists.\n"
+	if ! [ -d /usr/share/seclists ] || [ -d /usr/share/wordlist/seclists ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists is not located in /usr/share directory. Install Seclists.\n"
 		exit 1
 	fi 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists installed\n"
 
 	echo " "
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} All of the programs are installed for usage. You are ready to enumerate!"
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} All of the programs are installed for usage. You are ready to enumerate!\n"
 
 	exit 1
 }
@@ -297,28 +199,32 @@ check() {
 ###############################################################
 search_wordlist() {
 	local wordlist_name="$1"
-	find "/usr/share/" -type f -name "$wordlist_name" 2>/dev/null
-}
 
-URL_check() {
-	local URL="$1"
+	wordlist_path=$(find /usr/share/seclists -type f -name "$wordlist_name" 2>/dev/null | head -n 1)
 
-	# ---------------------------------------------------------------------------
-	# URL
-	# ---------------------------------------------------------------------------
-	if [ -z "$URL" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Missing URL address. Please specify the URL using the -u or --url option."
-		exit 1
+    	if [ -n "$wordlist_path" ]; then
+		echo $wordlist_path
+		return 0
+	else 
+		return 1
 	fi
 }
 
 input_check() {
 	# ---------------------------------------------------------------------------
+	# Target URL
+	# ---------------------------------------------------------------------------
+	if [ -z "$URL" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Missing URL address. Please specify the URL using the -u or --url option."
+		exit 1
+	fi
+
+	# ---------------------------------------------------------------------------
 	# WORDLIST
 	# ---------------------------------------------------------------------------
-	if [ -z "$WORDLIST" ]; then
-		if ! [ -f /usr/share/seclists ] || [ -f /usr/share/wordlist/seclists ]; then
-			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists is not located in /usr/bin. Install Seclists.\n"
+	if [[ -n "$WORDLIST" ]]; then
+		if ! [ -d /usr/share/seclists ] || [ -d /usr/share/wordlist/seclists ]; then
+			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists is not located in /usr/share directory. Install Seclists.\n"
 			exit 1
 		fi 
 
@@ -328,7 +234,7 @@ input_check() {
 			exit 1
 		fi
 
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Using wordlist: \n"
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Using wordlist: $wordlist_path\n"
 
 		exit 1
 	fi
@@ -392,16 +298,18 @@ input_check() {
 		printf "${YELLOW}Execution Rate:${ENDCOLOR} $EXECUTION_RATE\n"
 	fi
 
-	if [[ -n "$WORDLISTS" ]]; then
-		printf "${YELLOW}Wordlists:${ENDCOLOR} $WORDLISTS\n"
+	if [[ -n "$WORDLIST" ]]; then
+		printf "${YELLOW}Wordlist:${ENDCOLOR} $WORDLIST\n"
 	fi
+
+	# exit 0
 }
 
 ###############################################################
 # Directory Enumeration Selection Option                      #
 ###############################################################
 automatic_dir_scan() {
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Automatic Directory Enumeration Scan Enabled..${ENDCOLOR}"
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Automatic Directory Enumeration Scan Enabled..${ENDCOLOR}\n"
 
 	mkdir -p Dirauto/dir/Auto/Gobuster
 	mkdir -p Dirauto/dir/Auto/Feroxbuster
@@ -409,7 +317,7 @@ automatic_dir_scan() {
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Started Automatic Directory Enumeration Scan \n"
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Gobuster...\n"
 
-	common_path=$($search_wordlist "common.txt")
+	common_path=$(search_wordlist "common.txt")
 	if [ -z "$common_path" ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} common.txt wordlist not found\n"
 	else
@@ -417,39 +325,45 @@ automatic_dir_scan() {
 		gobuster dir -u $URL -w $common_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/common.txt
 	fi
 
-	big_path=$($search_wordlist "big.txt")
-	if [ -z "$big_path" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} big.txt wordlist not found\n"
-	else 
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found big.txt wordlist\n"
-		gobuster dir -u $URL -w $big_path -o $(pwd)/Dirauto/Auto/Gobuster/big.txt
-	fi
+	echo " "
 
-	directory_list_small_path=$($search_wordlist "directory-list-2.3-small.txt")
+	#big_path=$(search_wordlist "big.txt")
+	#if [ -z "$big_path" ]; then
+	#	printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} big.txt wordlist not found\n"
+	#else 
+	#	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found big.txt wordlist\n"
+	#	gobuster dir -u $URL -w $big_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/big.txt
+	#fi
+
+	echo " "
+
+	directory_list_small_path=$(search_wordlist "directory-list-2.3-small.txt")
 	if [ -z "$directory_list_small_path" ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-small.txt wordlist not found\n"
 	else
 		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-small.txt wordlist\n"
-		gobuster dir -u $URL -w $directory_list_small_path -o $(pwd)/Dirauto/Auto/Gobuster/dir_small.txt
-	fi
-
-	directory_list_medium_path=$($search_wordlist "directory-list-2.3-medium.txt")
-	if [ -z "$directory_list_medium_path" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-medium.txt wordlist not found\n"
-	else 
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-medium.txt wordlist\n"
-		gobuster dir -u $URL -w $directory_list_medium_path -o $(pwd)/Dirauto/Auto/Gobuster/dir_medium.txt
+		gobuster dir -u $URL -w $directory_list_small_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/dir_small.txt
 	fi
 
 	echo " "
 
-	raft_medium_directories_path=$($search_wordlist "raft-medium-directories.txt")
+	#directory_list_medium_path=$(search_wordlist "directory-list-2.3-medium.txt")
+	#if [ -z "$directory_list_medium_path" ]; then
+	#	printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-medium.txt wordlist not found\n"
+	#else 
+	#	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-medium.txt wordlist\n"
+	#	gobuster dir -u $URL -w $directory_list_medium_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/dir_medium.txt
+	#fi
+
+	echo " "
+
+	raft_medium_directories_path=$(search_wordlist "raft-medium-directories.txt")
 	if [ -z "$raft_medium_directories_path" ]; then
 		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} raft-medium-directories.txt wordlist not found\n"
 	else 
 		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found raft-medium-directories.txt wordlist\n"
 		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Feroxbuster...\n"
-		feroxbuster -u $URL --output $(pwd)/Dirauto/Auto/Feroxbuster/feroxbuster.txt
+		feroxbuster -u $URL --output $(pwd)/Dirauto/dir/Auto/Feroxbuster/feroxbuster.txt
 	fi
 
 	echo " "
@@ -719,7 +633,30 @@ run_dirb() {
 # ---------------------------------------------------------------------------
 # MODES
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Directory Mode
+# ---------------------------------------------------------------------------
 dir_mode() {
+	while [[ "$#" -gt 0 ]]; do
+		case $1 in
+			-h|--help) dir_help ;;
+			--usage) dir_usage ;;
+			-u|--url) URL="$2"; shift ;;
+			gb) $GOBUSTER=true; shift ;;
+			ff) $FFUF=true; shift ;;
+			fb) $FEROXBUSTER=true; shift ;;
+			ds) $DIRSEARCH=true; shift ;;
+			db) $DIRB=true; shift ;;
+			-x|--extensions) $EXTENSIONS="$2"; shift ;;
+			-c|--status-codes) $STATUS_CODES="$2"; shift ;;
+			-t|--threads) $THREADS="$2"; shift ;;
+			-w|--wordlist) $WORDLIST="$2"; shift ;;
+			--auto) AUTO=true; shift ;; 
+			*) printf "${WHITE}[${ENDCOLOR}${RED}Error${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown Parameter Passed: $1"; exit 1 ;;
+		esac
+		shift
+	done
+
 	input_check
 
 	OPTION="dir"
@@ -728,35 +665,68 @@ dir_mode() {
 
 	if [ "$AUTO" == "true" ]; then
 		automatic_dir_scan
+		SCANNED=="true"
 	fi
 
 	if [ "$GOBUSTER" == "true" ]; then
 		run_gobuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		SCANNED=="true"
 	fi
 
 	if [ "$FFUF" == "true" ]; then
 		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		SCANNED=="true"
 	fi
 
 	if [ "$DIRSEARCH" == "true" ]; then
 		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		SCANNED=="true"
 	fi
 
 	if [ "$FEROXBUSTER" == "true" ]; then
 		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		SCANNED=="true"
 	fi
 
 	if [ "$DIRB" == "true" ]; then
 		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+		SCANNED=="true"
+	fi
+
+	if ! [ "$SCANNED" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}You have not selected an enumeration program to perform directory scan${ENDCOLOR}\n"
+		exit 1
 	fi
 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed Directory Mode${ENDCOLOR}"
 
-	exit 1
+	exit 0
 }
 
-# Subdomain 
+# ---------------------------------------------------------------------------
+# Subdomain Mode
+# ---------------------------------------------------------------------------
 subdomain_mode() {
+	while [[ "$#" -gt 0 ]]; do
+		case $1 in
+			-h|--help) subdomain_help ;;
+			--usage) subdomain_usage ;;
+			-u|--url) $URL="$2"; shift ;;
+			gb) $GOBUSTER=true; shift ;; # GoBuster
+			ff) $FFUF=true; shift ;; # FFuF
+			fb) $FEROXBUSTER=true; shift ;; # FeroxBuster
+			ds) $DIRSEARCH=true; shift ;; # Dirsearch
+			db) $DIRB=true; shift ;; # Dirb
+			-x|--extensions) $EXTENSIONS="$2"; shift ;;
+			-c|--status-codes) $STATUS_CODES="$2"; shift ;;
+			-t|--threads) $THREADS="$2"; shift ;;
+			-w|--wordlist) $WORDLIST="$2"; shift ;;
+			--auto) $AUTO=true ;; 
+			*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
+		esac
+		shift
+	done
+
 	input_check
 
 	OPTION="subdomain"
@@ -792,8 +762,30 @@ subdomain_mode() {
 	exit 1
 }
 
-# VHost
+# ---------------------------------------------------------------------------
+# Virtual Host Mode
+# ---------------------------------------------------------------------------
 vhost_mode() {
+	while [[ "$#" -gt 0 ]]; do
+		case $1 in
+			-h|--help) vhost_help ;;
+			--usage) vhost_usage ;;
+			-u|--url) $URL="$2"; shift ;;
+			gb) $GOBUSTER=true; shift ;;
+			ff) $FFUF=true; shift ;;
+			fb) $FEROXBUSTER=true; shift ;;
+			ds) $DIRSEARCH=true; shift ;;
+			db) $DIRB=true; shift ;;
+			-x|--extensions) $EXTENSIONS="$2"; shift ;;
+			-c|--status-codes) $STATUS_CODES="$2"; shift ;;
+			-t|--threads) $THREADS="$2"; shift ;;
+			-w|--wordlist) $WORDLIST="$2"; shift ;;
+			--auto) $AUTO=true ;; 
+			*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
+		esac
+		shift
+	done
+
 	input_check
 
 	OPTION="vhost"
@@ -828,3 +820,46 @@ vhost_mode() {
 
 	exit 1
 }
+
+
+###############################################################
+# Arguments                                                   #
+###############################################################
+if [ $# -eq 0 ];
+then 
+	usage
+        exit 1
+fi
+
+URL=""
+EXTENSIONS=""
+STATUS_CODES=""
+THREADS=""
+EXECUTION_RATE=""
+WORDLIST=""
+GOBUSTER=false
+FEROXBUSTER=false
+DIRSEARCH=false
+DIRB=false
+AUTO=false
+SCANNED=false
+
+while [[ "$#" -gt 0 ]]; do
+	case $1 in
+		-h|--help) help ;;
+		--usage) usage ;;
+		-u|--url) URL="$2"; shift ;;
+		-x|--extensions) EXTENSIONS="$2"; shift ;;
+		-c|--status-codes) STATUS_CODES="$2"; shift ;;
+		dir) shift; dir_mode "$@"; break ;;
+		vhost) shift; vhost_mode "$@"; break ;;
+		subdomain) shift; subdomain_mode "$@"; break ;;
+		-t|--threads) THREADS="$2"; shift ;;
+		-w|--wordlist) WORDLIST="$2"; shift ;;
+		--check) check ;;
+		-i|--install) installation ;; 
+		*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
+	esac
+	shift
+done
+
