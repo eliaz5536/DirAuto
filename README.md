@@ -86,32 +86,138 @@ Usage: dirauto [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions]
 
 ```
 
+┳┓•  ┏┓     
+┃┃┓┏┓┣┫┓┏╋┏┓
+┻┛┗┛ ┛┗┗┻┗┗┛
+
+Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
+ 
+Usage: dirauto [dir / vhost / subdomain] [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions] [-c, --status-codes] [-d, --dir] [-v, --vhost] [-s, --subdomain] [-t, --threads] [-w, --wordlist] [--check] [-i, --install]
+ 
+Options:
+  --usage                       Show usage information
+  -h, --help                    Show help message
+  -u, --url                     Specify target URL
+  -x, --extensions              Specify extensions
+  -c, --status-codes            Specify status codes
+  -e, --extension-rate          Specify extension rate
+  -t, --threads                 Specify number of threads
+  -w, --wordlist                Specify wordlist
+  --check                       Check if repositories are installed
+  -i, --install                 Install repositories
+ 
+Modes:
+  dir                           Directory Mode
+  vhost                         Virtual Host Mode
+  subdomain                     Subdomain Mode
+
 ```
 
 ## Directory Mode
 ```
 
+┳┓•  ┏┓     
+┃┃┓┏┓┣┫┓┏╋┏┓
+┻┛┗┛ ┛┗┗┻┗┗┛
+
+Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
+ 
+Usage: dirauto dir [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
+
 ```
 
 ```
+
+┳┓•  ┏┓     
+┃┃┓┏┓┣┫┓┏╋┏┓
+┻┛┗┛ ┛┗┗┻┗┗┛
+
+Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
+ 
+Usage: dirauto dir [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
+ 
+Directory mode help:
+  --usage                               Show usage information
+  -h, --help                            Show help information
+  -u, --url <URL>                       Specify target URL
+  -x, --extensions <ext>                Specify file extensions
+  -c, --status-codes <codes>            Specify Status Codes
+  -t, --threads <threads>               Specify number of threads
+  -e, --execution-rate <rate>           Specify execution rate
+  -w, --wordlist <file>                 Specify wordlist
+  --auto                                Enable auto mode
 
 ```
 
 ## Virtual Host Mode
 ```
 
+┳┓•  ┏┓     
+┃┃┓┏┓┣┫┓┏╋┏┓
+┻┛┗┛ ┛┗┗┻┗┗┛
+
+Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
+ 
+Usage: dirauto vhost [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
+
 ```
 
 ```
+
+┳┓•  ┏┓     
+┃┃┓┏┓┣┫┓┏╋┏┓
+┻┛┗┛ ┛┗┗┻┗┗┛
+
+Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
+ 
+Usage: dirauto vhost [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
+ 
+Virtual host mode help:
+  --usage                               Show usage information
+  -h, --help                            Show help information
+  -u, --url <URL>                       Specify target URL
+  -x, --extensions <ext>                Specify file extensions
+  -c, --status-codes <codes>            Specify Status Codes
+  -t, --threads <threads>               Specify number of threads
+  -e, --execution-rate <rate>           Specify execution rate
+  -w, --wordlist <file>                 Specify wordlist
+  --auto                                Enable auto mode
 
 ```
 
 ## Subdomain Mode
 ```
 
+┳┓•  ┏┓     
+┃┃┓┏┓┣┫┓┏╋┏┓
+┻┛┗┛ ┛┗┗┻┗┗┛
+
+Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
+ 
+Usage: dirauto subdomain [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
+
 ```
 
 ```
+
+┳┓•  ┏┓     
+┃┃┓┏┓┣┫┓┏╋┏┓
+┻┛┗┛ ┛┗┗┻┗┗┛
+
+Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
+ 
+Usage: dirauto subdomain [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
+ 
+Subdomain mode help:
+  --usage                       Show usage information
+  -h, --help                    Show help information
+  -u, --url                     Specify target URL
+  -x, --extensions              Specify file extensions
+  -c, --status-codes            Specify status codes
+  -t, --threads                 Specify number of threads
+  -e, --execution-rate          Specify execution rate
+  -w, --wordlist                Specify wordlist
+  --auto                        Enable auto mode
 
 ```
 
