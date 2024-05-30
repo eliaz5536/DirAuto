@@ -3,6 +3,7 @@
 
 # Demos 
 ## Automatic
+[![asciicast](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN.svg)](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN)
 
 ### Automatic Directory Enumeration Scan
 ```
