@@ -76,19 +76,6 @@ Launch NetAuto bash script file by doing the following
 ┳┓•  ┏┓     
 ┃┃┓┏┓┣┫┓┏╋┏┓
 ┻┛┗┛ ┛┗┗┻┗┗┛
-            
-
-Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
- 
-Usage: dirauto [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions] [-c, --status-codes] [-d, --dir] [-v, --vhost] [-s, --subdomain] [-t, --threads] [-w, --wordlist] [--check] [-i, --install]
-
-```
-
-```
-
-┳┓•  ┏┓     
-┃┃┓┏┓┣┫┓┏╋┏┓
-┻┛┗┛ ┛┗┗┻┗┗┛
 
 Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
  
@@ -123,18 +110,6 @@ Modes:
 Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
  
 Usage: dirauto dir [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
-
-```
-
-```
-
-┳┓•  ┏┓     
-┃┃┓┏┓┣┫┓┏╋┏┓
-┻┛┗┛ ┛┗┗┻┗┗┛
-
-Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
- 
-Usage: dirauto dir [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
  
 Directory mode help:
   --usage                               Show usage information
@@ -159,18 +134,6 @@ Directory mode help:
 Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
  
 Usage: dirauto vhost [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
-
-```
-
-```
-
-┳┓•  ┏┓     
-┃┃┓┏┓┣┫┓┏╋┏┓
-┻┛┗┛ ┛┗┗┻┗┗┛
-
-Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
- 
-Usage: dirauto vhost [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
  
 Virtual host mode help:
   --usage                               Show usage information
@@ -186,18 +149,6 @@ Virtual host mode help:
 ```
 
 ## Subdomain Mode
-```
-
-┳┓•  ┏┓     
-┃┃┓┏┓┣┫┓┏╋┏┓
-┻┛┗┛ ┛┗┗┻┗┗┛
-
-Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb
- 
-Usage: dirauto subdomain [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]
-
-```
-
 ```
 
 ┳┓•  ┏┓     
