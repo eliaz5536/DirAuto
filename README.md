@@ -24,7 +24,7 @@
 
 
 # DirAuto
-DirAuto is a basic direcotry reconnaissance tool that automates enumeration of directories present in existing websites, which is ideal for penetration testing environments and network scanning.
+DirAuto is a basic directory reconnaissance tool that automates enumeration of directories present in existing websites, which is ideal for penetration testing environments and network scanning.
 
 This tool performs port scans and service detection to perform further enumeration scans using different third-party tools.
 
