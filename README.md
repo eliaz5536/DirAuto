@@ -7,9 +7,7 @@
 [![asciicast](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN.svg)](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN)
 
 ### Automatic VHost Enumeration Scan
-```
-<insert asciinema player to show the process of performing automatic directory enumeration scan>
-```
+[![asciicast](https://asciinema.org/a/YIa74NmdbzuezIi8Dbq3gddPi.svg)](https://asciinema.org/a/YIa74NmdbzuezIi8Dbq3gddPi)
 
 ### Automatic Subdomain Enumeration Scan
 ```
