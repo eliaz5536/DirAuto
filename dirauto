@@ -325,7 +325,6 @@ automatic_dir_scan() {
 		gobuster dir -u $URL -w $common_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/common.txt
 	fi
 
-	echo " "
 
 	#big_path=$(search_wordlist "big.txt")
 	#if [ -z "$big_path" ]; then
@@ -335,8 +334,6 @@ automatic_dir_scan() {
 	#	gobuster dir -u $URL -w $big_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/big.txt
 	#fi
 
-	echo " "
-
 	#directory_list_small_path=$(search_wordlist "directory-list-2.3-small.txt")
 	#if [ -z "$directory_list_small_path" ]; then
 	#	printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-small.txt wordlist not found\n"
@@ -344,8 +341,6 @@ automatic_dir_scan() {
 	#	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-small.txt wordlist\n"
 	#	gobuster dir -u $URL -w $directory_list_small_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/dir_small.txt
 	#fi
-
-	echo " "
 
 	#directory_list_medium_path=$(search_wordlist "directory-list-2.3-medium.txt")
 	#if [ -z "$directory_list_medium_path" ]; then
@@ -369,6 +364,50 @@ automatic_dir_scan() {
 	echo " "
 
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Completed Automatic Directory Enumeration Scan \n"
+}
+
+automatic_vhost_scan() {
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Automatic Virtual Host Enumeration Scan Enabled..${ENDCOLOR}\n"
+
+	mkdir -p Dirauto/vhost/Auto/Gobuster
+	mkdir -p Dirauto/vhost/Auto/FFuF
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Started Automatic Virtual Host Enumeration Scan \n"
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Gobuster...\n"
+
+	subdomains_5000_path=$(search_wordlist "subdomains-top1million-5000.txt")
+	if [ -z "$subdomains_5000_path" ]; then
+		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} subdomains-top1million-5000.txt wordlist not found\n"
+	else
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found subdomains-top1million-5000.txt wordlist\n"
+
+		gobuster_command="gobuster vhost -u $URL -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt"
+		if [ -n "$EXCLUDE_CONTENT_LENGTH" ]; then
+			gobuster_command+=" --exclude-length $EXCLUDE_CONTENT_LENGTH"
+		fi
+
+		echo "$gobuster_command"
+		eval "$gobuster_command"
+
+		echo " "
+
+		# ============================== 
+
+		ffuf_command="ffuf -u $URL -H \"$HOST\" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -o $(pwd)/Dirauto/vhost/Auto/FFuF/subdomains-top1million-5000.txt"
+
+		if [ -n "$EXCLUDE_CONTENT_LENGTH" ]; then
+			ffuf_command+=" -fs $EXCLUDE_CONTENT_LENGTH"
+		fi
+
+		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing FFuF...\n"
+
+		eval "$ffuf_command"
+	fi
+
+	echo " "
+
+	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Completed Automatic Virtual Host Enumeration Scan \n"
+
 }
 
 ###############################################################
@@ -722,6 +761,7 @@ subdomain_mode() {
 			-t|--threads) $THREADS="$2"; shift ;;
 			-w|--wordlist) $WORDLIST="$2"; shift ;;
 			--auto) $AUTO=true ;; 
+			-H) ;;
 			*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
 		esac
 		shift
@@ -770,7 +810,7 @@ vhost_mode() {
 		case $1 in
 			-h|--help) vhost_help ;;
 			--usage) vhost_usage ;;
-			-u|--url) $URL="$2"; shift ;;
+			-u|--url) URL="$2"; shift ;;
 			gb) $GOBUSTER=true; shift ;;
 			ff) $FFUF=true; shift ;;
 			fb) $FEROXBUSTER=true; shift ;;
@@ -780,7 +820,9 @@ vhost_mode() {
 			-c|--status-codes) $STATUS_CODES="$2"; shift ;;
 			-t|--threads) $THREADS="$2"; shift ;;
 			-w|--wordlist) $WORDLIST="$2"; shift ;;
-			--auto) $AUTO=true ;; 
+			--auto) AUTO=true ;; 
+			-H) HOST="$2"; shift ;;
+			-fs) EXCLUDE_CONTENT_LENGTH="$2"; shift ;;
 			*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
 		esac
 		shift
@@ -793,7 +835,12 @@ vhost_mode() {
 	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized VHost Mode${ENDCOLOR}\n"
 
 	if [ "$AUTO" == "true" ]; then
-		automatic_dir_scan
+		if [ -z "$HOST" ]; then
+			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Host name empty\n"
+			exit 1
+		fi 		
+
+		automatic_vhost_scan
 	fi
 
 	if [ "$GOBUSTER" == "true" ]; then
@@ -831,6 +878,7 @@ then
         exit 1
 fi
 
+# Global Arguments
 URL=""
 EXTENSIONS=""
 STATUS_CODES=""
@@ -843,6 +891,10 @@ DIRSEARCH=false
 DIRB=false
 AUTO=false
 SCANNED=false
+
+# VHost Arguments
+HOST=""
+EXCLUDE_CONTENT_LENGTH=""
 
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
