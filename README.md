@@ -9,10 +9,8 @@
 ### Automatic VHost Enumeration Scan
 [![asciicast](https://asciinema.org/a/YIa74NmdbzuezIi8Dbq3gddPi.svg)](https://asciinema.org/a/YIa74NmdbzuezIi8Dbq3gddPi)
 
-### Automatic Subdomain Enumeration Scan
-```
-<insert asciinema player to show the process of performing automatic directory enumeration scan>
-```
+### Automatic DNS Enumeration Scan
+[![asciicast](https://asciinema.org/a/gCvMSkPseLYsUQb83SfaA2spA.svg)](https://asciinema.org/a/gCvMSkPseLYsUQb83SfaA2spA)
 
 ## Custom Commands
 ```
