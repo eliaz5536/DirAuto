@@ -12,13 +12,6 @@
 ### Automatic DNS Enumeration Scan
 [![asciicast](https://asciinema.org/a/gCvMSkPseLYsUQb83SfaA2spA.svg)](https://asciinema.org/a/gCvMSkPseLYsUQb83SfaA2spA)
 
-## Custom Commands
-```
-<insert asciinema player to show customized execution of each enumerator performed with customized settings>
-```
-
-
-
 # DirAuto
 DirAuto is a basic directory reconnaissance tool that automates enumeration of directories present in existing websites, which is ideal for penetration testing environments and network scanning.
 
