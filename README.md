@@ -33,21 +33,18 @@ You will also need to install the following wordlists in order to execute one of
 sudo apt-get install seclist
 ```
 
+# Requirements
 You can utilize the bash script by downloading the git clone by the following:
 ```
+# Clone the following repository
+# Clone repository
 
-```
-
-Make sure you provide the linux permission to execute the file before launching the bash script:
-```
+# Access the repository and change file permission of the script to be executable
 chmod +x dirauto
-```
 
-Launch NetAuto bash script file by doing the following
-```shell
-./dirauto -u <TARGET_URL_ADDRESS>
+# Launch DirAuto
+./dirauto
 ```
-
 # Usage 
 ```
 
