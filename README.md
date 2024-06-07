@@ -24,7 +24,7 @@ If you want to ensure that all of these packages are installed, perform those fo
 sudo apt-get install python python2 python3 python3-pip pip pipx
 ```
 
-You will also need to install the following wordlists in order to execute one of the following
+You will also need to install SecList in order to access extensive list of wordlists
 ```
 sudo apt-get install seclist
 ```
