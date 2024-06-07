@@ -31,13 +31,8 @@ sudo apt-get install python python2 python3 python3-pip pip pipx
 ```
 
 These following tools need to be installed and put in /opt directory in order to utilize the following script:
-```
-gobuster
-ffuf
-feroxbuster
-dirsearch
-dirb
-```
+| [GoBuster](https://github.com/OJ/gobuster) | [FFuF](https://github.com/ffuf/ffuf) | [FeroxBuster](https://github.com/epi052/feroxbuster) | [Dirsearch](https://github.com/maurosoria/dirsearch) | [Dirb](https://github.com/v0re/dirb) |
+|----------|------|-------------|-----------|------|
 
 You will also need to install the following wordlists in order to execute one of the following
 ```
