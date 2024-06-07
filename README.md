@@ -1,15 +1,13 @@
 ![dirauto_logo](https://github.com/eliaz5536/DirAuto/assets/5835036/97a666c3-bb93-4ece-a752-e2574d6932f8)
 
 # Demos 
-## Automatic
-
-### Directory Enumeration Scan
+## Automatic Directory Enumeration Scan
 [![asciicast](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN.svg)](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN)
 
-### VHost Enumeration Scan
+## Automatic VHost Enumeration Scan
 [![asciicast](https://asciinema.org/a/YIa74NmdbzuezIi8Dbq3gddPi.svg)](https://asciinema.org/a/YIa74NmdbzuezIi8Dbq3gddPi)
 
-### DNS Enumeration Scan
+## Automatic DNS Enumeration Scan
 [![asciicast](https://asciinema.org/a/gCvMSkPseLYsUQb83SfaA2spA.svg)](https://asciinema.org/a/gCvMSkPseLYsUQb83SfaA2spA)
 
 # DirAuto
