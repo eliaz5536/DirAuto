@@ -37,7 +37,7 @@ sudo apt-get install seclist
 You can utilize the bash script by downloading the git clone by the following:
 ```
 # Clone the following repository
-# Clone repository
+https://github.com/eliaz5536/DirAuto.git # Clone repository
 
 # Access the repository and change file permission of the script to be executable
 chmod +x dirauto
