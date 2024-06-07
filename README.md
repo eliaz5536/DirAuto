@@ -13,11 +13,7 @@
 [![asciicast](https://asciinema.org/a/gCvMSkPseLYsUQb83SfaA2spA.svg)](https://asciinema.org/a/gCvMSkPseLYsUQb83SfaA2spA)
 
 # DirAuto
-DirAuto is a basic directory reconnaissance tool that automates enumeration of directories present in existing websites, which is ideal for penetration testing environments and network scanning.
-
-This tool performs port scans and service detection to perform further enumeration scans using different third-party tools.
-
-It performs **no automated exploitation**.
+DirAuto is a customizable directory reconnaissance tool that automates enumeration of subdomains, ideal for penetration testing environments and network scanning.
 
 # Installation
 Requirements of utilizing this tool must be met by installing the latest available packages
