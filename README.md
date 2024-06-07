@@ -14,7 +14,7 @@
 DirAuto is a customizable directory reconnaissance tool that automates enumeration of subdomains, ideal for penetration testing environments and network scanning.
 
 # Installation
-Requirements of utilizing this tool must be met by installing the latest available packages
+Your machine must be up-to-date installing the latest available packages
 ```
 sudo apt-get update
 ```
