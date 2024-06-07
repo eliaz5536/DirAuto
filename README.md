@@ -66,7 +66,6 @@ Options:
   -t, --threads                 Specify number of threads
   -w, --wordlist                Specify wordlist
   --check                       Check if repositories are installed
-  -i, --install                 Install repositories
  
 Modes:
   dir                           Directory Mode
