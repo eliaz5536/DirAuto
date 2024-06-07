@@ -79,9 +79,3 @@ Modes:
   subdomain                     Subdomain Mode
 
 ```
-
-# Results
-The following results of these scans will produce NMAP directory and the rest of enumeration programs for each of the following ports through its name that will store and output all enumeration results of specified protocols through either -oN flag from NMAP or use tee to output the results into specified location 
-```
-show file location here and directory of how it is performed
-```
