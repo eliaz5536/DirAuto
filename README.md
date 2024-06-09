@@ -65,3 +65,8 @@ Modes:
   subdomain                     Subdomain Mode
 
 ```
+
+# Examples
+```
+<show commands over here>
+```
