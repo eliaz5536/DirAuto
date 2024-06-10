@@ -1,7 +1,34 @@
 #!/bin/bash
 
+#================================================================
+# HEADER
+#================================================================
+# Script Name   : dirauto
+# Description   : Customizable directory scan that enumerates 
+# 		:  subdomain through content-discovery
+# Author        : Eliaz Simon
+# Date          : <INSERT DATE HERE>
+# Version       : 1.0
+# Usage         : ./dirauto -i <target_host>
+# Notes         : Ensure you install all tools to use this script
+# Dependencies  : See README.md for more info on installation
+#================================================================
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#================================================================
+
 ###############################################################
-# Color Codes 				 	      	      # 
+# ANSI Color Code Escape Sequences			      #
 ###############################################################
 BLACK="\e[30m"
 RED="\e[31m"
@@ -35,24 +62,139 @@ WHITE_BG="\e[47m"
 BOLD="\e[1m"
 ITALIC="\e[3m"
 
+# Banner
 echo "
 ┳┓•  ┏┓     
 ┃┃┓┏┓┣┫┓┏╋┏┓
 ┻┛┗┛ ┛┗┗┻┗┗┛
 "
 
+#================================================================
+# FUNCTION: info
+# DESCRIPTION:
+#     Prints info message using the provided parameter.
+# PARAMETERS:
+#     $1 - A message
+# RETURNS:
+#     None
+#================================================================
+info() {
+	local message=$1
+	printf "${WHITE}[${ENDCOLOR}${CYAN}$current_time${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}$1${ENDCOLOR}\n"
+}
+
+#================================================================
+# FUNCTION: important_info
+# DESCRIPTION:
+#     Prints important info message using the provided parameter.
+# PARAMETERS:
+#     $1 - A message
+# RETURNS:
+#     None
+#================================================================
+important_info() {
+	local message=$1
+	printf "${WHITE}[${ENDCOLOR}${CYAN}$current_time${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}[${ENDCOLOR}${BOLD_GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${BOLD_WHITE}$1${ENDCOLOR}\n"
+}
+
+#================================================================
+# FUNCTION: success
+# DESCRIPTION:
+#     Prints success message using the provided parameter.
+# PARAMETERS:
+#     $1 - A message
+# RETURNS:
+#     None
+#================================================================
+success() {
+	local message=$1
+	printf "${WHITE}[${ENDCOLOR}${CYAN}$current_time${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}[${ENDCOLOR}${BOLD_GREEN}SUCCESS${ENDCOLOR}${WHITE}]${ENDCOLOR} ${BOLD_WHITE}$1${ENDCOLOR}\n"
+}
+
+#================================================================
+# FUNCTION: warning
+# DESCRIPTION:
+#     Prints warning message using the provided parameter.
+# PARAMETERS:
+#     $1 - A message
+# RETURNS:
+#     None
+#================================================================
+warning() {
+	local message=$1
+	printf "${WHITE}[${ENDCOLOR}${CYAN}$current_time${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}[${ENDCOLOR}${YELLOW}WARNING${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}$1${ENDCOLOR}\n"
+}
+
+#================================================================
+# FUNCTION: important_warning
+# DESCRIPTION:
+#     Prints important warning message using the provided parameter.
+# PARAMETERS:
+#     $1 - A message
+# RETURNS:
+#     None
+#================================================================
+important_warning() {
+	local message=$1
+	printf "${WHITE}[${ENDCOLOR}${CYAN}$current_time${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}[${ENDCOLOR}${BOLD_YELLOW}WARNING${ENDCOLOR}${WHITE}]${ENDCOLOR} ${BOLD_WHITE}$1${ENDCOLOR}\n"
+}
+
+#================================================================
+# FUNCTION: print_usage
+# DESCRIPTION:
+#     Prints error message using the provided parameter.
+# PARAMETERS:
+#     $1 - A message
+# RETURNS:
+#     None
+#================================================================
+error() {
+	local message=$1
+	printf "${WHITE}[${ENDCOLOR}${CYAN}$current_time${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}$1${ENDCOLOR}\n"
+}
+
+#================================================================
+# FUNCTION: print_usage
+# DESCRIPTION:
+#     Prints important error message using the provided parameter.
+# PARAMETERS:
+#     $1 - A message
+# RETURNS:
+#     None
+#================================================================
+important_error() {
+	local message=$1
+	printf "${WHITE}[${ENDCOLOR}${CYAN}$current_time${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}[${ENDCOLOR}${BOLD_RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} ${BOLD_WHITE}$1${ENDCOLOR}\n"
+}
+
 ###############################################################
 # Help & Usage                                                # 
 ###############################################################
-
-# Default
+#================================================================
+# FUNCTION: usage
+# DESCRIPTION:
+#     Prints default usage information.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
-	echo "Usage: dirauto [dir / vhost / subdomain] [-u, --url] [--usage] [-h, --help] [-u, --url] [-x, --extensions] [-c, --status-codes] [-d, --dir] [-v, --vhost] [-s, --subdomain] [-t, --threads] [-w, --wordlist] [--check] [-i, --install]"
+	echo "Usage: dirauto [modes] [-u, --url] [options]"
 	echo " "
 }
 
+#================================================================
+# FUNCTION: help
+# DESCRIPTION:
+#     Prints default help information.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 help()
 {
 	usage
@@ -75,13 +217,31 @@ help()
 	exit 0
 }
 
+#================================================================
+# FUNCTION: dir_usage
+# DESCRIPTION:
+#     Prints directory usage information.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 dir_usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
-	echo "Usage: dirauto dir [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
+	echo "Usage: dirauto dir [-u, --url] [modes]"
 	echo " "
 }
 
+#================================================================
+# FUNCTION: dir_help
+# DESCRIPTION:
+#     Prints directory help information.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 dir_help() {
 	dir_usage
         echo "Directory mode help:"
@@ -98,13 +258,31 @@ dir_help() {
 	exit 0
 }
 
+#================================================================
+# FUNCTION: vhost_usage
+# DESCRIPTION:
+#     Prints virtual host usage information.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 vhost_usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
-	echo "Usage: dirauto vhost [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
+	echo "Usage: dirauto vhost [-u, --url] [modes]"
 	echo " "
 }
 
+#================================================================
+# FUNCTION: vhost_help
+# DESCRIPTION:
+#     Prints virtual host help information.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 vhost_help() {
 	vhost_usage
         echo "Virtual host mode help:"
@@ -121,16 +299,34 @@ vhost_help() {
 	exit 0
 }
 
-subdomain_usage() {
+#================================================================
+# FUNCTION: dns_usage
+# DESCRIPTION:
+#     Prints DNS / subdomain usage information.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
+dns_usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
-	echo "Usage: dirauto subdomain [-u, --url] [--usage] [-h, --help] [-x, --extensions] [-c, --status-codes] [-t, --threads] [-w, --wordlist]"
+	echo "Usage: dirauto subdomain [-u, --url] [modes]"
 	echo " "
 }
 
-subdomain_help() { 
-	subdomain_usage
-        echo "Subdomain mode help:"
+#================================================================
+# FUNCTION: dns_help
+# DESCRIPTION:
+#     Prints DNS / subdomain help information.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
+dns_help() { 
+	dns_usage
+        echo "DNS mode help:"
        	printf "  ${BOLD}--usage${ENDCOLOR}			Show usage information\n"
         printf "  ${BOLD}-h, --help${ENDCOLOR}			Show help information\n"
         printf "  ${BOLD}-u, --url${ENDCOLOR}			Specify target URL\n"
@@ -150,46 +346,55 @@ subdomain_help() {
 # ---------------------------------------------------------------------------
 # Repositories Check
 # ---------------------------------------------------------------------------
+#================================================================
+# FUNCTION: check
+# DESCRIPTION:
+#     Checks third-party programs are located in /usr/bin directory.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 check() {
 	if ! [-f /usr/bin/gobuster ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Gobuster is not located in /usr/bin. Install Gobuster.\n"
+		error "Gobuster is not located in /usr/bin. Install Gobuster."
 		exit 1
 	fi 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Gobuster installed.\n"
+	info "Gobuster installed."
 
 	if ! [-f /usr/bin/ffuf ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} FFuF is not located in /usr/bin. Install FFuF.\n"
+		error "FFuF is not located in /usr/bin. Install FFuF."
 		exit 1
 	fi 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} FFuF installed.\n"
-	
+	info "FFuF installed."
+
 	if ! [-f /usr/bin/feroxbuster ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} FeroxBuster is not located in /usr/bin. Install FeroxBuster.\n"
+		error "FeroxBuster is not located in /usr/bin. Install FeroxBuster."
 		exit 1
 	fi 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Feroxbuster installed.\n"
+	info "Feroxbuster installed."
 
 	if ! [-f /usr/bin/dirsearch ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Dirsearch is not located in /usr/bin. Install Dirsearch.\n"
+		error "Dirsearch is not located in /usr/bin. Install Dirsearch."
 		exit 1
 	fi 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Dirsearch installed\n"
+	info "Dirsearch installed."
 
 	if ! [-f /usr/bin/dirb ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Dirb is not located in /usr/bin. Install Dirb.\n"
+		error "Dirb is not located in /usr/bin. Install Dirb,"
 		exit 1
 	fi 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Dirb installed\n"
-	
+	info "Dirb installed."
+
 	if ! [ -d /usr/share/seclists ] || [ -d /usr/share/wordlist/seclists ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists is not located in /usr/share directory. Install Seclists.\n"
+		error "Seclists is not located in /usr/share directory. Install Seclists."
 		exit 1
 	fi 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists installed\n"
+	info "Seclists installed."
 
 	echo " "
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} All of the programs are installed for usage. You are ready to enumerate!\n"
+	success "All of the programs are installed for usage. You are ready to enumerate!"
 
 	exit 1
 }
@@ -197,6 +402,15 @@ check() {
 ###############################################################
 # Printing output options...                                  #
 ###############################################################
+#================================================================
+# FUNCTION: search_wordlist
+# DESCRIPTION:
+#     Search the name of wordlist through /usr/share/seclists directory.
+# PARAMETERS:
+#     $1 - Specified wordlist
+# RETURNS:
+#     None
+#================================================================
 search_wordlist() {
 	local wordlist_name="$1"
 
@@ -210,12 +424,21 @@ search_wordlist() {
 	fi
 }
 
+#================================================================
+# FUNCTION: input_check
+# DESCRIPTION:
+#     Checks global variables that are specified before scan
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 input_check() {
 	# ---------------------------------------------------------------------------
 	# Target URL
 	# ---------------------------------------------------------------------------
 	if [ -z "$URL" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Missing URL address. Please specify the URL using the -u or --url option."
+		error "Missing URL address. Please specify the URL using the -u or --url option."
 		exit 1
 	fi
 
@@ -224,17 +447,17 @@ input_check() {
 	# ---------------------------------------------------------------------------
 	if [[ -n "$WORDLIST" ]]; then
 		if ! [ -d /usr/share/seclists ] || [ -d /usr/share/wordlist/seclists ]; then
-			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Seclists is not located in /usr/share directory. Install Seclists.\n"
+			error "Seclists is not located in /usr/share directory. Install Seclists."
 			exit 1
 		fi 
 
 		wordlist_path=$(search_wordlist "$WORDLIST")	
 		if [ -z "$wordlist_path" ]; then
-			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Wordlist not found\n"
+			error "Wordlist not found"
 			exit 1
 		fi
 
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Using wordlist: $wordlist_path\n"
+		info "Using wordlist: $wordlist_path"
 
 		exit 1
 	fi
@@ -244,7 +467,7 @@ input_check() {
 	# ---------------------------------------------------------------------------
 	if [[ -n "$EXTENSIONS" ]]; then
 		if ! [[ $EXTENSIONS =~ ^[a-zA-Z0-9.,]+$ ]]; then
-			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Status Codes must not contain any special characters'"
+			error "Status codes must not contain any special characters"
 			exit 1
 		fi	
 	fi
@@ -254,7 +477,7 @@ input_check() {
 	# ---------------------------------------------------------------------------
 	if [[ -n "$STATUS_CODES" ]]; then
 		if ! [[ $STATUS_CODES =~ ^[0-9]+$ ]]; then
-			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Status Codes must contain only integer and the following ','"
+			error "Status codes must contain only integer and the following charater ',' for separation"
 			exit 1
 		fi	
 	fi
@@ -264,7 +487,7 @@ input_check() {
 	# ---------------------------------------------------------------------------
 	if [[ -n "$EXECUTION_RATE" ]]; then
 		if ! [[ $EXECUTION_RATE =~ ^[0-9]+$ ]]; then
-			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Execution Rate must only accept integers"
+			error "Execution rate must only accept integers"
 			exit 1
 		fi	
 	fi
@@ -274,32 +497,32 @@ input_check() {
 	# ---------------------------------------------------------------------------
 	if [[ -n "$THREADS" ]]; then
 		if ! [[ $THREADS =~ ^[0-9]+$ ]]; then
-			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Threads must contain only integers"
+			error "Threads must contain only integers"
 			exit 1
 		fi	
 	fi
 
 	echo " "
-	printf "${YELLOW}Target:${ENDCOLOR} ${WHITE}$URL${ENDCOLOR}\n"
+	important_info "Target: $URL"
 
 	if [[ -n "$EXTENSIONS" ]]; then
-		printf "${YELLOW}Extensions:${ENDCOLOR} $EXTENSIONS\n"
+		info "Extensions: $EXTENSIONS"
 	fi
 
 	if [[ -n "$THREADS" ]]; then
-		printf "${YELLOW}Threads:${ENDCOLOR} $THREADS\n"
+		info "Threads: $THREADS"
 	fi
 
 	if [[ -n "$STATUS_CODES" ]]; then
-		printf "${YELLOW}Status Codes:${ENDCOLOR} $STATUS_CODES\n"
+		info "Status Codes: $STATUS_CODES"
 	fi
 
 	if [[ -n "$EXECUTION_RATE" ]]; then
-		printf "${YELLOW}Execution Rate:${ENDCOLOR} $EXECUTION_RATE\n"
+		info "Execution Rate: $EXECUTION_RATE"
 	fi
 
 	if [[ -n "$WORDLIST" ]]; then
-		printf "${YELLOW}Wordlist:${ENDCOLOR} $WORDLIST\n"
+		info "Wordlist: $WORDLIST"
 	fi
 
 	# exit 0
@@ -308,23 +531,31 @@ input_check() {
 ###############################################################
 # Directory Enumeration Selection Option                      #
 ###############################################################
-automatic_dir_scan() {
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Automatic Directory Enumeration Scan Enabled..${ENDCOLOR}\n"
+#================================================================
+# FUNCTION: auto_dir_scan
+# DESCRIPTION:
+#     Performs automatic directory scan on target URL.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
+auto_dir_scan() {
+	info "Automatic Directory Enumeration Scan Enabled.."
 
 	mkdir -p Dirauto/dir/Auto/Gobuster
 	mkdir -p Dirauto/dir/Auto/Feroxbuster
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Started Automatic Directory Enumeration Scan \n"
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Gobuster...\n"
+	info "Started Automatic Directory Enumeration Scan"
+	info "Initializing Gobuster..."
 
 	common_path=$(search_wordlist "common.txt")
 	if [ -z "$common_path" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} common.txt wordlist not found\n"
+		error "common.txt wordlist not found"
 	else
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found common.txt wordlist\n"
+		info "Found common.txt wordlist"
 		gobuster dir -u $URL -w $common_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/common.txt
 	fi
-
 
 	#big_path=$(search_wordlist "big.txt")
 	#if [ -z "$big_path" ]; then
@@ -354,32 +585,41 @@ automatic_dir_scan() {
 
 	raft_medium_directories_path=$(search_wordlist "raft-medium-directories.txt")
 	if [ -z "$raft_medium_directories_path" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} raft-medium-directories.txt wordlist not found\n"
+		error "raft-medium-directories.txt wordlist not found"
 	else 
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found raft-medium-directories.txt wordlist\n"
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Feroxbuster...\n"
+		info "Found raft-medium-directories.txt wordlist"
+		info "Initializing Feroxbuster..."
 		feroxbuster -u $URL --output $(pwd)/Dirauto/dir/Auto/Feroxbuster/feroxbuster.txt
 	fi
 
 	echo " "
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Completed Automatic Directory Enumeration Scan \n"
+	info "Completed Automatic Directory Enumeration Scan"
 }
 
-automatic_vhost_scan() {
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Automatic Virtual Host Enumeration Scan Enabled..${ENDCOLOR}\n"
+#================================================================
+# FUNCTION: auto_vhost_scan
+# DESCRIPTION:
+#     Performs automatic vhost scan on target URL.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
+auto_vhost_scan() {
+	info "Automatic Virtual Host Enumeration Scan Enabled.."
 
 	mkdir -p Dirauto/vhost/Auto/Gobuster
 	mkdir -p Dirauto/vhost/Auto/FFuF
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Started Automatic Virtual Host Enumeration Scan \n"
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing Gobuster...\n"
+	info "Started Automatic Virtual Host Enumeration Scan"
+	info "Initializing Gobuster..."
 
 	subdomains_5000_path=$(search_wordlist "subdomains-top1million-5000.txt")
 	if [ -z "$subdomains_5000_path" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} subdomains-top1million-5000.txt wordlist not found\n"
+		error "subdomains-top1million-5000.txt wordlist not found"
 	else
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found subdomains-top1million-5000.txt wordlist\n"
+		info "Found subdomains-top1million-5000.txt wordlist"
 
 		gobuster_command="gobuster vhost -u $URL -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt"
 		if [ -n "$EXCLUDE_CONTENT_LENGTH" ]; then
@@ -406,13 +646,68 @@ automatic_vhost_scan() {
 
 	echo " "
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Completed Automatic Virtual Host Enumeration Scan \n"
+	info "Completed Automatic Virtual Host Enumeration Scan"
 
+}
+
+#================================================================
+# FUNCTION: auto_dns_scan
+# DESCRIPTION:
+#     Performs DNS scan on target host.
+# PARAMETERS:
+#     $1 - A message
+# RETURNS:
+#     None
+#================================================================
+auto_dns_scan() {
+	info "Automatic DNS Enumeration Scan Enabled.."
+
+	mkdir -p Dirauto/dns/Auto/dig
+	mkdir -p Dirauto/dns/Auto/Gobuster
+
+	info "Started Automatic DNS Enumeration Scan"
+	info "Gathering DNS information from DNS server..."
+
+	if [ -z "$DOMAIN_NAME" ]; then
+		error "Domain name is required to gather DNS information"
+	else
+		dig_command="dig axfr $DOMAIN_NAME @$URL | tee $(pwd)/Dirauto/dns/Auto/dig/dig.txt"	
+		echo "$dig_command"
+		eval "$dig_command"
+
+		echo " "
+	fi	
+
+	info "Initializing Gobuster..."
+	subdomains_path=$(search_wordlist "subdomains-top1million-20000.txt")
+	if [ -z "$subdomains_path" ]; then
+		error "subdomains-top1million-5000.txt wordlist not found"
+	else
+		info "Found subdomains-top1million-5000.txt wordlist"
+
+		# gobuster_command="gobuster dns -d $DOMAIN_NAME -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt -o $(pwd)/Dirauto/dns/Auto/Gobuster/subdomains-top1million-20000.txt"
+		gobuster_command="gobuster vhost -u http://$DOMAIN_NAME --append-domain -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -o $(pwd)/Dirauto/dns/Auto/Gobuster/subdomains-top1million-5000.txt"
+
+		echo "$gobuster_command"
+		eval "$gobuster_command"
+	fi
 }
 
 ###############################################################
 # Enumeration Programs                                        #
 ###############################################################
+#================================================================
+# FUNCTION: run_gobuster
+# DESCRIPTION:
+#     Performs selected enumeration scan using GoBuster.
+# PARAMETERS:
+#     $1 - Specified option scan
+#     $2 - Specified extension
+#     $3 - Specified response codes
+#     $4 - Specified execution rate
+# RETURNS:
+#     None
+#================================================================
 run_gobuster() {
 	local OPTION="$1"
 
@@ -466,7 +761,7 @@ run_gobuster() {
 		done
 	fi
 
-	if [ "$OPTION" == "subdomain" ]; then
+	if [ "$OPTION" == "dns" ]; then
 		local url="$2"
 		local execution_rate="$6"
 	
@@ -489,6 +784,19 @@ run_gobuster() {
 	fi
 }
 
+#================================================================
+# FUNCTION: run_FFuF
+# DESCRIPTION:
+#     Performs selected enumeration scan using FFuF.
+# PARAMETERS:
+#     $1 - Specified option scan
+#     $2 - Specified target URL
+#     $3 - Specified extension 
+#     $4 - Specified resposne codes
+#     $5 - Specified execution rate
+# RETURNS:
+#     None
+#================================================================
 run_FFuF() {
 	local OPTION="$1"
 
@@ -545,7 +853,7 @@ run_FFuF() {
 		done
 	fi
 
-	if [ "$OPTION" == "subdomain" ]; then
+	if [ "$OPTION" == "dns" ]; then
 		local url="$2"
 		local execution_rate="$6"
 
@@ -568,6 +876,19 @@ run_FFuF() {
 	fi
 }
 
+#================================================================
+# FUNCTION: run_dirsearch
+# DESCRIPTION:
+#     Performs selected enumeration scan using DirSearch.
+# PARAMETERS:
+#     $1 - Specified option scan
+#     $2 - Specified target URL
+#     $3 - Specified extension
+#     $4 - Specified response codes
+#     $5 - Specified execution rate
+# RETURNS:
+#     None
+#================================================================
 run_dirsearch() {
 	local OPTION="$1"
 
@@ -604,11 +925,24 @@ run_dirsearch() {
 	fi 
 
 	if [ -z "$OPTION" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+		error "Option mode has not been selected"
 	fi
 	
 }
 
+#================================================================
+# FUNCTION: run_feroxbuster
+# DESCRIPTION:
+#     Performs selected enumeration scan using FeroxBuster.
+# PARAMETERS:
+#     $1 - Specified option scan
+#     $2 - Specified target URL
+#     $3 - Specified extension
+#     $4 - Specified response codes  
+#     $5 - Specified execution rate
+# RETURNS:
+#     None
+#================================================================
 run_feroxbuster() {
 	local OPTION="$1"
 
@@ -639,10 +973,21 @@ run_feroxbuster() {
 	fi 
 
 	if [ -z "$OPTION" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+		error "Option mode has not been selected"
 	fi
 }
 
+#================================================================
+# FUNCTION: info
+# DESCRIPTION:
+#     Performs selected enumeration scan using FeroxBuster.
+# PARAMETERS:
+#     $1 - Specified option scan
+#     $2 - Specified target URL
+#     $3 - Specified extension
+# RETURNS:
+#     None
+#================================================================
 run_dirb() {
 	local OPTION="$1"
 
@@ -665,7 +1010,7 @@ run_dirb() {
 	fi 
 
 	if [ -z "$OPTION" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+		error "Option mode has not been selected"
 	fi
 }
 
@@ -675,6 +1020,15 @@ run_dirb() {
 # ---------------------------------------------------------------------------
 # Directory Mode
 # ---------------------------------------------------------------------------
+#================================================================
+# FUNCTION: dir_mode
+# DESCRIPTION:
+#     Processes parameters in directory mode.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 dir_mode() {
 	while [[ "$#" -gt 0 ]]; do
 		case $1 in
@@ -691,7 +1045,7 @@ dir_mode() {
 			-t|--threads) $THREADS="$2"; shift ;;
 			-w|--wordlist) $WORDLIST="$2"; shift ;;
 			--auto) AUTO=true; shift ;; 
-			*) printf "${WHITE}[${ENDCOLOR}${RED}Error${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown Parameter Passed: $1"; exit 1 ;;
+			*) error "Unknown Paramter Passed: $1"; exist 1 ;;
 		esac
 		shift
 	done
@@ -700,7 +1054,7 @@ dir_mode() {
 
 	OPTION="dir"
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized Directory Mode${ENDCOLOR}\n"
+	info "Initialized Directory Mode"
 
 	if [ "$AUTO" == "true" ]; then
 		automatic_dir_scan
@@ -733,11 +1087,11 @@ dir_mode() {
 	fi
 
 	if ! [ "$SCANNED" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}You have not selected an enumeration program to perform directory scan${ENDCOLOR}\n"
+		error "You have not selected an enumeration program to perform directory scan."
 		exit 1
 	fi
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed Directory Mode${ENDCOLOR}"
+	info "Completed Directory Mode"
 
 	exit 0
 }
@@ -745,36 +1099,45 @@ dir_mode() {
 # ---------------------------------------------------------------------------
 # Subdomain Mode
 # ---------------------------------------------------------------------------
-subdomain_mode() {
+#================================================================
+# FUNCTION: dns_mode
+# DESCRIPTION:
+#     Processes parameters in DNS / Subdomain mode.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
+dns_mode() {
 	while [[ "$#" -gt 0 ]]; do
 		case $1 in
-			-h|--help) subdomain_help ;;
-			--usage) subdomain_usage ;;
-			-u|--url) $URL="$2"; shift ;;
-			gb) $GOBUSTER=true; shift ;; # GoBuster
-			ff) $FFUF=true; shift ;; # FFuF
-			fb) $FEROXBUSTER=true; shift ;; # FeroxBuster
-			ds) $DIRSEARCH=true; shift ;; # Dirsearch
-			db) $DIRB=true; shift ;; # Dirb
+			-h|--help) dns_help ;;
+			--usage) dns_usage ;;
+			-u|--url) URL="$2"; shift ;;
+			gb) $GOBUSTER=true; shift ;;
+			ff) $FFUF=true; shift ;;
+			fb) $FEROXBUSTER=true; shift ;;
+			ds) $DIRSEARCH=true; shift ;;
+			db) $DIRB=true; shift ;;
 			-x|--extensions) $EXTENSIONS="$2"; shift ;;
 			-c|--status-codes) $STATUS_CODES="$2"; shift ;;
 			-t|--threads) $THREADS="$2"; shift ;;
 			-w|--wordlist) $WORDLIST="$2"; shift ;;
-			--auto) $AUTO=true ;; 
-			-H) ;;
-			*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
+			--auto) AUTO=true ;; 
+			-d|--domain)DOMAIN_NAME="$2"; shift ;;
+			*) error "Unknown Parameter Passed: $1"; exit 1 ;;
 		esac
 		shift
 	done
 
 	input_check
 
-	OPTION="subdomain"
+	OPTION="dns"
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized Subdomain Mode${ENDCOLOR}\n"
+	info "Initialized DNS Mode"
 
 	if [ "$AUTO" == "true" ]; then
-		automatic_dir_scan
+		automatic_dns_scan
 	fi
 
 	if [ "$GOBUSTER" == "true" ]; then
@@ -797,14 +1160,23 @@ subdomain_mode() {
 		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
 	fi
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed Subdomain Mode${ENDCOLOR}"
+	info "Completed Subdomain Mode"
 
-	exit 1
+	exit 0
 }
 
 # ---------------------------------------------------------------------------
 # Virtual Host Mode
 # ---------------------------------------------------------------------------
+#================================================================
+# FUNCTION: vhost_mode
+# DESCRIPTION:
+#     Processes parameters in virtual host mode.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
 vhost_mode() {
 	while [[ "$#" -gt 0 ]]; do
 		case $1 in
@@ -823,7 +1195,7 @@ vhost_mode() {
 			--auto) AUTO=true ;; 
 			-H) HOST="$2"; shift ;;
 			-fs) EXCLUDE_CONTENT_LENGTH="$2"; shift ;;
-			*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
+			*) error "Unknown parameter passed: $1"; exit 1 ;;
 		esac
 		shift
 	done
@@ -832,11 +1204,11 @@ vhost_mode() {
 
 	OPTION="vhost"
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Initialized VHost Mode${ENDCOLOR}\n"
+	info "Initialized VHost Mode"
 
 	if [ "$AUTO" == "true" ]; then
 		if [ -z "$HOST" ]; then
-			printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Host name empty\n"
+			error "Host name empty"
 			exit 1
 		fi 		
 
@@ -863,7 +1235,7 @@ vhost_mode() {
 		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
 	fi
 
-	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} ${WHITE}Completed VHost Mode${ENDCOLOR}"
+	info "Completed VHost Mode"
 
 	exit 1
 }
@@ -896,6 +1268,9 @@ SCANNED=false
 HOST=""
 EXCLUDE_CONTENT_LENGTH=""
 
+# DNS Arguments
+DOMAIN_name=""
+
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
 		-h|--help) help ;;
@@ -905,12 +1280,11 @@ while [[ "$#" -gt 0 ]]; do
 		-c|--status-codes) STATUS_CODES="$2"; shift ;;
 		dir) shift; dir_mode "$@"; break ;;
 		vhost) shift; vhost_mode "$@"; break ;;
-		subdomain) shift; subdomain_mode "$@"; break ;;
+		dns) shift; dns_mode "$@"; break ;;
 		-t|--threads) THREADS="$2"; shift ;;
 		-w|--wordlist) WORDLIST="$2"; shift ;;
 		--check) check ;;
-		-i|--install) installation ;; 
-		*) printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Unknown parameter passed: $1"; exit 1 ;;
+		*) error "Unknown parameter passed: $1"; exit 1 ;;
 	esac
 	shift
 done
