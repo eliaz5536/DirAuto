@@ -27,6 +27,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #================================================================
 
+# Capture the current time
+current_time=$(date +"%T")
+
 ###############################################################
 # ANSI Color Code Escape Sequences			      #
 ###############################################################
@@ -47,6 +50,42 @@ LIGHT_MAGENTA="\e[95m"
 LIGHT_CYAN="\e[96m"
 WHITE="\e[97m"
 ENDCOLOR="\e[0m"
+
+# Bold 
+BOLD_BLACK="\e[1;30m"
+BOLD_RED="\e[1;31m"
+BOLD_GREEN="\e[1;32m"
+BOLD_YELLOW="\e[1;33m"
+BOLD_BLUE="\e[1;34m"
+BOLD_MAGENTA="\e[1;35m"
+BOLD_CYAN="\e[1;36m"
+BOLD_LIGHT_GRAY="\e[1;37m"
+BOLD_GRAY="\e[1;90m"
+BOLD_LIGHT_RED="\e[1;91m"
+BOLD_LIGHT_GREEN="\e[1;92m"
+BOLD_LIGHT_YELLOW="\e[1;93m"
+BOLD_LIGHT_BLUE="\e[1;94m"
+BOLD_LIGHT_MAGENTA="\e[1;95m"
+BOLD_LIGHT_CYAN="\e[1;96m"
+BOLD_WHITE="\e[1;97m"
+
+# Italic
+ITALIC_BLACK="\e[3;30m"
+ITALIC_RED="\e[3;31m"
+ITALIC_GREEN="\e[3;32m"
+ITALIC_YELLOW="\e[3;33m"
+ITALIC_BLUE="\e[3;34m"
+ITALIC_MAGENTA="\e[3;35m"
+ITALIC_CYAN="\e[3;36m"
+ITALIC_LIGHT_GRAY="\e[3;37m"
+ITALIC_GRAY="\e[3;90m"
+ITALIC_LIGHT_RED="\e[3;91m"
+ITALIC_LIGHT_GREEN="\e[3;92m"
+ITALIC_LIGHT_YELLOW="\e[3;93m"
+ITALIC_LIGHT_BLUE="\e[3;94m"
+ITALIC_LIGHT_MAGENTA="\e[3;95m"
+ITALIC_LIGHT_CYAN="\e[3;96m"
+ITALIC_WHITE="\e[3;97m"
 
 # Background Color
 BLACK_BG="\e[40m"
@@ -394,7 +433,7 @@ check() {
 
 	echo " "
 
-	success "All of the programs are installed for usage. You are ready to enumerate!"
+	success "All of the programs are installed in your system. You are ready to enumerate!"
 
 	exit 1
 }
@@ -443,22 +482,46 @@ input_check() {
 	fi
 
 	# ---------------------------------------------------------------------------
+	# PROGRAMS
+	# ---------------------------------------------------------------------------
+	if [ -z "$PROGRAMS" ]; then
+		error "Enumeration program not selected."	
+		exit 1
+	fi
+
+	match_found=0
+	enumeration_programs=("gobuster" "ffuf" "feroxbuster" "dirsearch" "dirb")
+	IFS="," read -r -a ENUMERATION_PROGRAMS <<< "$PROGRAMS"
+	for program in ${ENUMERATION_PROGRAMS[@]}; do
+		info "Enumeration Program selected: $program"
+		match_found=1
+	done
+	if [[ $match_found -eq 0 ]]; then
+		error "The program you specified does not match with any other enumeration programs listed from this script."
+		exit 1
+	fi
+
+	# ---------------------------------------------------------------------------
 	# WORDLIST
 	# ---------------------------------------------------------------------------
-	if [[ -n "$WORDLIST" ]]; then
+	if [[ -n "$WORDLISTS" ]]; then
 		if ! [ -d /usr/share/seclists ] || [ -d /usr/share/wordlist/seclists ]; then
 			error "Seclists is not located in /usr/share directory. Install Seclists."
 			exit 1
 		fi 
 
-		wordlist_path=$(search_wordlist "$WORDLIST")	
-		if [ -z "$wordlist_path" ]; then
-			error "Wordlist not found"
-			exit 1
-		fi
-
-		info "Using wordlist: $wordlist_path"
-
+		# Loop through each wordlist from here before initializing
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
+		for wordlist in ${FILES[@]}; do
+			wordlist_path=$(search_wordlist "$wordlist")	
+			if [ -z "$wordlist_path" ]; then
+				error "Wordlist not found."
+				exit 1
+			fi
+			info "Found selected wordlist: $wordlist_path"
+		done
+	else 
+		error "Wordlist has not been selected."
 		exit 1
 	fi
 
@@ -521,7 +584,7 @@ input_check() {
 		info "Execution Rate: $EXECUTION_RATE"
 	fi
 
-	if [[ -n "$WORDLIST" ]]; then
+	if [[ -n "$WORDLISTS" ]]; then
 		info "Wordlist: $WORDLIST"
 	fi
 
@@ -556,30 +619,6 @@ auto_dir_scan() {
 		info "Found common.txt wordlist"
 		gobuster dir -u $URL -w $common_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/common.txt
 	fi
-
-	#big_path=$(search_wordlist "big.txt")
-	#if [ -z "$big_path" ]; then
-	#	printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} big.txt wordlist not found\n"
-	#else 
-	#	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found big.txt wordlist\n"
-	#	gobuster dir -u $URL -w $big_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/big.txt
-	#fi
-
-	#directory_list_small_path=$(search_wordlist "directory-list-2.3-small.txt")
-	#if [ -z "$directory_list_small_path" ]; then
-	#	printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-small.txt wordlist not found\n"
-	#else
-	#	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-small.txt wordlist\n"
-	#	gobuster dir -u $URL -w $directory_list_small_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/dir_small.txt
-	#fi
-
-	#directory_list_medium_path=$(search_wordlist "directory-list-2.3-medium.txt")
-	#if [ -z "$directory_list_medium_path" ]; then
-	#	printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} directory-list-2.3-medium.txt wordlist not found\n"
-	#else 
-	#	printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Found directory-list-2.3-medium.txt wordlist\n"
-	#	gobuster dir -u $URL -w $directory_list_medium_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/dir_medium.txt
-	#fi
 
 	echo " "
 
@@ -713,13 +752,14 @@ run_gobuster() {
 
 	if [ "$OPTION" == "dir" ]; then
 		local url="$2"
-		local extension="$4"
-		local response_codes="$5"
-		local execution_rate="$6"
+		local extension="$3"
+		local response_codes="$4"
+		local execution_rate="$5"
 
-		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
-			command="gobuster dir -u $url -w $wordlist -o $(pwd)/Dirauto/dir/Gobuster/$wordlist.txt"
+			wordlist_path=$(search_wordlist "$wordlist")	
+			command="gobuster dir -u $url -w $wordlist_path -o $(pwd)/Dirauto/dir/Gobuster/$wordlist.txt"
 
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -745,10 +785,11 @@ run_gobuster() {
 
 	if [ "$OPTION" == "vhost" ]; then
 		local url="$2"
-		local execution_rate="$6"
+		local execution_rate="$5"
 
-		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
+			wordlist_path=$(search_wordlist "$wordlist")	
 			command="gobuster vhost -u $url -w $wordlist -o $(pwd)/Dirauto/vhost/Gobuster/$wordlist.txt"
 
 			if [ -n "$execution_rate" ]; then
@@ -763,10 +804,11 @@ run_gobuster() {
 
 	if [ "$OPTION" == "dns" ]; then
 		local url="$2"
-		local execution_rate="$6"
+		local execution_rate="$5"
 	
-		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
+			wordlist_path=$(search_wordlist "$wordlist")	
 			command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/Dirauto/subdomain/Gobuster/$wordlist.txt"
 
 			if [ -n "$execution_rate" ]; then
@@ -780,7 +822,7 @@ run_gobuster() {
 	fi 
 
 	if [ -z "$OPTION" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+		error "Opetion mode has not been selected"
 	fi
 }
 
@@ -802,12 +844,13 @@ run_FFuF() {
 
 	if [ "$OPTION" == "dir" ]; then
 		local url="$2"
-		local extension="$4"
-		local response_codes="$5"
-		local execution_rate="$6"
+		local extension="$3"
+		local response_codes="$4"
+		local execution_rate="$5"
 		
-		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
+			wordlist_path=$(search_wordlist "$wordlist")	
 			command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/Dirauto/dir/FFuF/$wordlist.txt"
 			
 			if [ -n "$extension" ]; then
@@ -834,13 +877,14 @@ run_FFuF() {
 	
 	if [ "$OPTION" == "vhost" ]; then
 		local url="$2"
-		local execution_rate="$6"
+		local execution_rate="$5"
 
 		echo "Enter the name of the header for FUZZING (Example: \"Host: FUZZ.ffuf.com \"): "	
 		read headerInput
 
-		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
+			wordlist_path=$(search_wordlist "$wordlist")	
 			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/Dirauto/vhost/FFuF/$wordlist.txt"
 
 			if [ -n "$execution_rate" ]; then
@@ -855,10 +899,11 @@ run_FFuF() {
 
 	if [ "$OPTION" == "dns" ]; then
 		local url="$2"
-		local execution_rate="$6"
+		local execution_rate="$5"
 
-		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
+			wordlist_path=$(search_wordlist "$wordlist")	
 			command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/Dirauto/subdomain/FFuF/$wordlist.txt"
 		
 			if [ -n "$execution_rate" ]; then
@@ -872,7 +917,7 @@ run_FFuF() {
 	fi 
 
 	if [ -z "$OPTION" ]; then
-		printf "${WHITE}[${ENDCOLOR}${RED}ERROR${ENDCOLOR}${WHITE}]${ENDCOLOR} Option mode has not been selected\n"
+		error "Option mode has not been selected"
 	fi
 }
 
@@ -894,12 +939,13 @@ run_dirsearch() {
 
 	if [ "$OPTION" == "dir" ]; then
 		local url="$2"
-		local extension="$4"
-		local response_codes="$5"
-		local execution_rate="$6"
+		local extension="$3"
+		local response_codes="$4"
+		local execution_rate="$5"
 
-		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
+			wordlist_path=$(search_wordlist "$wordlist")	
 			command="dirsearch -u $url -o $(pwd)/Dirauto/dir/Dirsearch/$wordlist.txt"
 
 			if [ -n "$extension" ]; then
@@ -952,8 +998,9 @@ run_feroxbuster() {
 		local response_codes="$5"
 		local execution_rate="$6"
 		
-		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
+			wordlist_path=$(search_wordlist "$wordlist")	
 			command="feroxbuster --url $url --wordlist $(pwd)/Dirauto/dir/Feroxbuster/$wordlist"	
 
 			if [ -n "$extension" ]; then
@@ -995,8 +1042,9 @@ run_dirb() {
 		local url="$2"
 		local extension="$4"
 
-		IFS=";" read -r -a FILES <<< "$WORDLISTS"
+		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
+			wordlist_path=$(search_wordlist "$wordlist")	
 			command="dirb $url -o $(pwd)/Dirauto/dir/Dirb/$wordlist.txt"
 
 			if [ -n "$extension" ]; then
@@ -1035,15 +1083,11 @@ dir_mode() {
 			-h|--help) dir_help ;;
 			--usage) dir_usage ;;
 			-u|--url) URL="$2"; shift ;;
-			gb) $GOBUSTER=true; shift ;;
-			ff) $FFUF=true; shift ;;
-			fb) $FEROXBUSTER=true; shift ;;
-			ds) $DIRSEARCH=true; shift ;;
-			db) $DIRB=true; shift ;;
-			-x|--extensions) $EXTENSIONS="$2"; shift ;;
-			-c|--status-codes) $STATUS_CODES="$2"; shift ;;
-			-t|--threads) $THREADS="$2"; shift ;;
-			-w|--wordlist) $WORDLIST="$2"; shift ;;
+			-p|--programs) PROGRAMS="$2"; shift ;;
+			-x|--extensions) EXTENSIONS="$2"; shift ;;
+			-c|--status-codes) STATUS_CODES="$2"; shift ;;
+			-t|--threads) THREADS="$2"; shift ;;
+			-w|--wordlists) WORDLISTS="$2"; shift ;;
 			--auto) AUTO=true; shift ;; 
 			*) error "Unknown Paramter Passed: $1"; exist 1 ;;
 		esac
@@ -1056,42 +1100,9 @@ dir_mode() {
 
 	info "Initialized Directory Mode"
 
-	if [ "$AUTO" == "true" ]; then
-		automatic_dir_scan
-		SCANNED=="true"
-	fi
+	run_program
 
-	if [ "$GOBUSTER" == "true" ]; then
-		run_gobuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		SCANNED=="true"
-	fi
-
-	if [ "$FFUF" == "true" ]; then
-		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		SCANNED=="true"
-	fi
-
-	if [ "$DIRSEARCH" == "true" ]; then
-		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		SCANNED=="true"
-	fi
-
-	if [ "$FEROXBUSTER" == "true" ]; then
-		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		SCANNED=="true"
-	fi
-
-	if [ "$DIRB" == "true" ]; then
-		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-		SCANNED=="true"
-	fi
-
-	if ! [ "$SCANNED" ]; then
-		error "You have not selected an enumeration program to perform directory scan."
-		exit 1
-	fi
-
-	info "Completed Directory Mode"
+	success "Completed Directory Mode"
 
 	exit 0
 }
@@ -1114,15 +1125,11 @@ dns_mode() {
 			-h|--help) dns_help ;;
 			--usage) dns_usage ;;
 			-u|--url) URL="$2"; shift ;;
-			gb) $GOBUSTER=true; shift ;;
-			ff) $FFUF=true; shift ;;
-			fb) $FEROXBUSTER=true; shift ;;
-			ds) $DIRSEARCH=true; shift ;;
-			db) $DIRB=true; shift ;;
-			-x|--extensions) $EXTENSIONS="$2"; shift ;;
-			-c|--status-codes) $STATUS_CODES="$2"; shift ;;
-			-t|--threads) $THREADS="$2"; shift ;;
-			-w|--wordlist) $WORDLIST="$2"; shift ;;
+			-p|--programs) PROGRAMS="$2"; shift ;;
+			-x|--extensions) EXTENSIONS="$2"; shift ;;
+			-c|--status-codes) STATUS_CODES="$2"; shift ;;
+			-t|--threads) THREADS="$2"; shift ;;
+			-w|--wordlists) WORDLIST="$2"; shift ;;
 			--auto) AUTO=true ;; 
 			-d|--domain)DOMAIN_NAME="$2"; shift ;;
 			*) error "Unknown Parameter Passed: $1"; exit 1 ;;
@@ -1136,31 +1143,9 @@ dns_mode() {
 
 	info "Initialized DNS Mode"
 
-	if [ "$AUTO" == "true" ]; then
-		automatic_dns_scan
-	fi
+	run_program
 
-	if [ "$GOBUSTER" == "true" ]; then
-		run_gobuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [ "$FFUF" == "true" ]; then
-		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [ "$DIRSEARCH" == "true" ]; then
-		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [ "$FEROXBUSTER" == "true" ]; then
-		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [ "$DIRB" == "true" ]; then
-		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	info "Completed Subdomain Mode"
+	success "Completed Subdomain Mode"
 
 	exit 0
 }
@@ -1183,15 +1168,11 @@ vhost_mode() {
 			-h|--help) vhost_help ;;
 			--usage) vhost_usage ;;
 			-u|--url) URL="$2"; shift ;;
-			gb) $GOBUSTER=true; shift ;;
-			ff) $FFUF=true; shift ;;
-			fb) $FEROXBUSTER=true; shift ;;
-			ds) $DIRSEARCH=true; shift ;;
-			db) $DIRB=true; shift ;;
-			-x|--extensions) $EXTENSIONS="$2"; shift ;;
-			-c|--status-codes) $STATUS_CODES="$2"; shift ;;
-			-t|--threads) $THREADS="$2"; shift ;;
-			-w|--wordlist) $WORDLIST="$2"; shift ;;
+			-p|--programs) PROGRAMS="$2"; shift ;;
+			-x|--extensions) EXTENSIONS="$2"; shift ;;
+			-c|--status-codes) STATUS_CODES="$2"; shift ;;
+			-t|--threads) THREADS="$2"; shift ;;
+			-w|--wordlist) WORDLIST="$2"; shift ;;
 			--auto) AUTO=true ;; 
 			-H) HOST="$2"; shift ;;
 			-fs) EXCLUDE_CONTENT_LENGTH="$2"; shift ;;
@@ -1211,35 +1192,46 @@ vhost_mode() {
 			error "Host name empty"
 			exit 1
 		fi 		
-
-		automatic_vhost_scan
+		auto_vhost_scan
 	fi
 
-	if [ "$GOBUSTER" == "true" ]; then
-		run_gobuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [ "$FFUF" == "true" ]; then
-		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [ "$DIRSEARCH" == "true" ]; then
-		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [ "$FEROXBUSTER" == "true" ]; then
-		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [ "$DIRB" == "true" ]; then
-		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
+	run_program
 
 	info "Completed VHost Mode"
 
 	exit 1
 }
 
+#================================================================
+# FUNCTION: run_program
+# DESCRIPTION:
+#     Processes parameters in virtual host mode.
+# PARAMETERS:
+#     None
+# RETURNS:
+#     None
+#================================================================
+run_program() {
+	if [[ "$PROGRAMS" == "gobuster" ]]; then
+		run_gobuster "$OPTION" "$URL" "$WORDLISTS" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [[ "$PROGRAMS" == "ffuf" ]]; then
+		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [[ "$PROGRAMS" == "feroxbuster" ]]; then
+		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [[ "$PROGRAMS" == "dirsearch" ]]; then
+		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+
+	if [[ "$PROGRAMS" == "dirb" ]]; then
+		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
+	fi
+}
 
 ###############################################################
 # Arguments                                                   #
@@ -1252,17 +1244,13 @@ fi
 
 # Global Arguments
 URL=""
+PROGRAMS=""
 EXTENSIONS=""
 STATUS_CODES=""
 THREADS=""
 EXECUTION_RATE=""
 WORDLIST=""
-GOBUSTER=false
-FEROXBUSTER=false
-DIRSEARCH=false
-DIRB=false
 AUTO=false
-SCANNED=false
 
 # VHost Arguments
 HOST=""
@@ -1282,7 +1270,7 @@ while [[ "$#" -gt 0 ]]; do
 		vhost) shift; vhost_mode "$@"; break ;;
 		dns) shift; dns_mode "$@"; break ;;
 		-t|--threads) THREADS="$2"; shift ;;
-		-w|--wordlist) WORDLIST="$2"; shift ;;
+		-w|--wordlists) WORDLISTS="$2"; shift ;;
 		--check) check ;;
 		*) error "Unknown parameter passed: $1"; exit 1 ;;
 	esac
