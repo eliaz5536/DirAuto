@@ -585,10 +585,56 @@ input_check() {
 	fi
 
 	if [[ -n "$WORDLISTS" ]]; then
-		info "Wordlist: $WORDLIST"
+		info "Wordlist: $WORDLISTS"
 	fi
 
 	# exit 0
+}
+
+#================================================================
+# FUNCTION: directory_check
+# DESCRIPTION:
+#     Checks if a created directory path exists on the system for scan.
+# PARAMETERS:
+#     $1 - The directory path
+#     $2 - The name of the scan
+# RETURNS:
+#     None
+#================================================================
+directory_check() {
+	local path=$1
+	local scan=$2
+
+	if [[ -d $1 ]]; then
+		echo " "
+		info "Created $2 output directory of target live host under '$1'"
+	else
+		echo " "
+		warning "Failed to create $2 output directory of target live host under '$1'"
+	fi
+}
+
+#================================================================
+# FUNCTION: file_check
+# DESCRIPTION:
+#     Checks if a generated file exists on the system for scan.
+# PARAMETERS:
+#     $1 - The file path
+#     $2 - The name of the scan
+# RETURNS:
+#     None
+#================================================================
+file_check() {
+	local path=$1
+	local scan=$2
+
+	if [[ -e $1 ]]; then
+		echo " "
+		success "Generated output data for $2 of target live host under '$1'"
+	else
+		echo " "
+		warning "Failed to generate output data for $2 of target live host under '$1'"
+	fi
 }
 
 ###############################################################
@@ -606,8 +652,8 @@ input_check() {
 auto_dir_scan() {
 	info "Automatic Directory Enumeration Scan Enabled.."
 
-	mkdir -p Dirauto/dir/Auto/Gobuster
-	mkdir -p Dirauto/dir/Auto/Feroxbuster
+	mkdir -p Dirauto/dir/Gobuster
+	mkdir -p Dirauto/dir/Feroxbuster
 
 	info "Started Automatic Directory Enumeration Scan"
 	info "Initializing Gobuster..."
@@ -756,10 +802,16 @@ run_gobuster() {
 		local response_codes="$4"
 		local execution_rate="$5"
 
+		mkdir -p Dirauto/manual/dir/gobuster
+		directory_check "$(pwd)/Dirauto/manual/dir/gobuster" "manual GoBuster directory"
+
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
-			command="gobuster dir -u $url -w $wordlist_path -o $(pwd)/Dirauto/dir/Gobuster/$wordlist.txt"
+
+			touch "$(pwd)/Dirauto/manual/dir/gobuster/$wordlist"
+
+			command="gobuster dir -u $url -w $wordlist_path -o $(pwd)/Dirauto/manual/dir/gobuster/$wordlist"
 
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -780,6 +832,9 @@ run_gobuster() {
 			fi
 
 			eval "$command"
+			
+			file_check "$(pwd)/Dirauto/manual/dir/gobuster/$wordlist" "GoBuster directory scan"
+
 		done
 	fi
 
@@ -787,10 +842,16 @@ run_gobuster() {
 		local url="$2"
 		local execution_rate="$5"
 
+		mkdir -p Dirauto/manual/vhost/gobuster
+		directory_check "$(pwd)/Dirauto/manual/vhost/gobuster" "manual GoBuster vhost"
+
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
-			command="gobuster vhost -u $url -w $wordlist -o $(pwd)/Dirauto/vhost/Gobuster/$wordlist.txt"
+
+			touch "$(pwd)/Dirauto/manual/vhost/gobuster/$wordlist"
+
+			command="gobuster vhost -u $url -w $wordlist -o $(pwd)/Dirauto/vhost/Gobuster/$wordlist"
 
 			if [ -n "$execution_rate" ]; then
 				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
@@ -799,6 +860,8 @@ run_gobuster() {
 			fi
 
 			eval "$command"
+
+			file_check "$(pwd)/Dirauto/manual/vhost/gobuster/$wordlist" "GoBuster vhost scan"
 		done
 	fi
 
@@ -806,10 +869,16 @@ run_gobuster() {
 		local url="$2"
 		local execution_rate="$5"
 	
+		mkdir -p Dirauto/manual/dns/gobuster
+		directory_check "$(pwd)/Dirauto/manual/dns/gobuster" "manual GoBuster dns"
+
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
-			command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/Dirauto/subdomain/Gobuster/$wordlist.txt"
+
+			touch "$(pwd)/Dirauto/manual/dns/gobuster/$wordlist"
+
+			command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/Dirauto/manual/dns/gobuster/$wordlist"
 
 			if [ -n "$execution_rate" ]; then
 				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
@@ -818,11 +887,13 @@ run_gobuster() {
 			fi
 
 			eval "$command"
+
+			file_check "$(pwd)/Dirauto/manual/dns/gobuster/$wordlist" "GoBuster dns scan"
 		done
 	fi 
 
 	if [ -z "$OPTION" ]; then
-		error "Opetion mode has not been selected"
+		error "Option mode has not been selected"
 	fi
 }
 
@@ -847,11 +918,17 @@ run_FFuF() {
 		local extension="$3"
 		local response_codes="$4"
 		local execution_rate="$5"
-		
+
+		mkdir -p Dirauto/manual/dir/ffuf
+		directory_check "$(pwd)/Dirauto/manual/dir/ffuf" "manual FFuF directory"
+
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
-			command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/Dirauto/dir/FFuF/$wordlist.txt"
+			
+			touch "$(pwd)/Dirauto/manual/dir/ffuf/$wordlist"
+
+			command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/Dirauto/manual/dir/ffuf/$wordlist"
 			
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -872,6 +949,8 @@ run_FFuF() {
 			fi 
 			
 			eval "$command"
+
+			file_check "$(pwd)/Dirauto/manual/dir/ffuf/$wordlist" "FFuF directory scan"
 		done
 	fi
 	
@@ -882,10 +961,16 @@ run_FFuF() {
 		echo "Enter the name of the header for FUZZING (Example: \"Host: FUZZ.ffuf.com \"): "	
 		read headerInput
 
+		mkdir -p Dirauto/manual/vhost/ffuf
+		directory_check "$(pwd)/Dirauto/manual/vhost/ffuf" "manual FFuF vhost"
+
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
-			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/Dirauto/vhost/FFuF/$wordlist.txt"
+
+			touch "$(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"	
+
+			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"
 
 			if [ -n "$execution_rate" ]; then
 				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
@@ -894,6 +979,8 @@ run_FFuF() {
 			fi 
 
 			eval "$command"
+
+			file_check "$(pwd)/Dirauto/manual/vhost/ffuf/$wordlist" "FFuF vhost scan"
 		done
 	fi
 
@@ -901,10 +988,16 @@ run_FFuF() {
 		local url="$2"
 		local execution_rate="$5"
 
+		mkdir -p Dirauto/manual/dns/ffuf
+		directory_check "$(pwd)/Dirauto/manual/dns/ffuf" "manual FFuF dns"
+
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
-			command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/Dirauto/subdomain/FFuF/$wordlist.txt"
+	
+			touch "$(pwd)/Dirauto/manual/dns/ffuf/$wordlist"
+
+			command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/Dirauto/manual/dns/ffuf/$wordlist"
 		
 			if [ -n "$execution_rate" ]; then
 				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
@@ -913,6 +1006,8 @@ run_FFuF() {
 			fi 
 
 			eval "$command"
+
+			file_check "$(pwd)/Dirauto/manual/dns/ffuf/$wordlist" "FFuF dns scan"
 		done
 	fi 
 
@@ -943,10 +1038,16 @@ run_dirsearch() {
 		local response_codes="$4"
 		local execution_rate="$5"
 
+		mkdir -p Dirauto/manual/dir/dirsearch
+		directory_check "$(pwd)/Dirauto/manual/dir/dirsearch" "manual dirsearch directory"
+
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
-			command="dirsearch -u $url -o $(pwd)/Dirauto/dir/Dirsearch/$wordlist.txt"
+
+			touch "$(pwd)/Dirauto/manual/dir/dirsearch/$wordlist"	
+
+			command="dirsearch -u $url -o $(pwd)/Dirauto/manual/dir/dirsearch/$wordlist"
 
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -967,13 +1068,14 @@ run_dirsearch() {
 			fi 
 
 			eval "$command"
+
+			file_check "$(pwd)/Dirauto/manual/dir/dirsearch/$wordlist" "FFuF directory scan"
 		done
 	fi 
 
 	if [ -z "$OPTION" ]; then
 		error "Option mode has not been selected"
 	fi
-	
 }
 
 #================================================================
@@ -997,11 +1099,17 @@ run_feroxbuster() {
 		local extension="$4"
 		local response_codes="$5"
 		local execution_rate="$6"
-		
+
+		mkdir -p Dirauto/manual/dir/feroxbuster
+		directory_check "$(pwd)/Dirauto/manual/dir/feroxbuster" "manual feroxbuster directory"
+
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
-			command="feroxbuster --url $url --wordlist $(pwd)/Dirauto/dir/Feroxbuster/$wordlist"	
+
+			touch "$(pwd)/Dirauto/manual/dir/feroxbuster/$wordlist"
+				
+			command="feroxbuster --url $url --wordlist $(pwd)/Dirauto/manual/dir/feroxbuster/$wordlist"	
 
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -1016,6 +1124,8 @@ run_feroxbuster() {
 			fi 
 
 			eval "$command"
+
+			file_check "$(pwd)/Dirauto/manual/dir/feroxbuster/$wordlist" "FeroxBuster directory scan"
 		done
 	fi 
 
@@ -1038,6 +1148,9 @@ run_feroxbuster() {
 run_dirb() {
 	local OPTION="$1"
 
+	mkdir -p Dirauto/manual/dir/dirb
+	directory_check "$(pwd)/Dirauto/manual/dir/dirb" "manual dirb directory"
+
 	if [ "$OPTION" == "dir" ]; then
 		local url="$2"
 		local extension="$4"
@@ -1045,7 +1158,10 @@ run_dirb() {
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
-			command="dirb $url -o $(pwd)/Dirauto/dir/Dirb/$wordlist.txt"
+
+			touch "$(pwd)/Dirauto/manual/dir/dirb/$wordlist"
+
+			command="dirb $url -o $(pwd)/Dirauto/dir/manual/dirb/$wordlist"
 
 			if [ -n "$extension" ]; then
 				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
@@ -1054,6 +1170,8 @@ run_dirb() {
 			fi 
 
 			eval "$command"
+
+			file_check "$(pwd)/Dirauto/dir/manual/dirb/$wordlist" "Dirb directory scan"
 		done
 	fi 
 
