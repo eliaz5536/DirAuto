@@ -480,6 +480,7 @@ input_check() {
 		error "Missing URL address. Please specify the URL using the -u or --url option."
 		exit 1
 	fi
+	important_info "Target: $URL"
 
 	# ---------------------------------------------------------------------------
 	# PROGRAMS
@@ -500,6 +501,19 @@ input_check() {
 		error "The program you specified does not match with any other enumeration programs listed from this script."
 		exit 1
 	fi
+
+	# ---------------------------------------------------------------------------
+	# HOST (VHOST MODE)
+	# ---------------------------------------------------------------------------
+	if [[ -n "$HOST" ]]; then
+		if echo "$PROGRAMS" | grep -q "\bffuf\b"; then
+			if ! echo "$HOST" | grep -q "\bFUZZ\b"; then
+				error "Host string must contain the word 'FUZZ' in order to enumerate subdomains"
+				exit 1
+			fi	
+		fi
+	fi
+	info "Host (FFuF): $HOST"
 
 	# ---------------------------------------------------------------------------
 	# WORDLIST
@@ -534,6 +548,7 @@ input_check() {
 			exit 1
 		fi	
 	fi
+	info "Extensions: $EXTENSIONS"
 
 	# ---------------------------------------------------------------------------
 	# STATUS CODES
@@ -544,6 +559,7 @@ input_check() {
 			exit 1
 		fi	
 	fi
+	info "Status Codes: $STATUS_CODES"
 
 	# ---------------------------------------------------------------------------
 	# EXECUTION RATE
@@ -554,6 +570,7 @@ input_check() {
 			exit 1
 		fi	
 	fi
+	info "Execution Rate: $EXECUTION_RATE"
 
 	# ---------------------------------------------------------------------------
 	# THREADS
@@ -564,31 +581,19 @@ input_check() {
 			exit 1
 		fi	
 	fi
+	info "Threads: $THREADS"
 
-	echo " "
-	important_info "Target: $URL"
-
-	if [[ -n "$EXTENSIONS" ]]; then
-		info "Extensions: $EXTENSIONS"
+	# ---------------------------------------------------------------------------
+	# RESPONSE / CONTENT SIZE
+	# ---------------------------------------------------------------------------
+	if [[ -n "$CONTENT_SIZE" ]]; then
+		if ! [[ $CONTENT_SIZE =~ ^[0-9]+$  || $CONTENT_SIZE =~ ^[0-9]+,[0-9]+$ ]]; then
+			error "Content size must contain only integers"
+			exit 1
+		fi	
 	fi
+	info "Exclude Content Size: $CONTENT_SIZE"
 
-	if [[ -n "$THREADS" ]]; then
-		info "Threads: $THREADS"
-	fi
-
-	if [[ -n "$STATUS_CODES" ]]; then
-		info "Status Codes: $STATUS_CODES"
-	fi
-
-	if [[ -n "$EXECUTION_RATE" ]]; then
-		info "Execution Rate: $EXECUTION_RATE"
-	fi
-
-	if [[ -n "$WORDLISTS" ]]; then
-		info "Wordlist: $WORDLISTS"
-	fi
-
-	# exit 0
 }
 
 #================================================================
@@ -786,22 +791,12 @@ auto_dns_scan() {
 # DESCRIPTION:
 #     Performs selected enumeration scan using GoBuster.
 # PARAMETERS:
-#     $1 - Specified option scan
-#     $2 - Specified extension
-#     $3 - Specified response codes
-#     $4 - Specified execution rate
+#     None
 # RETURNS:
 #     None
 #================================================================
 run_gobuster() {
-	local OPTION="$1"
-
 	if [ "$OPTION" == "dir" ]; then
-		local url="$2"
-		local extension="$3"
-		local response_codes="$4"
-		local execution_rate="$5"
-
 		mkdir -p Dirauto/manual/dir/gobuster
 		directory_check "$(pwd)/Dirauto/manual/dir/gobuster" "manual GoBuster directory"
 
@@ -811,24 +806,14 @@ run_gobuster() {
 
 			touch "$(pwd)/Dirauto/manual/dir/gobuster/$wordlist"
 
-			command="gobuster dir -u $url -w $wordlist_path -o $(pwd)/Dirauto/manual/dir/gobuster/$wordlist"
+			command="gobuster dir -u $URL -w $wordlist_path -o $(pwd)/Dirauto/manual/dir/gobuster/$wordlist"
 
-			if [ -n "$extension" ]; then
-				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-					command+=" -x $extension"	
-				fi
+			if [ -n "$EXTENSIONS" ]; then
+				command+=" -x $EXTENSIONS"	
 			fi
 			
-			if [ -n "$response_codes" ]; then
-				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
-					command+=" -s $response_codes"	
-				fi
-			fi
-
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"	
-				fi
+			if [ -n "$RESPONSE_CODES" ]; then
+				command+=" -s $RESPONSE_CODES"	
 			fi
 
 			eval "$command"
@@ -839,9 +824,6 @@ run_gobuster() {
 	fi
 
 	if [ "$OPTION" == "vhost" ]; then
-		local url="$2"
-		local execution_rate="$5"
-
 		mkdir -p Dirauto/manual/vhost/gobuster
 		directory_check "$(pwd)/Dirauto/manual/vhost/gobuster" "manual GoBuster vhost"
 
@@ -851,12 +833,14 @@ run_gobuster() {
 
 			touch "$(pwd)/Dirauto/manual/vhost/gobuster/$wordlist"
 
-			command="gobuster vhost -u $url -w $wordlist -o $(pwd)/Dirauto/vhost/Gobuster/$wordlist"
+			command="gobuster vhost -u $URL -w $wordlist_path -o $(pwd)/Dirauto/manual/vhost/gobuster/$wordlist"
 
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"	
-				fi
+			if [ -n "$EXECUTION_RATE" ]; then
+				command+=" -t $EXECUTION_RATE"	
+			fi
+
+			if [ -n "$CONTENT_SIZE" ]; then
+				command+=" --exclude-length $CONTENT_SIZE"	
 			fi
 
 			eval "$command"
@@ -866,9 +850,6 @@ run_gobuster() {
 	fi
 
 	if [ "$OPTION" == "dns" ]; then
-		local url="$2"
-		local execution_rate="$5"
-	
 		mkdir -p Dirauto/manual/dns/gobuster
 		directory_check "$(pwd)/Dirauto/manual/dns/gobuster" "manual GoBuster dns"
 
@@ -878,12 +859,10 @@ run_gobuster() {
 
 			touch "$(pwd)/Dirauto/manual/dns/gobuster/$wordlist"
 
-			command="gobuster dns -d $url -w $wordlist -i -o $(pwd)/Dirauto/manual/dns/gobuster/$wordlist"
+			command="gobuster dns -d $URL -w $wordlist -i -o $(pwd)/Dirauto/manual/dns/gobuster/$wordlist"
 
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"	
-				fi
+			if [ -n "$EXECUTION_RATE" ]; then
+				command+=" -t $EXECUTION_RATE"	
 			fi
 
 			eval "$command"
@@ -902,23 +881,12 @@ run_gobuster() {
 # DESCRIPTION:
 #     Performs selected enumeration scan using FFuF.
 # PARAMETERS:
-#     $1 - Specified option scan
-#     $2 - Specified target URL
-#     $3 - Specified extension 
-#     $4 - Specified resposne codes
-#     $5 - Specified execution rate
+#     None
 # RETURNS:
 #     None
 #================================================================
 run_FFuF() {
-	local OPTION="$1"
-
 	if [ "$OPTION" == "dir" ]; then
-		local url="$2"
-		local extension="$3"
-		local response_codes="$4"
-		local execution_rate="$5"
-
 		mkdir -p Dirauto/manual/dir/ffuf
 		directory_check "$(pwd)/Dirauto/manual/dir/ffuf" "manual FFuF directory"
 
@@ -928,24 +896,18 @@ run_FFuF() {
 			
 			touch "$(pwd)/Dirauto/manual/dir/ffuf/$wordlist"
 
-			command="ffuf -c -w $wordlist -u $url/FUZZ -o $(pwd)/Dirauto/manual/dir/ffuf/$wordlist"
+			command="ffuf -c -w $wordlist_path -u $URL/FUZZ -o $(pwd)/Dirauto/manual/dir/ffuf/$wordlist"
 			
-			if [ -n "$extension" ]; then
-				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-					command+=" -e $extension"
-				fi
+			if [ -n "$EXTENSIONS" ]; then
+				command+=" -e $EXTENSIONS"
 			fi 
 
-			if [ -n "$response_codes" ]; then
-				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
-					command+=" -mc $response_codes"
-				fi
+			if [ -n "$RESPONSE_CODES" ]; then
+				command+=" -mc $RESPONSE_CODES"
 			fi 
 
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"
-				fi
+			if [ -n "$EXECUTION_RATE" ]; then
+				command+=" -t $EXECUTION_RATE"
 			fi 
 			
 			eval "$command"
@@ -955,9 +917,8 @@ run_FFuF() {
 	fi
 	
 	if [ "$OPTION" == "vhost" ]; then
-		local url="$2"
-		local execution_rate="$5"
-
+		# Add option for domain name
+		# Review this section over here
 		echo "Enter the name of the header for FUZZING (Example: \"Host: FUZZ.ffuf.com \"): "	
 		read headerInput
 
@@ -970,12 +931,10 @@ run_FFuF() {
 
 			touch "$(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"	
 
-			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $url -o $(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"
+			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $URL -o $(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"
 
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"
-				fi
+			if [ -n "$EXECUTION_RATE" ]; then
+				command+=" -t $EXECUTION_RATE"
 			fi 
 
 			eval "$command"
@@ -985,9 +944,6 @@ run_FFuF() {
 	fi
 
 	if [ "$OPTION" == "dns" ]; then
-		local url="$2"
-		local execution_rate="$5"
-
 		mkdir -p Dirauto/manual/dns/ffuf
 		directory_check "$(pwd)/Dirauto/manual/dns/ffuf" "manual FFuF dns"
 
@@ -997,12 +953,10 @@ run_FFuF() {
 	
 			touch "$(pwd)/Dirauto/manual/dns/ffuf/$wordlist"
 
-			command="ffuf -c -w $wordlist -u $url -H \"Host: FUZZ\" -o $(pwd)/Dirauto/manual/dns/ffuf/$wordlist"
+			command="ffuf -c -w $wordlist -u $URL -H \"Host: FUZZ\" -o $(pwd)/Dirauto/manual/dns/ffuf/$wordlist"
 		
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"
-				fi
+			if [ -n "$EXECUTION_RATE" ]; then
+				command+=" -t $EXECUTION_RATE"
 			fi 
 
 			eval "$command"
@@ -1021,11 +975,7 @@ run_FFuF() {
 # DESCRIPTION:
 #     Performs selected enumeration scan using DirSearch.
 # PARAMETERS:
-#     $1 - Specified option scan
-#     $2 - Specified target URL
-#     $3 - Specified extension
-#     $4 - Specified response codes
-#     $5 - Specified execution rate
+#     None
 # RETURNS:
 #     None
 #================================================================
@@ -1033,11 +983,6 @@ run_dirsearch() {
 	local OPTION="$1"
 
 	if [ "$OPTION" == "dir" ]; then
-		local url="$2"
-		local extension="$3"
-		local response_codes="$4"
-		local execution_rate="$5"
-
 		mkdir -p Dirauto/manual/dir/dirsearch
 		directory_check "$(pwd)/Dirauto/manual/dir/dirsearch" "manual dirsearch directory"
 
@@ -1047,24 +992,18 @@ run_dirsearch() {
 
 			touch "$(pwd)/Dirauto/manual/dir/dirsearch/$wordlist"	
 
-			command="dirsearch -u $url -o $(pwd)/Dirauto/manual/dir/dirsearch/$wordlist"
+			command="dirsearch -u $URL -w $wordlist_path -o $(pwd)/Dirauto/manual/dir/dirsearch/$wordlist"
 
-			if [ -n "$extension" ]; then
-				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-					command+=" -e $extension"
-				fi
+			if [ -n "$EXTENSIONS" ]; then
+				command+=" -e $EXTENSIONS"
 			fi 
 
-			if [ -n "$response_codes" ]; then
-				if [[ $response_codes =~ *[[:alpha:]]* ]] && [[ $response_codes =~ *[[:digit:]]* ]]; then
-					command+=" -i $response_codes"
-				fi
+			if [ -n "$RESPONSE_CODES" ]; then
+				command+=" -i $RESPONSE_CODES"
 			fi 
 
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"
-				fi
+			if [ -n "$EXECUTION_RATE" ]; then
+				command+=" -t $EXECUTION_RATE"
 			fi 
 
 			eval "$command"
@@ -1083,11 +1022,7 @@ run_dirsearch() {
 # DESCRIPTION:
 #     Performs selected enumeration scan using FeroxBuster.
 # PARAMETERS:
-#     $1 - Specified option scan
-#     $2 - Specified target URL
-#     $3 - Specified extension
-#     $4 - Specified response codes  
-#     $5 - Specified execution rate
+#     None
 # RETURNS:
 #     None
 #================================================================
@@ -1095,11 +1030,6 @@ run_feroxbuster() {
 	local OPTION="$1"
 
 	if [ "$OPTION" == "dir" ]; then
-		local url="$2"
-		local extension="$4"
-		local response_codes="$5"
-		local execution_rate="$6"
-
 		mkdir -p Dirauto/manual/dir/feroxbuster
 		directory_check "$(pwd)/Dirauto/manual/dir/feroxbuster" "manual feroxbuster directory"
 
@@ -1109,18 +1039,14 @@ run_feroxbuster() {
 
 			touch "$(pwd)/Dirauto/manual/dir/feroxbuster/$wordlist"
 				
-			command="feroxbuster --url $url --wordlist $(pwd)/Dirauto/manual/dir/feroxbuster/$wordlist"	
+			command="feroxbuster --url $URL --wordlist $wordlist_path --output $(pwd)/Dirauto/manual/dir/feroxbuster/$wordlist"	
 
-			if [ -n "$extension" ]; then
-				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-					command+=" -x $extension"
-				fi
+			if [ -n "$EXTENSIONS" ]; then
+				command+=" -x $EXTENSIONS"
 			fi 
 
-			if [ -n "$execution_rate" ]; then
-				if [[ $execution_rate =~ *[[:digit:]]* ]]; then
-					command+=" -t $execution_rate"
-				fi
+			if [ -n "$EXECUTION_RATE" ]; then
+				command+=" -t $EXECUTION_RATE"
 			fi 
 
 			eval "$command"
@@ -1135,38 +1061,29 @@ run_feroxbuster() {
 }
 
 #================================================================
-# FUNCTION: info
+# FUNCTION: run_dirb
 # DESCRIPTION:
 #     Performs selected enumeration scan using FeroxBuster.
 # PARAMETERS:
-#     $1 - Specified option scan
-#     $2 - Specified target URL
-#     $3 - Specified extension
+#     None
 # RETURNS:
 #     None
 #================================================================
 run_dirb() {
-	local OPTION="$1"
-
 	mkdir -p Dirauto/manual/dir/dirb
 	directory_check "$(pwd)/Dirauto/manual/dir/dirb" "manual dirb directory"
 
 	if [ "$OPTION" == "dir" ]; then
-		local url="$2"
-		local extension="$4"
-
 		IFS="," read -r -a FILES <<< "$WORDLISTS"
 		for wordlist in ${FILES[@]}; do
 			wordlist_path=$(search_wordlist "$wordlist")	
 
 			touch "$(pwd)/Dirauto/manual/dir/dirb/$wordlist"
 
-			command="dirb $url -o $(pwd)/Dirauto/dir/manual/dirb/$wordlist"
+			command="dirb $URL -w $wordlist_path -o $(pwd)/Dirauto/manual/dir/dirb/$wordlist"
 
-			if [ -n "$extension" ]; then
-				if [[ $extension =~ *[[:alpha:]]* ]] && [[ $extension =~ *[[:digit:]]* ]]; then
-					command+=" -X $extension"
-				fi
+			if [ -n "$EXTENSIONS" ]; then
+				command+=" -X $EXTENSIONS"
 			fi 
 
 			eval "$command"
@@ -1250,6 +1167,7 @@ dns_mode() {
 			-w|--wordlists) WORDLIST="$2"; shift ;;
 			--auto) AUTO=true ;; 
 			-d|--domain)DOMAIN_NAME="$2"; shift ;;
+			-fs) CONTENT_SIZE="$2"; shift ;;
 			*) error "Unknown Parameter Passed: $1"; exit 1 ;;
 		esac
 		shift
@@ -1290,10 +1208,10 @@ vhost_mode() {
 			-x|--extensions) EXTENSIONS="$2"; shift ;;
 			-c|--status-codes) STATUS_CODES="$2"; shift ;;
 			-t|--threads) THREADS="$2"; shift ;;
-			-w|--wordlist) WORDLIST="$2"; shift ;;
+			-w|--wordlists) WORDLISTS="$2"; shift ;;
 			--auto) AUTO=true ;; 
 			-H) HOST="$2"; shift ;;
-			-fs) EXCLUDE_CONTENT_LENGTH="$2"; shift ;;
+			-fs) CONTENT_SIZE="$2"; shift ;;
 			*) error "Unknown parameter passed: $1"; exit 1 ;;
 		esac
 		shift
@@ -1330,25 +1248,11 @@ vhost_mode() {
 #     None
 #================================================================
 run_program() {
-	if [[ "$PROGRAMS" == "gobuster" ]]; then
-		run_gobuster "$OPTION" "$URL" "$WORDLISTS" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [[ "$PROGRAMS" == "ffuf" ]]; then
-		run_FFuF "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [[ "$PROGRAMS" == "feroxbuster" ]]; then
-		run_feroxbuster "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [[ "$PROGRAMS" == "dirsearch" ]]; then
-		run_dirsearch "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
-
-	if [[ "$PROGRAMS" == "dirb" ]]; then
-		run_dirb "$OPTION" "$URL" "$wordlist" "$EXTENSIONS" "$STATUS_CODES" "$THREADS"
-	fi
+	if [[ "$PROGRAMS" == "gobuster" ]]; then run_gobuster fi
+	if [[ "$PROGRAMS" == "ffuf" ]]; then run_FFuF fi
+	if [[ "$PROGRAMS" == "feroxbuster" ]]; then run_feroxbuster fi
+	if [[ "$PROGRAMS" == "dirsearch" ]]; then run_dirsearch fi
+	if [[ "$PROGRAMS" == "dirb" ]]; then run_dirb fi
 }
 
 ###############################################################
@@ -1362,20 +1266,21 @@ fi
 
 # Global Arguments
 URL=""
+OPTION=""
 PROGRAMS=""
 EXTENSIONS=""
 STATUS_CODES=""
 THREADS=""
 EXECUTION_RATE=""
-WORDLIST=""
+WORDLISTS=""
 AUTO=false
 
 # VHost Arguments
 HOST=""
-EXCLUDE_CONTENT_LENGTH=""
+CONTENT_LENGTH=""
 
 # DNS Arguments
-DOMAIN_name=""
+DOMAIN_NAME=""
 
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
