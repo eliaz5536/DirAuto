@@ -73,8 +73,3 @@ Filter Options:
   -fw, --filter-words <word_count>                      Filters word count
 
 ```
-
-# Examples
-```
-<show commands over here>
-```
