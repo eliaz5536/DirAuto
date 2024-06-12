@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #================================================================
 # HEADER
 #================================================================
@@ -179,7 +178,7 @@ important_warning() {
 }
 
 #================================================================
-# FUNCTION: print_usage
+# FUNCTION: error
 # DESCRIPTION:
 #     Prints error message using the provided parameter.
 # PARAMETERS:
@@ -193,7 +192,7 @@ error() {
 }
 
 #================================================================
-# FUNCTION: print_usage
+# FUNCTION: important_error
 # DESCRIPTION:
 #     Prints important error message using the provided parameter.
 # PARAMETERS:
@@ -221,7 +220,7 @@ important_error() {
 usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
-	echo "Usage: dirauto [modes] [-u, --url] [options]"
+	echo "Usage: dirauto [modes] [options]"
 	echo " "
 }
 
@@ -238,21 +237,32 @@ help()
 {
 	usage
         echo "Options:"
-       	printf "  ${BOLD}--usage${ENDCOLOR}			Show usage information\n"
-        printf "  ${BOLD}-h, --help${ENDCOLOR}			Show help message\n"
-        printf "  ${BOLD}-u, --url${ENDCOLOR}			Specify target URL\n"
-        printf "  ${BOLD}-x, --extensions${ENDCOLOR}		Specify extensions\n"
-        printf "  ${BOLD}-c, --status-codes${ENDCOLOR}		Specify status codes\n"
-        printf "  ${BOLD}-e, --extension-rate${ENDCOLOR}		Specify extension rate\n"
-        printf "  ${BOLD}-t, --threads${ENDCOLOR}			Specify number of threads\n"
-        printf "  ${BOLD}-w, --wordlist${ENDCOLOR}		Specify wordlist\n"
-        printf "  ${BOLD}--check${ENDCOLOR}			Check if repositories are installed\n"
-        printf "  ${BOLD}-i, --install${ENDCOLOR}			Install repositories\n"
+       	printf "  ${BOLD}--usage${ENDCOLOR}						Show usage information\n"
+        printf "  ${BOLD}-h, --help${ENDCOLOR}						Show help message\n"
+        printf "  ${BOLD}-u, --url${ENDCOLOR}						Specify target URL\n"
+        printf "  ${BOLD}-x, --extensions${ENDCOLOR}					Specify extensions\n"
+        printf "  ${BOLD}-p, --programs${ENDCOLOR}					Specify enumeration programs\n"
+        printf "  ${BOLD}-c, --status-codes${ENDCOLOR}					Specify status codes\n"
+        printf "  ${BOLD}-w, --wordlist${ENDCOLOR}					Specify wordlist\n"
+        printf "  ${BOLD}--check${ENDCOLOR}						Check if repositories are installed\n"
         echo " "
         echo "Modes:"
-        printf "  ${BOLD}dir${ENDCOLOR}				Directory Mode\n"
-        printf "  ${BOLD}vhost${ENDCOLOR}				Virtual Host Mode\n"
-        printf "  ${BOLD}subdomain${ENDCOLOR}			Subdomain Mode\n"
+        printf "  ${BOLD}dir${ENDCOLOR}							Directory Mode\n"
+        printf "  ${BOLD}vhost${ENDCOLOR}							Virtual Host Mode\n"
+        printf "  ${BOLD}subdomain${ENDCOLOR}						Subdomain Mode\n"
+        echo " "
+        echo "Enumeration Programs:"
+        printf "  ${BOLD}gobuster${ENDCOLOR}						Directory/File, DNS and VHost busting tool written in Go\n"
+        printf "  ${BOLD}ffuf${ENDCOLOR}							Fast web fuzzer written in Go\n"
+        printf "  ${BOLD}feroxbuster${ENDCOLOR}						A fast, simple, recursive content discovery tool written in Rust\n"
+        printf "  ${BOLD}dirsearch${ENDCOLOR}						Web path scanner\n"
+        printf "  ${BOLD}dirb${ENDCOLOR}							Web content scanner\n"
+        echo " "
+        echo "Filter Options:"
+        printf "  ${BOLD}-fs, --filter-status <status_codes>${ENDCOLOR} 			Filters HTTP status codes\n"
+        printf "  ${BOLD}-fl, --filter-lines <line_count>${ENDCOLOR}			Filters line count\n"
+        printf "  ${BOLD}-fs, --filter-size <content_size>${ENDCOLOR}			Filters content size\n"
+        printf "  ${BOLD}-fw, --filter-words <word_count>${ENDCOLOR}			Filters word count\n"
 	exit 0
 }
 
@@ -268,7 +278,7 @@ help()
 dir_usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
-	echo "Usage: dirauto dir [-u, --url] [modes]"
+	echo "Usage: dirauto dir [options]"
 	echo " "
 }
 
@@ -284,15 +294,26 @@ dir_usage() {
 dir_help() {
 	dir_usage
         echo "Directory mode help:"
-       	printf "  ${BOLD}--usage${ENDCOLOR}				Show usage information\n"
-        printf "  ${BOLD}-h, --help${ENDCOLOR}				Show help information\n"
-        printf "  ${BOLD}-u, --url <URL>${ENDCOLOR}			Specify target URL\n"
-        printf "  ${BOLD}-x, --extensions <ext>${ENDCOLOR}		Specify file extensions\n"
-        printf "  ${BOLD}-c, --status-codes <codes>${ENDCOLOR}		Specify Status Codes\n"
-        printf "  ${BOLD}-t, --threads <threads>${ENDCOLOR}		Specify number of threads\n"
-        printf "  ${BOLD}-e, --execution-rate <rate>${ENDCOLOR}		Specify execution rate\n"
-        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}			Specify wordlist\n"
-        printf "  ${BOLD}--auto${ENDCOLOR}				Enable auto mode\n"
+       	printf "  ${BOLD}--usage${ENDCOLOR}						Show usage information\n"
+        printf "  ${BOLD}-h, --help${ENDCOLOR}						Show help information\n"
+        printf "  ${BOLD}-u, --url <URL>${ENDCOLOR}					Specify target URL\n"
+        printf "  ${BOLD}-x, --extensions <ext>${ENDCOLOR}				Specify file extensions\n"
+        printf "  ${BOLD}-p, --programs${ENDCOLOR}					Specify enumeration programs\n"
+        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}					Specify wordlist\n"
+        printf "  ${BOLD}--auto${ENDCOLOR}						Enable auto mode\n"
+	echo " "
+        echo "Enumeration Programs:"
+        printf "  ${BOLD}gobuster${ENDCOLOR}						Directory/File, DNS and VHost busting tool written in Go\n"
+        printf "  ${BOLD}ffuf${ENDCOLOR}							Fast web fuzzer written in Go\n"
+        printf "  ${BOLD}feroxbuster${ENDCOLOR}						A fast, simple, recursive content discovery tool written in Rust\n"
+        printf "  ${BOLD}dirsearch${ENDCOLOR}						Web path scanner\n"
+        printf "  ${BOLD}dirb${ENDCOLOR}							Web content scanner\n"
+	echo " "
+        echo "Filter Options:"
+        printf "  ${BOLD}-fs, --filter-status <status_codes>${ENDCOLOR} 			Filters HTTP status codes\n"
+        printf "  ${BOLD}-fl, --filter-lines <line_count>${ENDCOLOR}			Filters line count\n"
+        printf "  ${BOLD}-fs, --filter-size <content_size>${ENDCOLOR}			Filters content size\n"
+        printf "  ${BOLD}-fw, --filter-words <word_count>${ENDCOLOR}			Filters word count\n"
         echo " "
 	exit 0
 }
@@ -309,7 +330,7 @@ dir_help() {
 vhost_usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
-	echo "Usage: dirauto vhost [-u, --url] [modes]"
+	echo "Usage: dirauto vhost [modes]"
 	echo " "
 }
 
@@ -325,15 +346,26 @@ vhost_usage() {
 vhost_help() {
 	vhost_usage
         echo "Virtual host mode help:"
-       	printf "  ${BOLD}--usage${ENDCOLOR}				Show usage information\n"
-        printf "  ${BOLD}-h, --help${ENDCOLOR}				Show help information\n"
-        printf "  ${BOLD}-u, --url <URL>${ENDCOLOR}			Specify target URL\n"
-        printf "  ${BOLD}-x, --extensions <ext>${ENDCOLOR}		Specify file extensions\n"
-        printf "  ${BOLD}-c, --status-codes <codes>${ENDCOLOR}		Specify Status Codes\n"
-        printf "  ${BOLD}-t, --threads <threads>${ENDCOLOR}		Specify number of threads\n"
-        printf "  ${BOLD}-e, --execution-rate <rate>${ENDCOLOR}		Specify execution rate\n"
-        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}			Specify wordlist\n"
-        printf "  ${BOLD}--auto${ENDCOLOR}				Enable auto mode\n"
+       	printf "  ${BOLD}--usage${ENDCOLOR}						Show usage information\n"
+        printf "  ${BOLD}-h, --help${ENDCOLOR}						Show help information\n"
+        printf "  ${BOLD}-u, --url <URL>${ENDCOLOR}					Specify target URL\n"
+        printf "  ${BOLD}-x, --extensions <ext>${ENDCOLOR}				Specify file extensions\n"
+        printf "  ${BOLD}-p, --programs${ENDCOLOR}					Specify enumeration programs\n"
+        printf "  ${BOLD}-w, --wordlist <file>${ENDCOLOR}					Specify wordlist\n"
+        printf "  ${BOLD}--auto${ENDCOLOR}						Enable auto mode\n"
+	echo " "
+        echo "Enumeration Programs:"
+        printf "  ${BOLD}gobuster${ENDCOLOR}						Directory/File, DNS and VHost busting tool written in Go\n"
+        printf "  ${BOLD}ffuf${ENDCOLOR}							Fast web fuzzer written in Go\n"
+        printf "  ${BOLD}feroxbuster${ENDCOLOR}						A fast, simple, recursive content discovery tool written in Rust\n"
+        printf "  ${BOLD}dirsearch${ENDCOLOR}						Web path scanner\n"
+        printf "  ${BOLD}dirb${ENDCOLOR}							Web content scanner\n"
+	echo " "
+        echo "Filter Options:"
+        printf "  ${BOLD}-fs, --filter-status <status_codes>${ENDCOLOR} 			Filters HTTP status codes\n"
+        printf "  ${BOLD}-fl, --filter-lines <line_count>${ENDCOLOR}			Filters line count\n"
+        printf "  ${BOLD}-fs, --filter-size <content_size>${ENDCOLOR}			Filters content size\n"
+        printf "  ${BOLD}-fw, --filter-words <word_count>${ENDCOLOR}			Filters word count\n"
         echo " "
 	exit 0
 }
@@ -350,7 +382,7 @@ vhost_help() {
 dns_usage() {
         echo "Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Dirb"
 	echo " "
-	echo "Usage: dirauto subdomain [-u, --url] [modes]"
+	echo "Usage: dirauto dns [options]"
 	echo " "
 }
 
@@ -366,15 +398,26 @@ dns_usage() {
 dns_help() { 
 	dns_usage
         echo "DNS mode help:"
-       	printf "  ${BOLD}--usage${ENDCOLOR}			Show usage information\n"
-        printf "  ${BOLD}-h, --help${ENDCOLOR}			Show help information\n"
-        printf "  ${BOLD}-u, --url${ENDCOLOR}			Specify target URL\n"
-        printf "  ${BOLD}-x, --extensions${ENDCOLOR}		Specify file extensions\n"
-        printf "  ${BOLD}-c, --status-codes${ENDCOLOR}		Specify status codes\n"
-        printf "  ${BOLD}-t, --threads${ENDCOLOR}			Specify number of threads\n"
-        printf "  ${BOLD}-e, --execution-rate${ENDCOLOR}		Specify execution rate\n"
-        printf "  ${BOLD}-w, --wordlist${ENDCOLOR}		Specify wordlist\n"
-        printf "  ${BOLD}--auto${ENDCOLOR}			Enable auto mode\n"
+       	printf "  ${BOLD}--usage${ENDCOLOR}						Show usage information\n"
+        printf "  ${BOLD}-h, --help${ENDCOLOR}						Show help information\n"
+        printf "  ${BOLD}-u, --url${ENDCOLOR}						Specify target URL\n"
+        printf "  ${BOLD}-x, --extensions${ENDCOLOR}					Specify file extensions\n"
+        printf "  ${BOLD}-p, --programs${ENDCOLOR}					Specify enumeration programs\n"
+        printf "  ${BOLD}-w, --wordlist${ENDCOLOR}					Specify wordlist\n"
+        printf "  ${BOLD}--auto${ENDCOLOR}						Enable auto mode\n"
+	echo " "
+        echo "Enumeration Programs:"
+        printf "  ${BOLD}gobuster${ENDCOLOR}						Directory/File, DNS and VHost busting tool written in Go\n"
+        printf "  ${BOLD}ffuf${ENDCOLOR}							Fast web fuzzer written in Go\n"
+        printf "  ${BOLD}feroxbuster${ENDCOLOR}						A fast, simple, recursive content discovery tool written in Rust\n"
+        printf "  ${BOLD}dirsearch${ENDCOLOR}						Web path scanner\n"
+        printf "  ${BOLD}dirb${ENDCOLOR}							Web content scanner\n"
+	echo " "
+        echo "Filter Options:"
+        printf "  ${BOLD}-fs, --filter-status <status_codes>${ENDCOLOR} 			Filters HTTP status codes\n"
+        printf "  ${BOLD}-fl, --filter-lines <line_count>${ENDCOLOR}			Filters line count\n"
+        printf "  ${BOLD}-fs, --filter-size <content_size>${ENDCOLOR}			Filters content size\n"
+        printf "  ${BOLD}-fw, --filter-words <word_count>${ENDCOLOR}			Filters word count\n"
         echo " "
 	exit 0
 }
@@ -382,65 +425,57 @@ dns_help() {
 # ===========================================================================
 # Checking Conditions... 
 # ===========================================================================
-# ---------------------------------------------------------------------------
-# Repositories Check
-# ---------------------------------------------------------------------------
 #================================================================
 # FUNCTION: check
 # DESCRIPTION:
-#     Checks third-party programs are located in /usr/bin directory.
+#     Check if binaries are located in /usr/bin directory.
 # PARAMETERS:
 #     None
 # RETURNS:
 #     None
 #================================================================
 check() {
-	if ! [-f /usr/bin/gobuster ]; then
+	if ! [ -f /usr/bin/gobuster ]; then
 		error "Gobuster is not located in /usr/bin. Install Gobuster."
 		exit 1
 	fi 
-	info "Gobuster installed."
+	important_info "Gobuster is located in /usr/bin directory."
 
-	if ! [-f /usr/bin/ffuf ]; then
+	if ! [ -f /usr/bin/ffuf ]; then
 		error "FFuF is not located in /usr/bin. Install FFuF."
 		exit 1
 	fi 
-	info "FFuF installed."
+	important_info "FFuF is located in /usr/bin directory."
 
-	if ! [-f /usr/bin/feroxbuster ]; then
+	if ! [ -f /usr/bin/feroxbuster ]; then
 		error "FeroxBuster is not located in /usr/bin. Install FeroxBuster."
 		exit 1
 	fi 
-	info "Feroxbuster installed."
+	important_info "Feroxbuster is located in /usr/bin directory."
 
-	if ! [-f /usr/bin/dirsearch ]; then
+	if ! [ -f /usr/bin/dirsearch ]; then
 		error "Dirsearch is not located in /usr/bin. Install Dirsearch."
 		exit 1
 	fi 
-	info "Dirsearch installed."
+	important_info "Dirsearch is located in /usr/bin directory."
 
-	if ! [-f /usr/bin/dirb ]; then
+	if ! [ -f /usr/bin/dirb ]; then
 		error "Dirb is not located in /usr/bin. Install Dirb,"
 		exit 1
 	fi 
-	info "Dirb installed."
+	important_info "Dirb is located in /usr/bin directory."
 
 	if ! [ -d /usr/share/seclists ] || [ -d /usr/share/wordlist/seclists ]; then
 		error "Seclists is not located in /usr/share directory. Install Seclists."
 		exit 1
 	fi 
-	info "Seclists installed."
+	important_info "Seclists is located in /usr/share directories."
 
-	echo " "
-
-	success "All of the programs are installed in your system. You are ready to enumerate!"
+	success "All of the repositories are installed in your system. You are ready to enumerate!"
 
 	exit 1
 }
 
-###############################################################
-# Printing output options...                                  #
-###############################################################
 #================================================================
 # FUNCTION: search_wordlist
 # DESCRIPTION:
@@ -551,49 +586,39 @@ input_check() {
 	fi
 
 	# ---------------------------------------------------------------------------
-	# STATUS CODES
+	# FITLER ARGUMENTS
 	# ---------------------------------------------------------------------------
-	if [[ -n "$STATUS_CODES" ]]; then
-		if ! [[ $STATUS_CODES =~ ^[0-9]+$ ]]; then
-			error "Status codes must contain only integer and the following charater ',' for separation"
-			exit 1
-		fi	
-		info "Status Codes: $STATUS_CODES"
+	# Filter HTTP Status Codes
+	if [[ -n "$FILTER_HTTP" ]]; then
+		if ! [[ $FILTER_HTTP =~ ^[0-9]+$  || $FILTER_HTTP =~ ^[0-9]+,[0-9]+$ ]]; then
+			error "HTTP status code filter must contain only integers and a comma if more than one HTTP filter request is listed."
+		fi
+		info "HTTP Status Code Filter: $FILTER_HTTP"
 	fi
 
-	# ---------------------------------------------------------------------------
-	# EXECUTION RATE
-	# ---------------------------------------------------------------------------
-	if [[ -n "$EXECUTION_RATE" ]]; then
-		if ! [[ $EXECUTION_RATE =~ ^[0-9]+$ ]]; then
-			error "Execution rate must only accept integers"
-			exit 1
-		fi	
-		info "Execution Rate: $EXECUTION_RATE"
+	# Filter Line Count
+	if [[ -n "$FILTER_LINE_COUNT" ]]; then
+		if ! [[ $FILTER_LINE_COUNT =~ ^[0-9]+$ ]]; then
+			error "Line count filter must contain only integers."
+		fi
+		info "Line Count Filter: $FILTER_LINES"
 	fi
 
-	# ---------------------------------------------------------------------------
-	# THREADS
-	# ---------------------------------------------------------------------------
-	if [[ -n "$THREADS" ]]; then
-		if ! [[ $THREADS =~ ^[0-9]+$ ]]; then
-			error "Threads must contain only integers"
-			exit 1
-		fi	
-		info "Threads: $THREADS"
+	# Filter Content Size
+	if [[ -n "$FILTER_SIZE" ]]; then
+		if ! [[ $FILTER_SIZE =~ ^[0-9]+$ ]]; then
+			error "Content size filter must contain only integers."
+		fi
+		info "Content Size Filter: $FILTER_SIZE"
 	fi
 
-	# ---------------------------------------------------------------------------
-	# RESPONSE / CONTENT SIZE
-	# ---------------------------------------------------------------------------
-	if [[ -n "$CONTENT_SIZE" ]]; then
-		if ! [[ $CONTENT_SIZE =~ ^[0-9]+$  || $CONTENT_SIZE =~ ^[0-9]+,[0-9]+$ ]]; then
-			error "Content size must contain only integers"
-			exit 1
-		fi	
-		info "Exclude Content Size: $CONTENT_SIZE"
+	# Filter Word Count
+	if [[ -n "$FILTER_WORD_COUNT" ]]; then
+		if ! [[ $FILTER_WORD_COUNT =~ ^[0-9]+$ ]]; then
+			error "Word count filter must contain only integers."
+		fi
+		info "Word Count Filter: $FILTER_WORDS"
 	fi
-
 }
 
 #================================================================
@@ -655,36 +680,47 @@ file_check() {
 #     None
 #================================================================
 auto_dir_scan() {
-	info "Automatic Directory Enumeration Scan Enabled.."
+	# You can customize your automatic directory scan in this function
+	
+	important_info "Performing Automatic Directory Enumeration Scan"
 
-	mkdir -p Dirauto/dir/Gobuster
-	mkdir -p Dirauto/dir/Feroxbuster
+	mkdir -p Dirauto/auto/dir/ffuf
+	directory_check "$(pwd)/Dirauto/auto/dir/FFuF" "FFuF auto directory"
 
-	info "Started Automatic Directory Enumeration Scan"
-	info "Initializing Gobuster..."
+	mkdir -p Dirauto/auto/dir/feroxbuster
+	directory_check "$(pwd)/Dirauto/auto/dir/Feroxbuster" "Feroxbuster auto directory"
 
-	common_path=$(search_wordlist "common.txt")
-	if [ -z "$common_path" ]; then
-		error "common.txt wordlist not found"
+	wordlist_path=$(search_wordlist "directory-list-2.3-small.txt")
+	if [ -z "$wordlist_path" ]; then
+		error "directory-list-2.3-small.txt.txt wordlist not found"
 	else
-		info "Found common.txt wordlist"
-		gobuster dir -u $URL -w $common_path -o $(pwd)/Dirauto/dir/Auto/Gobuster/common.txt
+		info "Found directory-list-2.3-small.txt wordlist"
+
+		important_info "Performing FFuF Auto Directory scan using $wordlist_path"
+		ffuf -c -w $wordlist_path -u $URL/FUZZ -o $(pwd)/Dirauto/auto/dir/ffuf/ffuf.txt
+		
+		file_check "$(pwd)/Dirauto/auto/dir/ffuf/ffuf.txt" "FFuF auto directory scan"
 	fi
 
 	echo " "
 
-	raft_medium_directories_path=$(search_wordlist "raft-medium-directories.txt")
-	if [ -z "$raft_medium_directories_path" ]; then
+	wordlist_path=$(search_wordlist "raft-medium-directories.txt")
+	if [ -z "$wordlist_path" ]; then
 		error "raft-medium-directories.txt wordlist not found"
 	else 
 		info "Found raft-medium-directories.txt wordlist"
-		info "Initializing Feroxbuster..."
-		feroxbuster -u $URL --output $(pwd)/Dirauto/dir/Auto/Feroxbuster/feroxbuster.txt
+
+		important_info "Performing FeroxBuster Auto Directory scan using $wordlist_path"
+		feroxbuster -u $URL --output $(pwd)/Dirauto/auto/dir/feroxbuster/feroxbuster.txt
+
+		file_check "$(pwd)/Dirauto/auto/dir/feroxbuster/feroxbuster.txt" "Feroxbuster auto directory scan"
 	fi
 
 	echo " "
 
-	info "Completed Automatic Directory Enumeration Scan"
+	success "Completed Automatic Directory Enumeration Scan"
+
+	exit 0
 }
 
 #================================================================
@@ -697,47 +733,46 @@ auto_dir_scan() {
 #     None
 #================================================================
 auto_vhost_scan() {
-	info "Automatic Virtual Host Enumeration Scan Enabled.."
+	# You can customize your automatic vhost scan using this function
+	important_info "Performing Automatic Virtual Host Enumeration Scan"
 
-	mkdir -p Dirauto/vhost/Auto/Gobuster
-	mkdir -p Dirauto/vhost/Auto/FFuF
+	mkdir -p Dirauto/auto/vhost/gobuster
+	directory_check "$(pwd)/Dirauto/auto/vhost/gobuster" "Gobuster auto virtual host"
+	mkdir -p Dirauto/auto/vhost/ffuf
+	directory_check "$(pwd)/Dirauto/auto/vhost/ffuf" "FFuF auto virtual host"
 
-	info "Started Automatic Virtual Host Enumeration Scan"
-	info "Initializing Gobuster..."
-
-	subdomains_5000_path=$(search_wordlist "subdomains-top1million-5000.txt")
-	if [ -z "$subdomains_5000_path" ]; then
+	wordlist_path=$(search_wordlist "subdomains-top1million-5000.txt")
+	if [ -z "$wordlist_path" ]; then
 		error "subdomains-top1million-5000.txt wordlist not found"
 	else
 		info "Found subdomains-top1million-5000.txt wordlist"
 
-		gobuster_command="gobuster vhost -u $URL -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt"
-		if [ -n "$EXCLUDE_CONTENT_LENGTH" ]; then
-			gobuster_command+=" --exclude-length $EXCLUDE_CONTENT_LENGTH"
+		gobuster_command="gobuster vhost -u $URL -w $wordlist_path -o $(pwd)/Dirauto/auto/vhost/gobuster/gobuster.txt"
+		if [ -n "$FILTER_SIZE" ]; then
+			gobuster_command+=" --exclude-length $FILTER_SIZE"
 		fi
 
-		echo "$gobuster_command"
+		important_info "Performing FeroxBuster Auto Directory scan using $wordlist_path"
 		eval "$gobuster_command"
+
+		file_check "$(pwd)/Dirauto/auto/vhost/gobuster/gobuster.txt" "GoBuster auto virtual host scan"
 
 		echo " "
 
-		# ============================== 
-
-		ffuf_command="ffuf -u $URL -H \"$HOST\" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -o $(pwd)/Dirauto/vhost/Auto/FFuF/subdomains-top1million-5000.txt"
-
-		if [ -n "$EXCLUDE_CONTENT_LENGTH" ]; then
-			ffuf_command+=" -fs $EXCLUDE_CONTENT_LENGTH"
+		ffuf_command="ffuf -u $URL -H \"$HOST\" -w $wordlist_path -o $(pwd)/Dirauto/auto/vhost/ffuf/ffuf.txt"
+		if [ -n "$FILTER_SIZE" ]; then
+			ffuf_command+=" -fs $FILTER_SIZE"
 		fi
 
-		printf "${WHITE}[${ENDCOLOR}${GREEN}INFO${ENDCOLOR}${WHITE}]${ENDCOLOR} Initializing FFuF...\n"
-
+		important_info "Performing FFuF Auto virtual host scan using $wordlist_path"
 		eval "$ffuf_command"
+
+		file_check "$(pwd)/Dirauto/auto/vhost/ffuf/ffuf.txt" "FFuF auto virtual host scan"
 	fi
 
 	echo " "
 
-	info "Completed Automatic Virtual Host Enumeration Scan"
-
+	success "Completed Automatic Virtual Host Enumeration Scan"
 }
 
 #================================================================
@@ -750,37 +785,44 @@ auto_vhost_scan() {
 #     None
 #================================================================
 auto_dns_scan() {
-	info "Automatic DNS Enumeration Scan Enabled.."
+	# You can customize your automatic DNS scan using this function
+	important_info "Performing Automatic DNS Enumeration Scan"
 
-	mkdir -p Dirauto/dns/Auto/dig
-	mkdir -p Dirauto/dns/Auto/Gobuster
-
-	info "Started Automatic DNS Enumeration Scan"
-	info "Gathering DNS information from DNS server..."
+	mkdir -p Dirauto/auto/dns/dig
+	directory_check "$(pwd)/Dirauto/auto/dns/dig" "dig auto DNS"
+	mkdir -p Dirauto/auto/dns/gobuster
+	directory_check "$(pwd)/Dirauto/auto/dns/gobuster" "GoBuster auto DNS"
 
 	if [ -z "$DOMAIN_NAME" ]; then
 		error "Domain name is required to gather DNS information"
 	else
-		dig_command="dig axfr $DOMAIN_NAME @$URL | tee $(pwd)/Dirauto/dns/Auto/dig/dig.txt"	
-		echo "$dig_command"
+		important_info "Performing dig auto DNS scan"
+		dig_command="dig axfr $DOMAIN_NAME @$URL | tee $(pwd)/Dirauto/auto/dns/dig/dig.txt"	
 		eval "$dig_command"
+
+		file_check "$(pwd)/Dirauto/auto/dns/dig/dig.txt" "Dig auto virtual host scan"
 
 		echo " "
 	fi	
 
 	info "Initializing Gobuster..."
-	subdomains_path=$(search_wordlist "subdomains-top1million-20000.txt")
+	wordlist_path=$(search_wordlist "subdomains-top1million-20000.txt")
 	if [ -z "$subdomains_path" ]; then
-		error "subdomains-top1million-5000.txt wordlist not found"
+		error "subdomains-top1million-20000.txt wordlist not found"
 	else
-		info "Found subdomains-top1million-5000.txt wordlist"
+		info "Found subdomains-top1million-20000.txt wordlist"
 
-		# gobuster_command="gobuster dns -d $DOMAIN_NAME -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt -o $(pwd)/Dirauto/dns/Auto/Gobuster/subdomains-top1million-20000.txt"
-		gobuster_command="gobuster vhost -u http://$DOMAIN_NAME --append-domain -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -o $(pwd)/Dirauto/dns/Auto/Gobuster/subdomains-top1million-5000.txt"
+		gobuster_command="gobuster vhost -u http://$DOMAIN_NAME --append-domain -w $wordlist_path -o $(pwd)/Dirauto/auto/dns/gobuster/gobuster.txt"
 
-		echo "$gobuster_command"
+		file_check "$(pwd)/Dirauto/auto/dns/gobuster/gobuster.txt" "GoBuster auto DNS scan"
+
+		important_info "Performing GoBuster auto DNS scan using $wordlist_path"
 		eval "$gobuster_command"
 	fi
+
+	echo " "
+
+	success "Completed Automatic DNS Scan"
 }
 
 ###############################################################
@@ -808,14 +850,18 @@ run_gobuster() {
 
 			command="gobuster dir -u $URL -w $wordlist_path -o $(pwd)/Dirauto/manual/dir/gobuster/$wordlist"
 
-			if [ -n "$EXTENSIONS" ]; then
+			if [[ -n "$EXTENSIONS" ]]; then
 				command+=" -x $EXTENSIONS"	
 			fi
-			
-			if [ -n "$RESPONSE_CODES" ]; then
-				command+=" -s $RESPONSE_CODES"	
-			fi
 
+			if [[ -n "$FILTER_HTTP" ]]; then
+				command+=" -b $FILTER_HTTP" # Blacklists status codes
+			fi	
+
+			if [[ -n "$FILTER_SIZE" ]]; then
+				command+=" --exclude-length $FILTER_SIZE"
+			fi	
+			
 			eval "$command"
 			
 			file_check "$(pwd)/Dirauto/manual/dir/gobuster/$wordlist" "GoBuster directory scan"
@@ -835,12 +881,12 @@ run_gobuster() {
 
 			command="gobuster vhost -u $URL -w $wordlist_path -o $(pwd)/Dirauto/manual/vhost/gobuster/$wordlist"
 
-			if [ -n "$EXECUTION_RATE" ]; then
-				command+=" -t $EXECUTION_RATE"	
-			fi
+			if [[ -n "$FILTER_HTTP" ]]; then
+				command+=" -b $FILTER_HTTP" # Blacklists status codes
+			fi	
 
-			if [ -n "$CONTENT_SIZE" ]; then
-				command+=" --exclude-length $CONTENT_SIZE"	
+			if [[ -n "$FILTER_SIZE" ]]; then
+				command+=" --exclude-length $FILTER_SIZE"	
 			fi
 
 			eval "$command"
@@ -861,9 +907,14 @@ run_gobuster() {
 
 			command="gobuster dns -d $URL -w $wordlist_path -i -o $(pwd)/Dirauto/manual/dns/gobuster/$wordlist"
 
-			if [ -n "$EXECUTION_RATE" ]; then
-				command+=" -t $EXECUTION_RATE"	
+			if [[ -n "$FILTER_HTTP" ]]; then
+				command+=" -b $FILTER_HTTP" # Blacklists status codes
+			fi	
+
+			if [[ -n "$FILTER_SIZE" ]]; then
+				command+=" --exclude-length $FILTER_SIZE"	
 			fi
+
 
 			eval "$command"
 
@@ -886,7 +937,6 @@ run_gobuster() {
 #     None
 #================================================================
 run_FFuF() {
-	# Focus on DIR part over here as a test
 	if [ "$OPTION" == "dir" ]; then
 		mkdir -p Dirauto/manual/dir/ffuf
 		directory_check "$(pwd)/Dirauto/manual/dir/ffuf" "manual FFuF directory"
@@ -903,14 +953,22 @@ run_FFuF() {
 				command+=" -e $EXTENSIONS"
 			fi 
 
-			if [ -n "$RESPONSE_CODES" ]; then
-				command+=" -mc $RESPONSE_CODES"
-			fi 
+			if [[ -n "$FILTER_HTTP" ]]; then
+				command+=" -fc $FILTER_HTTP"
+			fi	
 
-			if [ -n "$EXECUTION_RATE" ]; then
-				command+=" -t $EXECUTION_RATE"
-			fi 
+			if [[ -n "$FILTER_LINES" ]]; then
+				command+=" -fl $FILTER_LINES"
+			fi	
+
+			if [[ -n "$FILTER_SIZE" ]]; then
+				command+=" -fs $FILTER_SIZE"
+			fi	
 			
+			if [[ -n "$FILTER_WORDS" ]]; then
+				command+=" -fw $FILTER_WORDS"
+			fi	
+
 			eval "$command"
 
 			file_check "$(pwd)/Dirauto/manual/dir/ffuf/$wordlist" "FFuF directory scan"
@@ -929,17 +987,25 @@ run_FFuF() {
 
 			command="ffuf -c -w $wordlist_path -H \"$HOST\" -u $URL -o $(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"
 
-			if [ -n "$EXECUTION_RATE" ]; then
-				command+=" -t $EXECUTION_RATE"
+			if [ -n "$EXTENSIONS" ]; then
+				command+=" -e $EXTENSIONS"
 			fi 
 
-			if [ -n "$RESPONSE_CODES" ]; then
-				command+=" -mc $RESPONSE_CODES"
-			fi 
+			if [[ -n "$FILTER_HTTP" ]]; then
+				command+=" -fc $FILTER_HTTP"
+			fi	
 
-			if [ -n "$CONTENT_SIZE" ]; then
-				command+=" -fs $CONTENT_SIZE"
-			fi 
+			if [[ -n "$FILTER_LINES" ]]; then
+				command+=" -fl $FILTER_LINES"
+			fi	
+
+			if [[ -n "$FILTER_SIZE" ]]; then
+				command+=" -fs $FILTER_SIZE"
+			fi	
+			
+			if [[ -n "$FILTER_WORDS" ]]; then
+				command+=" -fw $FILTER_WORDS"
+			fi	
 
 			eval "$command"
 
@@ -959,17 +1025,25 @@ run_FFuF() {
 
 			command="ffuf -c -w $wordlist_path -H \"$HOST\" -u $URL -o $(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"
 		
-			if [ -n "$EXECUTION_RATE" ]; then
-				command+=" -t $EXECUTION_RATE"
+			if [ -n "$EXTENSIONS" ]; then
+				command+=" -e $EXTENSIONS"
 			fi 
 
-			if [ -n "$RESPONSE_CODES" ]; then
-				command+=" -mc $RESPONSE_CODES"
-			fi 
+			if [[ -n "$FILTER_HTTP" ]]; then
+				command+=" -fc $FILTER_HTTP"
+			fi	
 
-			if [ -n "$CONTENT_SIZE" ]; then
-				command+=" -fs $CONTENT_SIZE"
-			fi 
+			if [[ -n "$FILTER_LINES" ]]; then
+				command+=" -fl $FILTER_LINES"
+			fi	
+
+			if [[ -n "$FILTER_SIZE" ]]; then
+				command+=" -fs $FILTER_SIZE"
+			fi	
+			
+			if [[ -n "$FILTER_WORDS" ]]; then
+				command+=" -fw $FILTER_WORDS"
+			fi	
 
 			eval "$command"
 
@@ -1004,17 +1078,17 @@ run_dirsearch() {
 
 			command="dirsearch -u $URL -w $wordlist_path -o $(pwd)/Dirauto/manual/dir/dirsearch/$wordlist"
 
-			if [ -n "$EXTENSIONS" ]; then
+			if [[ -n "$EXTENSIONS" ]]; then
 				command+=" -e $EXTENSIONS"
 			fi 
 
-			if [ -n "$RESPONSE_CODES" ]; then
-				command+=" -i $RESPONSE_CODES"
+			if [[ -n "$FITLER_HTTP" ]]; then
+				command+=" -x $FILTER_HTTP"
 			fi 
 
-			if [ -n "$EXECUTION_RATE" ]; then
-				command+=" -t $EXECUTION_RATE"
-			fi 
+			if [[ -n "$FILTER_SIZE" ]]; then
+				command+=" --exclude-sizes=$FILTER_SIZE"	
+			fi
 
 			eval "$command"
 
@@ -1053,9 +1127,21 @@ run_feroxbuster() {
 				command+=" -x $EXTENSIONS"
 			fi 
 
-			if [ -n "$EXECUTION_RATE" ]; then
-				command+=" -t $EXECUTION_RATE"
-			fi 
+			if [[ -n "$FILTER_HTTP" ]]; then
+				command+=" -s $FILTER_HTTP"
+			fi
+
+			if [[ -n "$FILTER_SIZE" ]]; then
+				command+=" -S $FILTER_SIZE"
+			fi
+
+			if [[ -n "$FILTER_WORDS" ]]; then
+				command+=" -W $FILTER_WORDS"
+			fi
+
+			if [[ -n "$FILTER_LINES" ]]; then
+				command+=" -N $FILTER_LINES"
+			fi
 
 			eval "$command"
 
@@ -1090,9 +1176,13 @@ run_dirb() {
 
 			command="dirb $URL -w $wordlist_path -o $(pwd)/Dirauto/manual/dir/dirb/$wordlist"
 
-			if [ -n "$EXTENSIONS" ]; then
+			if [[ -n "$EXTENSIONS" ]]; then
 				command+=" -X $EXTENSIONS"
 			fi 
+
+			if [[ -n "$FILTER_HTTP" ]]; then
+				command+=" -N $FILTER_HTTP"
+			fi
 
 			eval "$command"
 
@@ -1128,8 +1218,10 @@ dir_mode() {
 			-u|--url) URL="$2"; shift ;;
 			-p|--programs) PROGRAMS="$2"; shift ;;
 			-x|--extensions) EXTENSIONS="$2"; shift ;;
-			-c|--status-codes) STATUS_CODES="$2"; shift ;;
-			-t|--threads) THREADS="$2"; shift ;;
+			-fc|--filter-status) FILTER_HTTP="$2"; shift ;;
+			-fl|--filter-lines) FILTER_LINES="$2"; shift ;;
+			-fs|--filter-size) FILTER_SIZE="$2"; shift ;;
+			-fw|--filter-words) FILTER_WORDS="$2"; shift ;;
 			-w|--wordlists) WORDLISTS="$2"; shift ;;
 			--auto) AUTO=true; shift ;; 
 			*) error "Unknown Paramter Passed: $1"; exist 1 ;;
@@ -1168,12 +1260,13 @@ dns_mode() {
 			-u|--url) URL="$2"; shift ;;
 			-p|--programs) PROGRAMS="$2"; shift ;;
 			-x|--extensions) EXTENSIONS="$2"; shift ;;
-			-c|--status-codes) STATUS_CODES="$2"; shift ;;
-			-t|--threads) THREADS="$2"; shift ;;
+			-fc|--filter-status) FILTER_HTTP="$2"; shift ;;
+			-fl|--filter-lines) FILTER_LINES="$2"; shift ;;
+			-fs|--filter-size) FILTER_SIZE="$2"; shift ;;
+			-fw|--filter-words) FILTER_WORDS="$2"; shift ;;
 			-w|--wordlists) WORDLISTS="$2"; shift ;;
 			--auto) AUTO=true ;; 
 			-d|--domain) DOMAIN_NAME="$2"; shift ;;
-			-fs) CONTENT_SIZE="$2"; shift ;;
 			*) error "Unknown Parameter Passed: $1"; exit 1 ;;
 		esac
 		shift
@@ -1210,12 +1303,13 @@ vhost_mode() {
 			-u|--url) URL="$2"; shift ;;
 			-p|--programs) PROGRAMS="$2"; shift ;;
 			-x|--extensions) EXTENSIONS="$2"; shift ;;
-			-c|--status-codes) STATUS_CODES="$2"; shift ;;
-			-t|--threads) THREADS="$2"; shift ;;
+			-fc|--filter-status) FILTER_HTTP="$2"; shift ;;
+			-fl|--filter-lines) FILTER_LINES="$2"; shift ;;
+			-fs|--filter-size) FILTER_SIZE="$2"; shift ;;
+			-fw|--filter-words) FILTER_WORDS="$2"; shift ;;
 			-w|--wordlists) WORDLISTS="$2"; shift ;;
 			--auto) AUTO=true ;; 
 			-H) HOST="$2"; shift ;;
-			-fs) CONTENT_SIZE="$2"; shift ;;
 			*) error "Unknown parameter passed: $1"; exit 1 ;;
 		esac
 		shift
@@ -1249,25 +1343,13 @@ vhost_mode() {
 #     None
 #================================================================
 run_program() {
-	if [[ "$PROGRAMS" == "gobuster" ]]; then 
-		run_gobuster 
-	fi
-
-	if [[ "$PROGRAMS" == "ffuf" ]]; then 
-		run_FFuF 
-	fi
-
-	if [[ "$PROGRAMS" == "feroxbuster" ]]; then 
-		run_feroxbuster 
-	fi
-
-	if [[ "$PROGRAMS" == "dirsearch" ]]; then 
-		run_dirsearch 
-	fi
-
-	if [[ "$PROGRAMS" == "dirb" ]]; then 
-		run_dirb 
-	fi
+	case "$PROGRAMS" in 
+		*"gobuster"*) run_gobuster ;;
+		*"ffuf"*) run_FFuF ;;
+		*"feroxbuster"*) run_feroxbuster ;;
+		*"dirsearch"*) run_dirsearch ;;
+		*"dirb"*) run_dirb ;;
+	esac
 }
 
 ###############################################################
@@ -1279,35 +1361,39 @@ then
         exit 1
 fi
 
-# Global Arguments
-URL=""
-OPTION=""
-PROGRAMS=""
+###############################################################
+# Global Flags                                                #
+###############################################################
+# Arguments
+URL="" # Target Host
+OPTION="" # Scan Option
+PROGRAMS="" # Enumeration Programs
 EXTENSIONS=""
-STATUS_CODES=""
-THREADS=""
-EXECUTION_RATE=""
-WORDLISTS=""
+WORDLISTS="" 
 AUTO=false
 
 # VHost Arguments
 HOST=""
-CONTENT_LENGTH=""
 
 # DNS Arguments
 DOMAIN_NAME=""
+
+# Filter Arguments
+FILTER_HTTP="" # Filter by HTTP status code requests
+FILTER_LINES="" # Filter by amount of lines
+FILTER_SIZE="" # Filter by content size
+FILTER_WORDS="" # Filter by the amount of words
 
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
 		-h|--help) help ;;
 		--usage) usage ;;
 		-u|--url) URL="$2"; shift ;;
+		-p|--programs) PROGRAMS="$2"; shift ;;
 		-x|--extensions) EXTENSIONS="$2"; shift ;;
-		-c|--status-codes) STATUS_CODES="$2"; shift ;;
 		dir) shift; dir_mode "$@"; break ;;
 		vhost) shift; vhost_mode "$@"; break ;;
 		dns) shift; dns_mode "$@"; break ;;
-		-t|--threads) THREADS="$2"; shift ;;
 		-w|--wordlists) WORDLISTS="$2"; shift ;;
 		--check) check ;;
 		*) error "Unknown parameter passed: $1"; exit 1 ;;
