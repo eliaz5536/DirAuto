@@ -3,12 +3,12 @@
 # HEADER
 #================================================================
 # Script Name   : dirauto
-# Description   : Customizable directory scan that enumerates 
-# 		:  subdomain through content-discovery
+# Description   : Customizable directory tool that enumerates 
+# 		: directories through content-discovery
 # Author        : Eliaz Simon
-# Date          : <INSERT DATE HERE>
+# Date          : 2024-05-23
 # Version       : 1.0
-# Usage         : ./dirauto -i <target_host>
+# Usage         : ./dirauto --url <target_host>
 # Notes         : Ensure you install all tools to use this script
 # Dependencies  : See README.md for more info on installation
 #================================================================
@@ -1362,7 +1362,6 @@ run_program() {
 	if [[ "$PROGRAMS" == *"dirb"* ]]; then
 		run_dirb
 	fi
-
 }
 
 ###############################################################
