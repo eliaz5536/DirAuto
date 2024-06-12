@@ -1,8 +1,7 @@
 ![dirauto_logo](https://github.com/eliaz5536/DirAuto/assets/5835036/97a666c3-bb93-4ece-a752-e2574d6932f8)
 
 # Demo
-[![asciicast](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN.svg)](https://asciinema.org/a/qWE7UgFr1jJ7GN0Uv2wl5LChN)
-
+[![asciicast](https://asciinema.org/a/Ux26WNgdmIuEr9drhCRjmS5Li.svg)](https://asciinema.org/a/Ux26WNgdmIuEr9drhCRjmS5Li)
 
 # DirAuto
 DirAuto is a customizable directory reconnaissance tool that automates enumeration of subdomains, ideal for penetration testing environments and network scanning.
