@@ -1343,13 +1343,26 @@ vhost_mode() {
 #     None
 #================================================================
 run_program() {
-	case "$PROGRAMS" in 
-		*"gobuster"*) run_gobuster ;;
-		*"ffuf"*) run_FFuF ;;
-		*"feroxbuster"*) run_feroxbuster ;;
-		*"dirsearch"*) run_dirsearch ;;
-		*"dirb"*) run_dirb ;;
-	esac
+	if [[ "$PROGRAMS" == *"gobuster"* ]]; then
+		run_gobuster
+	fi
+
+	if [[ "$PROGRAMS" == *"ffuf"* ]]; then
+		run_FFuF
+	fi
+
+	if [[ "$PROGRAMS" == *"feroxbuster"* ]]; then
+		run_feroxbuster
+	fi
+
+	if [[ "$PROGRAMS" == *"dirsearch"* ]]; then
+		run_dirsearch
+	fi
+
+	if [[ "$PROGRAMS" == *"dirb"* ]]; then
+		run_dirb
+	fi
+
 }
 
 ###############################################################
