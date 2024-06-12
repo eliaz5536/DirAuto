@@ -45,20 +45,32 @@ Directory Enumeration Automator with Gobuster, FFuF, Feroxbuster, DirSearch & Di
 Usage: dirauto [modes] [options]
  
 Options:
-  --usage                       Show usage information
-  -h, --help                    Show help message
-  -u, --url                     Specify target URL
-  -x, --extensions              Specify extensions
-  -c, --status-codes            Specify status codes
-  -e, --extension-rate          Specify extension rate
-  -t, --threads                 Specify number of threads
-  -w, --wordlist                Specify wordlist
-  --check                       Check if repositories are installed
+  --usage                                               Show usage information
+  -h, --help                                            Show help message
+  -u, --url                                             Specify target URL
+  -x, --extensions                                      Specify extensions
+  -p, --programs                                        Specify enumeration programs
+  -c, --status-codes                                    Specify status codes
+  -w, --wordlist                                        Specify wordlist
+  --check                                               Check if repositories are installed
  
 Modes:
-  dir                           Directory Mode
-  vhost                         Virtual Host Mode
-  subdomain                     Subdomain Mode
+  dir                                                   Directory Mode
+  vhost                                                 Virtual Host Mode
+  subdomain                                             Subdomain Mode
+ 
+Enumeration Programs:
+  gobuster                                              Directory/File, DNS and VHost busting tool written in Go
+  ffuf                                                  Fast web fuzzer written in Go
+  feroxbuster                                           A fast, simple, recursive content discovery tool written in Rust
+  dirsearch                                             Web path scanner
+  dirb                                                  Web content scanner
+ 
+Filter Options:
+  -fs, --filter-status <status_codes>                   Filters HTTP status codes
+  -fl, --filter-lines <line_count>                      Filters line count
+  -fs, --filter-size <content_size>                     Filters content size
+  -fw, --filter-words <word_count>                      Filters word count
 
 ```
 
