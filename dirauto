@@ -511,9 +511,9 @@ input_check() {
 				error "Host string must contain the word 'FUZZ' in order to enumerate subdomains"
 				exit 1
 			fi	
+			info "Host (FFuF): $HOST"
 		fi
 	fi
-	info "Host (FFuF): $HOST"
 
 	# ---------------------------------------------------------------------------
 	# WORDLIST
@@ -547,8 +547,8 @@ input_check() {
 			error "Status codes must not contain any special characters"
 			exit 1
 		fi	
+		info "Extensions: $EXTENSIONS"
 	fi
-	info "Extensions: $EXTENSIONS"
 
 	# ---------------------------------------------------------------------------
 	# STATUS CODES
@@ -558,8 +558,8 @@ input_check() {
 			error "Status codes must contain only integer and the following charater ',' for separation"
 			exit 1
 		fi	
+		info "Status Codes: $STATUS_CODES"
 	fi
-	info "Status Codes: $STATUS_CODES"
 
 	# ---------------------------------------------------------------------------
 	# EXECUTION RATE
@@ -569,8 +569,8 @@ input_check() {
 			error "Execution rate must only accept integers"
 			exit 1
 		fi	
+		info "Execution Rate: $EXECUTION_RATE"
 	fi
-	info "Execution Rate: $EXECUTION_RATE"
 
 	# ---------------------------------------------------------------------------
 	# THREADS
@@ -580,8 +580,8 @@ input_check() {
 			error "Threads must contain only integers"
 			exit 1
 		fi	
+		info "Threads: $THREADS"
 	fi
-	info "Threads: $THREADS"
 
 	# ---------------------------------------------------------------------------
 	# RESPONSE / CONTENT SIZE
@@ -591,8 +591,8 @@ input_check() {
 			error "Content size must contain only integers"
 			exit 1
 		fi	
+		info "Exclude Content Size: $CONTENT_SIZE"
 	fi
-	info "Exclude Content Size: $CONTENT_SIZE"
 
 }
 
@@ -859,7 +859,7 @@ run_gobuster() {
 
 			touch "$(pwd)/Dirauto/manual/dns/gobuster/$wordlist"
 
-			command="gobuster dns -d $URL -w $wordlist -i -o $(pwd)/Dirauto/manual/dns/gobuster/$wordlist"
+			command="gobuster dns -d $URL -w $wordlist_path -i -o $(pwd)/Dirauto/manual/dns/gobuster/$wordlist"
 
 			if [ -n "$EXECUTION_RATE" ]; then
 				command+=" -t $EXECUTION_RATE"	
@@ -886,6 +886,7 @@ run_gobuster() {
 #     None
 #================================================================
 run_FFuF() {
+	# Focus on DIR part over here as a test
 	if [ "$OPTION" == "dir" ]; then
 		mkdir -p Dirauto/manual/dir/ffuf
 		directory_check "$(pwd)/Dirauto/manual/dir/ffuf" "manual FFuF directory"
@@ -917,11 +918,6 @@ run_FFuF() {
 	fi
 	
 	if [ "$OPTION" == "vhost" ]; then
-		# Add option for domain name
-		# Review this section over here
-		echo "Enter the name of the header for FUZZING (Example: \"Host: FUZZ.ffuf.com \"): "	
-		read headerInput
-
 		mkdir -p Dirauto/manual/vhost/ffuf
 		directory_check "$(pwd)/Dirauto/manual/vhost/ffuf" "manual FFuF vhost"
 
@@ -931,10 +927,18 @@ run_FFuF() {
 
 			touch "$(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"	
 
-			command="ffuf -c -w $wordlist -H \"$headerInput\" -u $URL -o $(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"
+			command="ffuf -c -w $wordlist_path -H \"$HOST\" -u $URL -o $(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"
 
 			if [ -n "$EXECUTION_RATE" ]; then
 				command+=" -t $EXECUTION_RATE"
+			fi 
+
+			if [ -n "$RESPONSE_CODES" ]; then
+				command+=" -mc $RESPONSE_CODES"
+			fi 
+
+			if [ -n "$CONTENT_SIZE" ]; then
+				command+=" -fs $CONTENT_SIZE"
 			fi 
 
 			eval "$command"
@@ -953,10 +957,18 @@ run_FFuF() {
 	
 			touch "$(pwd)/Dirauto/manual/dns/ffuf/$wordlist"
 
-			command="ffuf -c -w $wordlist -u $URL -H \"Host: FUZZ\" -o $(pwd)/Dirauto/manual/dns/ffuf/$wordlist"
+			command="ffuf -c -w $wordlist_path -H \"$HOST\" -u $URL -o $(pwd)/Dirauto/manual/vhost/ffuf/$wordlist"
 		
 			if [ -n "$EXECUTION_RATE" ]; then
 				command+=" -t $EXECUTION_RATE"
+			fi 
+
+			if [ -n "$RESPONSE_CODES" ]; then
+				command+=" -mc $RESPONSE_CODES"
+			fi 
+
+			if [ -n "$CONTENT_SIZE" ]; then
+				command+=" -fs $CONTENT_SIZE"
 			fi 
 
 			eval "$command"
@@ -980,8 +992,6 @@ run_FFuF() {
 #     None
 #================================================================
 run_dirsearch() {
-	local OPTION="$1"
-
 	if [ "$OPTION" == "dir" ]; then
 		mkdir -p Dirauto/manual/dir/dirsearch
 		directory_check "$(pwd)/Dirauto/manual/dir/dirsearch" "manual dirsearch directory"
@@ -1008,7 +1018,7 @@ run_dirsearch() {
 
 			eval "$command"
 
-			file_check "$(pwd)/Dirauto/manual/dir/dirsearch/$wordlist" "FFuF directory scan"
+			file_check "$(pwd)/Dirauto/manual/dir/dirsearch/$wordlist" "Dirsearch directory scan"
 		done
 	fi 
 
@@ -1027,8 +1037,6 @@ run_dirsearch() {
 #     None
 #================================================================
 run_feroxbuster() {
-	local OPTION="$1"
-
 	if [ "$OPTION" == "dir" ]; then
 		mkdir -p Dirauto/manual/dir/feroxbuster
 		directory_check "$(pwd)/Dirauto/manual/dir/feroxbuster" "manual feroxbuster directory"
@@ -1134,9 +1142,7 @@ dir_mode() {
 	OPTION="dir"
 
 	info "Initialized Directory Mode"
-
 	run_program
-
 	success "Completed Directory Mode"
 
 	exit 0
@@ -1164,9 +1170,9 @@ dns_mode() {
 			-x|--extensions) EXTENSIONS="$2"; shift ;;
 			-c|--status-codes) STATUS_CODES="$2"; shift ;;
 			-t|--threads) THREADS="$2"; shift ;;
-			-w|--wordlists) WORDLIST="$2"; shift ;;
+			-w|--wordlists) WORDLISTS="$2"; shift ;;
 			--auto) AUTO=true ;; 
-			-d|--domain)DOMAIN_NAME="$2"; shift ;;
+			-d|--domain) DOMAIN_NAME="$2"; shift ;;
 			-fs) CONTENT_SIZE="$2"; shift ;;
 			*) error "Unknown Parameter Passed: $1"; exit 1 ;;
 		esac
@@ -1178,9 +1184,7 @@ dns_mode() {
 	OPTION="dns"
 
 	info "Initialized DNS Mode"
-
 	run_program
-
 	success "Completed Subdomain Mode"
 
 	exit 0
@@ -1222,7 +1226,6 @@ vhost_mode() {
 	OPTION="vhost"
 
 	info "Initialized VHost Mode"
-
 	if [ "$AUTO" == "true" ]; then
 		if [ -z "$HOST" ]; then
 			error "Host name empty"
@@ -1230,9 +1233,7 @@ vhost_mode() {
 		fi 		
 		auto_vhost_scan
 	fi
-
 	run_program
-
 	info "Completed VHost Mode"
 
 	exit 1
@@ -1248,11 +1249,25 @@ vhost_mode() {
 #     None
 #================================================================
 run_program() {
-	if [[ "$PROGRAMS" == "gobuster" ]]; then run_gobuster fi
-	if [[ "$PROGRAMS" == "ffuf" ]]; then run_FFuF fi
-	if [[ "$PROGRAMS" == "feroxbuster" ]]; then run_feroxbuster fi
-	if [[ "$PROGRAMS" == "dirsearch" ]]; then run_dirsearch fi
-	if [[ "$PROGRAMS" == "dirb" ]]; then run_dirb fi
+	if [[ "$PROGRAMS" == "gobuster" ]]; then 
+		run_gobuster 
+	fi
+
+	if [[ "$PROGRAMS" == "ffuf" ]]; then 
+		run_FFuF 
+	fi
+
+	if [[ "$PROGRAMS" == "feroxbuster" ]]; then 
+		run_feroxbuster 
+	fi
+
+	if [[ "$PROGRAMS" == "dirsearch" ]]; then 
+		run_dirsearch 
+	fi
+
+	if [[ "$PROGRAMS" == "dirb" ]]; then 
+		run_dirb 
+	fi
 }
 
 ###############################################################
